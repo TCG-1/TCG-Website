@@ -1,6 +1,7 @@
-# Tacklers Next.js Clone
+# Tacklers Consulting Group Site
 
-This project is a static Next.js recreation of the Tacklers WordPress site structure.
+This project is a Next.js 16 marketing site plus an authenticated admin area for careers, applications,
+blog content, leads, and the client hub.
 
 ## Included routes
 
@@ -28,6 +29,11 @@ npm run dev
 
 Open http://localhost:3000
 
+Local development uses a fallback admin login only when `NODE_ENV` is not `production`:
+
+- Email: `hello@tacklersconsulting.com`
+- Password: `Hello@123`
+
 ## Build
 
 ```bash
@@ -35,13 +41,57 @@ npm run build
 npm run start
 ```
 
+Next.js 16 requires Node.js `20.9+`, and the project declares that in `package.json`.
+
 ## Project structure
 
 - `src/app` — route pages
-- `src/components` — shared layout and content sections
+- `src/app/api` — route handlers for admin and careers data flows
+- `src/components` — shared layout, admin tools, and dashboard sections
 - `src/lib/site-data.ts` — centralised site content and navigation data
+- `supabase` — SQL setup for careers and client hub content
+
+## Environment variables
+
+Set these in `.env.local` for local work and in Vercel Project Settings for deploys:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+SUPABASE_CAREERS_BUCKET=career-applications
+
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+ADMIN_NAME=Tacklers Admin
+ADMIN_SESSION_SECRET=
+```
+
+Notes:
+
+- `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
+- `SUPABASE_URL` is optional if you already set `NEXT_PUBLIC_SUPABASE_URL`.
+- `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` are required for production admin access.
+
+## Supabase setup
+
+Run both SQL files in your Supabase SQL editor before deploying the admin features:
+
+```bash
+supabase/careers_setup.sql
+supabase/client_hub_setup.sql
+```
+
+## Vercel deployment
+
+1. Import the GitHub repo into Vercel.
+2. Keep the detected framework preset as `Next.js`.
+3. Add all environment variables from the section above to Production, and Preview if you want previews to work with admin features too.
+4. Deploy.
+5. After the first deploy, sign in at `/sign-in` using the admin credentials you configured in Vercel.
 
 ## Notes
 
-- The booking and contact forms are static UI placeholders ready to connect to your preferred backend or scheduler.
-- Shared navigation, CTA styling, and footer content are centralised for easier editing.
+- Google Calendar booking pages are embedded with live scheduler iframes.
+- Careers, applications, and client hub management depend on Supabase being configured.
+- Admin access is now cookie-based and server-validated for production deployments.

@@ -1,3 +1,4 @@
+import { requireAdminApiRequest } from "@/lib/admin-auth";
 import { careersBucket, createSupabaseAdminClient, getSupabaseConfigError } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -7,6 +8,12 @@ type RouteContext = {
 };
 
 export async function GET(_request: Request, context: RouteContext) {
+  const authError = await requireAdminApiRequest();
+
+  if (authError) {
+    return authError;
+  }
+
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {

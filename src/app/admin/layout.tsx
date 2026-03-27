@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { AdminShellClient } from "./admin-shell-client";
+import { AdminShell } from "@/components/admin-shell";
+import { requireAdminUser } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "Admin Panel | Tacklers Consulting Group",
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <AdminShellClient>{children}</AdminShellClient>;
+export const dynamic = "force-dynamic";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await requireAdminUser();
+
+  return <AdminShell userName={user.name}>{children}</AdminShell>;
 }

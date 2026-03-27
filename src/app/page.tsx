@@ -9,7 +9,7 @@ import {
   SectionHeader,
   StepsGrid,
 } from "@/components/sections";
-import { blogPosts, homeData } from "@/lib/site-data";
+import { blogPosts, globalCta, homeData } from "@/lib/site-data";
 
 export default function Home() {
   const faqItems = [
@@ -36,7 +36,7 @@ export default function Home() {
     {
       question: "What is the best first step?",
       answer:
-        "Book a discovery call or request an on-site assessment so we can see how work flows and agree the first practical improvements.",
+        "Book a discovery call or request an on-site assessment. We'll identify improvement opportunities, define a plan that suits your organisation, and agree the first milestones for success.",
     },
   ];
 
@@ -126,8 +126,7 @@ export default function Home() {
                 Implementing Lean principles that have delivered multi-million-pound savings to organisations
               </p>
               <p className="rounded-2xl border border-[#8a0917]/20 bg-white/80 px-4 py-4 text-sm font-semibold leading-6 text-slate-800 backdrop-blur-sm">
-                Delivering Lean training to over 500 employees globally, from front-line staff to C-suite
-                level
+                500+ individuals, from front-line teams to C-Suite level, trained in Lean Principles
               </p>
             </div>
           </div>
@@ -140,7 +139,11 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/75">Fun facts</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
-                { value: "5,000+", label: "Happy Customers" },
+                {
+                  value: "500+",
+                  label: "Individuals trained in Lean Principles",
+                  detail: "From front-line teams to C-Suite level",
+                },
                 { value: "4.8/5", label: "Average Rating" },
                 { value: "98%", label: "Client Satisfaction" },
                 { value: "10+", label: "Years Experience" },
@@ -153,6 +156,9 @@ export default function Home() {
                   <div className="mt-3 text-sm font-semibold uppercase tracking-[0.14em] text-white/80">
                     {item.label}
                   </div>
+                  {"detail" in item ? (
+                    <div className="mt-2 text-sm leading-6 text-white/78">{item.detail}</div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -403,16 +409,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <CtaBanner
-        eyebrow="Ready to cut waste and keep your people?"
-        title="Ready to cut waste and keep your people?"
-        body="Book a discovery call, or request an on-site assessment. We’ll identify what’s slowing delivery down and agree the first set of fixes. No theatre. Just real work."
-        primary={{ label: "Book a discovery call", href: "/book-a-discovery-call" }}
-        secondary={{
-          label: "Request an on-site assessment",
-          href: "/request-an-on-site-assessment",
-        }}
-      />
+      <CtaBanner {...globalCta} />
     </div>
   );
 }

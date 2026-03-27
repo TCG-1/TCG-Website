@@ -1,3 +1,4 @@
+import { requireAdminApiRequest } from "@/lib/admin-auth";
 import { isApplicationStatus, normalizeOptionalText, normalizeText } from "@/lib/careers";
 import { createSupabaseAdminClient, getSupabaseConfigError } from "@/lib/supabase/admin";
 
@@ -8,6 +9,12 @@ type RouteContext = {
 };
 
 export async function PATCH(request: Request, context: RouteContext) {
+  const authError = await requireAdminApiRequest();
+
+  if (authError) {
+    return authError;
+  }
+
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {

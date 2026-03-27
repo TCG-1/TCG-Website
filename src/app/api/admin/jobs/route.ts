@@ -7,11 +7,18 @@ import {
   normalizeOptionalText,
   normalizeText,
 } from "@/lib/careers";
+import { requireAdminApiRequest } from "@/lib/admin-auth";
 import { createSupabaseAdminClient, getSupabaseConfigError } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
 export async function GET() {
+  const authError = await requireAdminApiRequest();
+
+  if (authError) {
+    return authError;
+  }
+
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
@@ -31,6 +38,12 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const authError = await requireAdminApiRequest();
+
+  if (authError) {
+    return authError;
+  }
+
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {

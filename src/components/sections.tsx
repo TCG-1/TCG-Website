@@ -23,6 +23,11 @@ export function PageHero({
   secondary?: { label: string; href: string };
   image?: string;
 }) {
+  const eyebrowClassName =
+    eyebrow === "Transforming Challenges Into Opportunities"
+      ? "text-sm font-serif tracking-[0.08em] text-[#8a0917]"
+      : "eyebrow";
+
   return (
     <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
       {image ? (
@@ -38,7 +43,7 @@ export function PageHero({
       <div className="hero-soft-gradient absolute inset-0" />
       <Container>
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-14 text-center sm:pt-16 lg:pt-20">
-          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+          {eyebrow ? <p className={eyebrowClassName}>{eyebrow}</p> : null}
           <h1 className="display-title mt-3 max-w-4xl">
             {title}
           </h1>

@@ -2,26 +2,18 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useTransition } from "react";
 
-import { clearAdminSession, getAdminSession, getStoredAdminUser } from "@/lib/admin-auth-client";
-
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({
+  children,
+  userName,
+}: {
+  children: React.ReactNode;
+  userName: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
-  const session = getAdminSession();
-  const user = getStoredAdminUser();
-  const userName = user?.name ?? "Admin";
-
-  useEffect(() => {
-    if (!session) {
-      router.replace("/sign-in");
-    }
-  }, [router, session]);
-
-  if (!session) {
-    return <div className="section-gap text-center text-slate-600">Loading admin panel…</div>;
-  }
+  const [isPending, startTransition] = useTransition();
 
   const navItems = [
     { href: "/admin", label: "Dashboard" },
@@ -63,12 +55,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => {
-                clearAdminSession();
-                router.push("/sign-in");
+                startTransition(async () => {
+                  await fetch("/api/admin/session", { method: "DELETE" });
+                  router.replace("/sign-in");
+                  router.refresh();
+                });
               }}
+              disabled={isPending}
               className="mt-4 inline-flex rounded-full border border-white/25 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-white/10"
             >
-              Log out
+              {isPending ? "Logging out..." : "Log out"}
             </button>
           </div>
         </aside>

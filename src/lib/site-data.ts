@@ -60,9 +60,10 @@ export const footerData = {
 
 export const globalCta = {
   eyebrow: "Start the right conversation",
-  title: "Ready to improve performance without disrupting your workforce?",
+  title:
+    "Ready to eliminate waste, improve productivity, and optimize your team's capabilities?",
   body:
-    "Book a discovery call or request an on-site assessment. We will help you choose a practical starting point based on how work really runs.",
+    "Book a discovery call or request an on-site assessment. We'll work with you to identify improvement opportunities, define an implementation plan that suits your organization, and establish key milestones for success.",
   primary: { label: "Book a discovery call", href: "/book-a-discovery-call" },
   secondary: {
     label: "Request an on-site assessment",
@@ -88,9 +89,11 @@ export const homeData = {
   },
   stats: [
     { value: "10+", label: "Years Lean Experience" },
-    { value: "500+", label: "Employees Trained" },
+    {
+      value: "500+",
+      label: "Individuals, from front-line teams to C-Suite level, trained in Lean Principles",
+    },
     { value: "£M+", label: "Savings Delivered" },
-    { value: "5,000+", label: "Happy Customers" },
     { value: "4.8/5", label: "Average Rating" },
     { value: "98%", label: "Client Satisfaction" },
   ],

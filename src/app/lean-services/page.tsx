@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Container,
 } from "@/components/sections";
-import { leanProgrammes, methodSteps } from "@/lib/site-data";
+import { globalCta, leanProgrammes, methodSteps } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "Lean Group Mentoring | Tacklers Consulting Group",
@@ -245,9 +245,9 @@ export default function LeanServicesPage() {
 
       <section className="py-16 bg-white">
         <Container>
-          <div className="flex flex-col items-center justify-between gap-10 bg-[#FDD835] p-10 md:flex-row md:p-16">
-            <div className="flex items-center gap-6">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#8a0917] text-white">
+          <div className="flex flex-col items-start justify-between gap-10 bg-[#FDD835] p-10 md:p-16 lg:flex-row lg:items-center">
+            <div className="flex items-start gap-6">
+              <div className="mt-1 flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#8a0917] text-white">
                 <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
@@ -258,21 +258,24 @@ export default function LeanServicesPage() {
                   />
                 </svg>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold leading-tight text-slate-950 md:text-3xl">
-                  Ready to cut waste and keep your people?
+              <div className="max-w-3xl">
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-slate-900/70">
+                  {globalCta.eyebrow}
+                </p>
+                <h3 className="mt-3 text-2xl font-bold leading-tight text-slate-950 md:text-3xl">
+                  {globalCta.title}
                 </h3>
-                <p className="mt-2 font-medium text-[#8a0917]">
-                  Schedule a discovery call to discuss your transformation journey.
+                <p className="mt-4 max-w-2xl text-base leading-7 text-slate-900/78">
+                  {globalCta.body}
                 </p>
               </div>
             </div>
             <div className="flex w-full flex-col gap-4 sm:flex-row md:w-auto">
               <Link href="/book-a-discovery-call" className="button-primary whitespace-nowrap px-8">
-                Book a Discovery Call
+                {globalCta.primary.label}
               </Link>
               <Link href="/request-an-on-site-assessment" className="inline-flex items-center justify-center whitespace-nowrap bg-slate-950 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:bg-black">
-                Request Assessment
+                {globalCta.secondary.label}
               </Link>
             </div>
           </div>
