@@ -1,7 +1,10 @@
+import { TrainingSessionForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData } from "@/lib/training-portal";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
 
-export default function AdminSessionsPage() {
+export default async function AdminSessionsPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -14,14 +17,14 @@ export default function AdminSessionsPage() {
         title="Upcoming sessions"
         description="Delivery schedule with readiness and assignment signals."
       >
-        <PortalList
-          items={adminTrainingData.sessions.map((session) => ({
-            meta: `${session.time} • ${session.format} • ${session.facilitator}`,
-            note: `${session.cohort}. ${session.status}.`,
-            status: session.status,
-            title: session.title,
-          }))}
-        />
+        <PortalList items={workspace.sessions} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Schedule a session"
+        description="Create the live workshop, link it to a module, and publish the preparation checklist that learners will see."
+      >
+        <TrainingSessionForm cohorts={workspace.references.cohorts} modules={workspace.references.modules} />
       </PortalPanel>
     </div>
   );

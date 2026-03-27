@@ -1,7 +1,10 @@
+import { TrainingResourceForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData } from "@/lib/training-portal";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
 
-export default function AdminResourcesPage() {
+export default async function AdminResourcesPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -14,26 +17,24 @@ export default function AdminResourcesPage() {
         title="Resource governance"
         description="Materials grouped by audience and module context."
       >
-        <PortalList
-          items={adminTrainingData.resources.map((resource) => ({
-            meta: `${resource.module} • ${resource.format} • ${resource.audience}`,
-            note: "Version-controlled resource set for the training journey.",
-            title: resource.title,
-          }))}
-        />
+        <PortalList items={workspace.resources} />
       </PortalPanel>
 
       <PortalPanel
         title="Syllabus-linked publishing"
         description="Resource release should stay tied to the module plan, not become a detached document operation."
       >
-        <PortalList
-          items={adminTrainingData.syllabus.map((module) => ({
-            meta: `${module.phase} • ${module.duration}`,
-            note: module.outcomes.join(" • "),
-            status: module.status,
-            title: module.title,
-          }))}
+        <PortalList items={workspace.sessions.slice(0, 4)} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Release a resource"
+        description="Publish the learner pack, manager pack, or facilitator material at the correct point in the delivery pathway."
+      >
+        <TrainingResourceForm
+          cohorts={workspace.references.cohorts}
+          modules={workspace.references.modules}
+          programmes={workspace.references.programmes}
         />
       </PortalPanel>
     </div>

@@ -166,7 +166,7 @@ export function PortalSignInForm({
         return;
       }
 
-      router.replace("/client-hub");
+      router.replace("/sign-in");
       router.refresh();
     } finally {
       setIsSubmitting(false);

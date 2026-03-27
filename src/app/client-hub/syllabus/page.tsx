@@ -1,7 +1,10 @@
 import { PortalIntro, PortalList, PortalPanel, PortalWorkflow } from "@/components/training-portal/portal-primitives";
-import { clientTrainingData, trainingBlueprint } from "@/lib/training-portal";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
+import { trainingBlueprint } from "@/lib/training-portal";
 
-export default function ClientHubSyllabusPage() {
+export default async function ClientHubSyllabusPage() {
+  const workspace = await getClientTrainingWorkspace();
+
   return (
     <div className="space-y-10 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
@@ -21,14 +24,7 @@ export default function ClientHubSyllabusPage() {
         title="Module breakdown"
         description="Current status, expected outcomes, and delivery rhythm for the active syllabus."
       >
-        <PortalList
-          items={clientTrainingData.modules.map((module) => ({
-            meta: `${module.phase} • ${module.duration}`,
-            note: module.outcomes.join(" • "),
-            status: module.status,
-            title: module.title,
-          }))}
-        />
+        <PortalList items={workspace.modules} />
       </PortalPanel>
     </div>
   );

@@ -1,7 +1,10 @@
+import { TrainingAssessmentForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData } from "@/lib/training-portal";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
 
-export default function AdminAssessmentsPage() {
+export default async function AdminAssessmentsPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -14,14 +17,14 @@ export default function AdminAssessmentsPage() {
         title="Assessment operations"
         description="Queues, blockers, and learner support signals."
       >
-        <PortalList
-          items={adminTrainingData.assessments.map((assessment) => ({
-            meta: `${assessment.cohort} • ${assessment.due}`,
-            note: assessment.notes,
-            status: assessment.status,
-            title: assessment.title,
-          }))}
-        />
+        <PortalList items={workspace.assessments} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Release a new assessment"
+        description="Publish the next quiz, practical task, or reflection directly into the training flow with due dates and instructions."
+      >
+        <TrainingAssessmentForm cohorts={workspace.references.cohorts} modules={workspace.references.modules} />
       </PortalPanel>
     </div>
   );

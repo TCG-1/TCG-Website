@@ -1,7 +1,9 @@
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { clientTrainingData } from "@/lib/training-portal";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
 
-export default function ClientHubSchedulePage() {
+export default async function ClientHubSchedulePage() {
+  const workspace = await getClientTrainingWorkspace();
+
   return (
     <div className="space-y-10 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
@@ -15,14 +17,7 @@ export default function ClientHubSchedulePage() {
           title="Upcoming delivery"
           description="Confirmed sessions, format, timing, and facilitator ownership."
         >
-          <PortalList
-            items={clientTrainingData.sessions.map((session) => ({
-              meta: `${session.time} • ${session.format} • ${session.facilitator}`,
-              note: `${session.cohort}. ${session.status}.`,
-              status: session.status,
-              title: session.title,
-            }))}
-          />
+          <PortalList items={workspace.sessions} />
         </PortalPanel>
 
         <PortalPanel
@@ -30,7 +25,10 @@ export default function ClientHubSchedulePage() {
           description="The best learner experience tells people exactly how to show up ready."
         >
           <div className="space-y-3">
-            {clientTrainingData.nextSession.checklist.map((item) => (
+            {(workspace.nextSession?.checklist ?? [
+              "The next training session has not been published yet.",
+              "When it is published, the readiness checklist will appear here.",
+            ]).map((item) => (
               <div key={item} className="rounded-[1.4rem] border border-[#ece1dc] bg-[#faf7f5] px-4 py-4 text-sm leading-6 text-slate-600">
                 {item}
               </div>

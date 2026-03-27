@@ -8,32 +8,39 @@ import {
   PortalPanel,
   PortalWorkflow,
 } from "@/components/training-portal/portal-primitives";
-import type { ClientHubContent } from "@/lib/client-hub";
-import { clientTrainingData, trainingBlueprint } from "@/lib/training-portal";
+import type { ClientTrainingWorkspace } from "@/lib/training-system";
+import { trainingBlueprint } from "@/lib/training-portal";
 
-export function ClientHubView({ content }: { content: ClientHubContent }) {
+export function ClientHubView({ workspace }: { workspace: ClientTrainingWorkspace }) {
   return (
     <div className="space-y-12 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
-        eyebrow={clientTrainingData.intro.eyebrow}
-        title={`Welcome back, ${content.meta.greetingName}.`}
-        description={clientTrainingData.intro.description}
+        eyebrow={workspace.intro.eyebrow}
+        title={`Welcome back, ${workspace.viewerName}.`}
+        description={workspace.intro.description}
       />
 
-      <PortalMetricGrid items={clientTrainingData.metrics} />
+      <PortalMetricGrid items={workspace.metrics} />
 
       <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
         <PortalPanel
-          title={clientTrainingData.nextSession.title}
-          description={`${clientTrainingData.nextSession.time} • ${clientTrainingData.nextSession.format} • ${clientTrainingData.nextSession.venue}`}
+          title={workspace.nextSession?.title ?? "No upcoming session is scheduled yet."}
+          description={
+            workspace.nextSession
+              ? `${workspace.nextSession.time} • ${workspace.nextSession.format} • ${workspace.nextSession.venue}`
+              : "As soon as the next live workshop is scheduled, the training detail and preparation checklist will appear here."
+          }
         >
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]">
-                Facilitated by {clientTrainingData.nextSession.facilitator}
+                {workspace.nextSession ? `Facilitated by ${workspace.nextSession.facilitator}` : "Training delivery details will appear here"}
               </p>
               <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-600">
-                {clientTrainingData.nextSession.checklist.map((item) => (
+                {(workspace.nextSession?.checklist ?? [
+                  "The next training milestone has not been published yet.",
+                  "When it is published, this panel will show the exact prework and readiness checklist.",
+                ]).map((item) => (
                   <li key={item} className="rounded-[1.2rem] border border-[#ece1dc] bg-[#faf7f5] px-4 py-3">
                     {item}
                   </li>
@@ -70,14 +77,7 @@ export function ClientHubView({ content }: { content: ClientHubContent }) {
           title="Syllabus in motion"
           description="Every module should show the phase, expected outcomes, and where the learner currently stands."
         >
-          <PortalList
-            items={clientTrainingData.modules.map((module) => ({
-              meta: `${module.phase} • ${module.duration}`,
-              note: module.outcomes.join(" • "),
-              status: module.status,
-              title: module.title,
-            }))}
-          />
+          <PortalList items={workspace.modules} />
           <div className="mt-6">
             <Link href="/client-hub/syllabus" className="button-secondary">
               Open full syllabus
@@ -89,14 +89,7 @@ export function ClientHubView({ content }: { content: ClientHubContent }) {
           title="Assessments and evidence"
           description="Quizzes, practical assignments, and re-sits need visibility so nobody is surprised by what is due."
         >
-          <PortalList
-            items={clientTrainingData.assessments.map((item) => ({
-              meta: `${item.cohort} • ${item.due}`,
-              note: item.notes,
-              status: item.status,
-              title: item.title,
-            }))}
-          />
+          <PortalList items={workspace.assessments} />
           <div className="mt-6">
             <Link href="/client-hub/assessments" className="button-secondary">
               Open assessments
@@ -110,13 +103,7 @@ export function ClientHubView({ content }: { content: ClientHubContent }) {
           title="Learning resources"
           description="Resources should be tied to modules and learner roles, not buried in a generic file list."
         >
-          <PortalList
-            items={clientTrainingData.resources.map((resource) => ({
-              meta: `${resource.module} • ${resource.format} • ${resource.audience}`,
-              note: "Ready for download and classroom application.",
-              title: resource.title,
-            }))}
-          />
+          <PortalList items={workspace.resources} />
           <div className="mt-6">
             <Link href="/client-hub/resources" className="button-secondary">
               Open learning resources
@@ -128,7 +115,7 @@ export function ClientHubView({ content }: { content: ClientHubContent }) {
           title="Progress and readiness"
           description="Attendance, confidence, completion, and certification need to stay visible for both the learner and sponsor."
         >
-          <PortalKeyline items={clientTrainingData.progress} />
+          <PortalKeyline items={workspace.progress} />
           <div className="mt-8 rounded-[1.5rem] border border-[#ece1dc] bg-[#faf7f5] p-5">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">What the old portal missed</p>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-600">

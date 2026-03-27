@@ -12,6 +12,7 @@ type AccountScope = "admin" | "client";
 
 export type AdminAccountRecord = {
   id: string;
+  auth_user_id: string | null;
   email: string;
   full_name: string;
   job_title: string | null;
@@ -24,6 +25,7 @@ export type AdminAccountRecord = {
 export type ClientAccountRecord = {
   id: string;
   client_id: string | null;
+  auth_user_id: string | null;
   email: string;
   full_name: string;
   role_title: string | null;
@@ -40,6 +42,9 @@ export type ClientRecord = {
   industry: string | null;
   status: string;
   location_label: string;
+  account_owner_email?: string | null;
+  account_owner_name?: string | null;
+  overview?: string | null;
 };
 
 export type AccountPreferenceRecord = {
@@ -321,11 +326,13 @@ export async function ensureAdminPortalContext() {
     throw new Error("Unauthorized.");
   }
 
+  const portalUser = await getPortalUser();
   const supabase = getSupabaseAdminClientOrThrow();
   const { data: upsertedAccount, error: accountError } = await supabase
     .from("admin_accounts")
     .upsert(
       {
+        auth_user_id: portalUser?.id ?? null,
         email: auth.user.email,
         full_name: auth.user.name,
         status: "active",
@@ -378,6 +385,7 @@ export async function ensureClientPortalContext() {
     .upsert(
       {
         avatar_url: avatarUrl,
+        auth_user_id: user.id,
         email: user.email,
         full_name: fullName,
         last_signed_in_at: new Date().toISOString(),

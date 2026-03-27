@@ -1,19 +1,8 @@
 import { ClientHubView } from "@/components/client-hub/client-hub-view";
-import { getClientHubContent } from "@/lib/client-hub";
-import { getPortalUserDisplayName, requirePortalUser } from "@/lib/portal-auth";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
 
 export default async function ClientHubPage() {
-  const [user, { content }] = await Promise.all([requirePortalUser(), getClientHubContent()]);
+  const workspace = await getClientTrainingWorkspace();
 
-  return (
-    <ClientHubView
-      content={{
-        ...content,
-        meta: {
-          ...content.meta,
-          greetingName: getPortalUserDisplayName(user),
-        },
-      }}
-    />
-  );
+  return <ClientHubView workspace={workspace} />;
 }

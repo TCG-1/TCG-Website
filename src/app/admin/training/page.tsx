@@ -1,7 +1,11 @@
+import { TrainingCohortForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel, PortalWorkflow } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData, trainingBlueprint } from "@/lib/training-portal";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { trainingBlueprint } from "@/lib/training-portal";
 
-export default function AdminTrainingProgrammesPage() {
+export default async function AdminTrainingProgrammesPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -21,13 +25,18 @@ export default function AdminTrainingProgrammesPage() {
         title="Active cohorts"
         description="Each cohort should show sponsor context, next milestone, and readiness status."
       >
-        <PortalList
-          items={adminTrainingData.cohorts.map((cohort) => ({
-            meta: `${cohort.sponsor} • ${cohort.nextMilestone}`,
-            note: cohort.readiness,
-            status: cohort.status,
-            title: cohort.label,
-          }))}
+        <PortalList items={workspace.cohorts} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Create a cohort"
+        description="Start a real programme instance for a client, assign the training owner, and anchor the upcoming delivery sequence."
+      >
+        <TrainingCohortForm
+          clients={workspace.references.clients}
+          managers={workspace.references.managers}
+          programmes={workspace.references.programmes}
+          trainers={workspace.references.trainers}
         />
       </PortalPanel>
     </div>

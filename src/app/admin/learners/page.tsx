@@ -1,27 +1,10 @@
+import { TrainingLearnerForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
 
-const learnerSignals = [
-  {
-    meta: "Lean Fundamentals Cohort A • Attendance 100%",
-    note: "Ready for Module 4. Completed prework and passed the previous knowledge check.",
-    status: "Healthy",
-    title: "Priya S.",
-  },
-  {
-    meta: "Lean Leader Cohort B • Attendance 75%",
-    note: "Missed the last coaching clinic and still needs feedback on the practical assignment.",
-    status: "At risk",
-    title: "Michael R.",
-  },
-  {
-    meta: "Continuous Improvement Bootcamp • New enrollee",
-    note: "Needs onboarding, sponsor approval, and initial confidence baseline before launch.",
-    status: "Needs setup",
-    title: "Amina K.",
-  },
-];
+export default async function AdminLearnersPage() {
+  const workspace = await getAdminTrainingWorkspace();
 
-export default function AdminLearnersPage() {
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -34,7 +17,14 @@ export default function AdminLearnersPage() {
         title="Learner health"
         description="Signals that should drive coaching, sponsor escalation, and support actions."
       >
-        <PortalList items={learnerSignals} />
+        <PortalList items={workspace.learners} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Enrol a learner"
+        description="Create or reuse the client account, assign the cohort role, and make the training journey visible in the learner workspace."
+      >
+        <TrainingLearnerForm cohorts={workspace.references.cohorts} />
       </PortalPanel>
     </div>
   );

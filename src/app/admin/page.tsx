@@ -8,18 +8,21 @@ import {
   PortalPanel,
   PortalWorkflow,
 } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData, trainingBlueprint } from "@/lib/training-portal";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { trainingBlueprint } from "@/lib/training-portal";
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-12">
       <PortalIntro
-        eyebrow={adminTrainingData.intro.eyebrow}
-        title={adminTrainingData.intro.title}
-        description={adminTrainingData.intro.description}
+        eyebrow={workspace.intro.eyebrow}
+        title={workspace.intro.title}
+        description={workspace.intro.description}
       />
 
-      <PortalMetricGrid items={adminTrainingData.metrics} />
+      <PortalMetricGrid items={workspace.metrics} />
 
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
         <PortalPanel
@@ -48,14 +51,7 @@ export default function AdminDashboardPage() {
           title="Cohort health"
           description="Sponsors, pathways, readiness, and the next milestone for each active cohort."
         >
-          <PortalList
-            items={adminTrainingData.cohorts.map((cohort) => ({
-              meta: `${cohort.sponsor} • ${cohort.nextMilestone}`,
-              note: cohort.readiness,
-              status: cohort.status,
-              title: cohort.label,
-            }))}
-          />
+          <PortalList items={workspace.cohorts} />
           <div className="mt-6">
             <Link href="/admin/training" className="button-secondary">
               Open programmes
@@ -67,14 +63,7 @@ export default function AdminDashboardPage() {
           title="Session readiness"
           description="Upcoming delivery with facilitator ownership and setup status."
         >
-          <PortalList
-            items={adminTrainingData.sessions.map((session) => ({
-              meta: `${session.time} • ${session.format} • ${session.facilitator}`,
-              note: `${session.cohort}. ${session.status}.`,
-              status: session.status,
-              title: session.title,
-            }))}
-          />
+          <PortalList items={workspace.sessions} />
           <div className="mt-6">
             <Link href="/admin/sessions" className="button-secondary">
               Open sessions
@@ -88,23 +77,16 @@ export default function AdminDashboardPage() {
           title="Assessment control"
           description="Queues, release blockers, and learner support before pass/fail becomes a problem."
         >
-          <PortalList
-            items={adminTrainingData.assessments.map((assessment) => ({
-              meta: `${assessment.cohort} • ${assessment.due}`,
-              note: assessment.notes,
-              status: assessment.status,
-              title: assessment.title,
-            }))}
-          />
+          <PortalList items={workspace.assessments} />
         </PortalPanel>
 
         <PortalPanel
           title="Progress intelligence"
           description="Attendance, grading SLA, and certification readiness are the signals that keep delivery honest."
         >
-          <PortalKeyline items={adminTrainingData.progress} />
+          <PortalKeyline items={workspace.progress} />
           <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {adminTrainingData.workflowCards.map((item) => (
+            {workspace.workflowCards.map((item) => (
               <article key={item.label} className="rounded-[1.4rem] border border-[#ece1dc] bg-[#faf7f5] p-5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8a0917]">{item.label}</p>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{item.detail}</p>

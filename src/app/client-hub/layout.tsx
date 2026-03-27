@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 
 import { ClientHubShell } from "@/components/client-hub/client-hub-shell";
+import { TrainingRealtimeBridge } from "@/components/training-portal/training-realtime-bridge";
 import { getClientHubContent } from "@/lib/client-hub";
 import { getPortalUserDisplayName, requirePortalUser } from "@/lib/portal-auth";
 
@@ -35,6 +36,7 @@ export default async function ClientHubLayout({ children }: { children: React.Re
 
   return (
     <div className={`${plusJakartaSans.variable} ${manrope.variable}`}>
+      <TrainingRealtimeBridge scope="client" />
       <ClientHubShell
         content={content}
         userDisplayName={userDisplayName}

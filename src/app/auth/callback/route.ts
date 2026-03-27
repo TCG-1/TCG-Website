@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { isAdminEmail } from "@/lib/admin-auth";
+import { getAdminAccountForPortalUser } from "@/lib/admin-auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -25,7 +25,9 @@ export async function GET(request: Request) {
     return NextResponse.redirect(new URL("/sign-in?error=oauth", requestUrl.origin));
   }
 
-  if (isAdminEmail(user?.email)) {
+  const adminUser = await getAdminAccountForPortalUser(user);
+
+  if (adminUser) {
     return NextResponse.redirect(new URL("/admin", requestUrl.origin));
   }
 

@@ -1,7 +1,9 @@
 import { PortalIntro, PortalKeyline, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { clientTrainingData } from "@/lib/training-portal";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
 
-export default function ClientHubProgressPage() {
+export default async function ClientHubProgressPage() {
+  const workspace = await getClientTrainingWorkspace();
+
   return (
     <div className="space-y-10 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
@@ -14,35 +16,14 @@ export default function ClientHubProgressPage() {
         title="Progress indicators"
         description="A fuller view of learner progress across the pathway."
       >
-        <PortalKeyline items={clientTrainingData.progress} />
+        <PortalKeyline items={workspace.progress} />
       </PortalPanel>
 
       <PortalPanel
         title="Signals shaping readiness"
         description="The strongest learner progress view connects sessions, assessments, and applied work."
       >
-        <PortalList
-          items={[
-            {
-              meta: "Attendance signal",
-              note: "Attendance stays above target, which keeps practical exercises and peer learning intact.",
-              status: "Healthy",
-              title: "Session participation",
-            },
-            {
-              meta: "Evidence signal",
-              note: "Assignments are being submitted, but the next practical task still needs stronger completion discipline.",
-              status: "Watch",
-              title: "Applied work",
-            },
-            {
-              meta: "Certification signal",
-              note: "Readiness stays on track if the next module and practical evidence are both completed on time.",
-              status: "On track",
-              title: "Certification pathway",
-            },
-          ]}
-        />
+        <PortalList items={workspace.signals} />
       </PortalPanel>
     </div>
   );

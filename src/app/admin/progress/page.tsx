@@ -1,7 +1,10 @@
-import { PortalIntro, PortalKeyline, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { adminTrainingData, trainingBlueprint } from "@/lib/training-portal";
+import { PortalIntro, PortalKeyline, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
+import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { trainingBlueprint } from "@/lib/training-portal";
 
-export default function AdminProgressPage() {
+export default async function AdminProgressPage() {
+  const workspace = await getAdminTrainingWorkspace();
+
   return (
     <div className="space-y-10">
       <PortalIntro
@@ -14,7 +17,14 @@ export default function AdminProgressPage() {
         title="Training health indicators"
         description="Signals that should drive sponsor conversations and operational follow-up."
       >
-        <PortalKeyline items={adminTrainingData.progress} />
+        <PortalKeyline items={workspace.progress} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="At-risk learner view"
+        description="Progress only matters if it shows who needs support before the next module or assessment window."
+      >
+        <PortalList items={workspace.learners} />
       </PortalPanel>
 
       <PortalPanel

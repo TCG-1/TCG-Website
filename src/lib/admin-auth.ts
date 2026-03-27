@@ -2,8 +2,10 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
 
 import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const ADMIN_SESSION_COOKIE = "tcg_admin_session";
 const ADMIN_SESSION_MAX_AGE = 60 * 60 * 24 * 30;
@@ -141,6 +143,63 @@ export function isAdminEmail(email?: string | null) {
   return safeEqual(email.trim().toLowerCase(), config.user.email);
 }
 
+export async function getAdminAccountForPortalUser(portalUser?: Pick<User, "email" | "id"> | null) {
+  if (!portalUser?.email) {
+    return null;
+  }
+
+  if (isAdminEmail(portalUser.email)) {
+    const config = getAdminConfig();
+
+    if (config.configured) {
+      return {
+        email: config.user.email,
+        name: config.user.name,
+      } satisfies AdminUser;
+    }
+  }
+
+  const supabase = createSupabaseAdminClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  if (portalUser.id) {
+    const { data: byAuthUser } = await supabase
+      .from("admin_accounts")
+      .select("email, full_name, status")
+      .eq("auth_user_id", portalUser.id)
+      .in("status", ["active", "invited"])
+      .limit(1)
+      .maybeSingle();
+
+    if (byAuthUser) {
+      return {
+        email: byAuthUser.email,
+        name: byAuthUser.full_name,
+      } satisfies AdminUser;
+    }
+  }
+
+  const { data: byEmail } = await supabase
+    .from("admin_accounts")
+    .select("email, full_name, status")
+    .eq("email", portalUser.email.trim().toLowerCase())
+    .in("status", ["active", "invited"])
+    .limit(1)
+    .maybeSingle();
+
+  if (!byEmail) {
+    return null;
+  }
+
+  return {
+    email: byEmail.email,
+    name: byEmail.full_name,
+  } satisfies AdminUser;
+}
+
 export function validateAdminCredentials(email: string, password: string) {
   const config = getAdminConfig();
 
@@ -195,10 +254,12 @@ export async function getAdminUser() {
     data: { user: portalUser },
   } = await supabase.auth.getUser();
 
-  if (isAdminEmail(portalUser?.email)) {
+  const supabaseAdminUser = await getAdminAccountForPortalUser(portalUser);
+
+  if (supabaseAdminUser) {
     return {
       configured: true as const,
-      user: config.user,
+      user: supabaseAdminUser,
     };
   }
 

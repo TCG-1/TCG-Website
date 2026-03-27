@@ -1,7 +1,10 @@
+import { LearnerAssessmentSubmitForm } from "@/components/training-portal/training-action-forms";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { clientTrainingData } from "@/lib/training-portal";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
 
-export default function ClientHubAssessmentsPage() {
+export default async function ClientHubAssessmentsPage() {
+  const workspace = await getClientTrainingWorkspace();
+
   return (
     <div className="space-y-10 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
@@ -15,14 +18,7 @@ export default function ClientHubAssessmentsPage() {
           title="Assessment queue"
           description="Released quizzes, practical work, and re-sit actions."
         >
-          <PortalList
-            items={clientTrainingData.assessments.map((assessment) => ({
-              meta: `${assessment.cohort} • ${assessment.due}`,
-              note: assessment.notes,
-              status: assessment.status,
-              title: assessment.title,
-            }))}
-          />
+          <PortalList items={workspace.assessments} />
         </PortalPanel>
 
         <PortalPanel
@@ -42,6 +38,23 @@ export default function ClientHubAssessmentsPage() {
           </div>
         </PortalPanel>
       </div>
+
+      {workspace.roleLabel === "Learner" ? (
+        <PortalPanel
+          title="Submit assessment evidence"
+          description="Learners can post their evidence directly into the marking queue without leaving the training workspace."
+        >
+          {workspace.assessments.length ? (
+            <LearnerAssessmentSubmitForm
+              assessmentId={workspace.assessments[0].assessmentId}
+              existingSubmission={workspace.assessments[0].submissionText}
+              disabled={!workspace.assessments[0].canSubmit}
+            />
+          ) : (
+            <p className="text-sm leading-6 text-slate-600">No live assessments are waiting for a learner submission.</p>
+          )}
+        </PortalPanel>
+      ) : null}
     </div>
   );
 }

@@ -1,7 +1,9 @@
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { clientTrainingData } from "@/lib/training-portal";
+import { getClientTrainingWorkspace } from "@/lib/training-system";
 
-export default function ClientHubResourcesPage() {
+export default async function ClientHubResourcesPage() {
+  const workspace = await getClientTrainingWorkspace();
+
   return (
     <div className="space-y-10 px-6 py-8 lg:px-10 lg:py-12">
       <PortalIntro
@@ -14,13 +16,7 @@ export default function ClientHubResourcesPage() {
         title="Module-linked resources"
         description="Resources grouped by learning context instead of buried in a generic file store."
       >
-        <PortalList
-          items={clientTrainingData.resources.map((resource) => ({
-            meta: `${resource.module} • ${resource.format} • ${resource.audience}`,
-            note: "Ready for workshop preparation, live use, or post-session reinforcement.",
-            title: resource.title,
-          }))}
-        />
+        <PortalList items={workspace.resources} />
       </PortalPanel>
     </div>
   );
