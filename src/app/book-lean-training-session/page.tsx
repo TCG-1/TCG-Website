@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
 import { Container, PageHero } from "@/components/sections";
 
 export const metadata: Metadata = {
@@ -19,17 +20,7 @@ export default function TrainingBookingPage() {
       <section className="section-gap">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="card overflow-hidden p-0">
-              <iframe
-                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0UzjL0Lcv8jfoEPCIOsd9ixdkSGfvYESVsoClERgG3oDL3KI70KxeNhucFnpaYS0y23iMYE5eS?gv=true"
-                title="Google Calendar Lean training scheduling"
-                style={{ border: 0 }}
-                width="100%"
-                height="600"
-                frameBorder="0"
-                loading="lazy"
-              />
-            </div>
+            <LeadCaptureForm title="Plan your Lean training request" variant="lean_training" />
             <div className="grid gap-6">
               <div className="card grid gap-4 sm:grid-cols-2">
                 <div>
@@ -48,6 +39,13 @@ export default function TrainingBookingPage() {
                   <p className="eyebrow">Mon-Fri 9:00 AM - 5:00 PM</p>
                   <p className="mt-3 text-slate-600">Typical planning availability for live sessions and programme setup.</p>
                 </div>
+              </div>
+              <div className="card">
+                <p className="eyebrow">Better qualification</p>
+                <p className="mt-4 leading-8 text-slate-600">
+                  The form lets us qualify delivery mode, audience size, and capability gaps before we come
+                  back to you, so the next conversation is already grounded in what the team needs.
+                </p>
               </div>
               <div className="card">
                 <p className="eyebrow">Our approach</p>

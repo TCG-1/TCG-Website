@@ -8,10 +8,22 @@ type AdminNavItem = {
   href: string;
   label: string;
   subtitle: string;
-  icon: "dashboard" | "blog" | "leads" | "client-hub" | "jobs" | "applications";
+  icon:
+    | "dashboard"
+    | "blog"
+    | "leads"
+    | "client-hub"
+    | "jobs"
+    | "applications"
+    | "notifications"
+    | "documents"
+    | "support"
+    | "activity"
+    | "profile"
+    | "settings";
 };
 
-const navItems: AdminNavItem[] = [
+const primaryNavItems: AdminNavItem[] = [
   {
     href: "/admin",
     label: "Dashboard",
@@ -50,6 +62,51 @@ const navItems: AdminNavItem[] = [
   },
 ];
 
+const secondaryNavItems: AdminNavItem[] = [
+  {
+    href: "/admin/notifications",
+    label: "Notifications",
+    subtitle: "Alerts, escalations, and delivery preferences",
+    icon: "notifications",
+  },
+  {
+    href: "/admin/documents",
+    label: "Documents",
+    subtitle: "Collections, access, and publication control",
+    icon: "documents",
+  },
+  {
+    href: "/admin/support",
+    label: "Support",
+    subtitle: "Client tickets, triage, and response workflow",
+    icon: "support",
+  },
+  {
+    href: "/admin/activity",
+    label: "Activity",
+    subtitle: "Platform timeline, audits, and operational pulse",
+    icon: "activity",
+  },
+  {
+    href: "/admin/profile",
+    label: "Profile",
+    subtitle: "Admin details, sessions, and responsibilities",
+    icon: "profile",
+  },
+  {
+    href: "/admin/settings",
+    label: "Settings",
+    subtitle: "Security, defaults, and workflow automation",
+    icon: "settings",
+  },
+];
+
+const allNavItems = [...primaryNavItems, ...secondaryNavItems];
+
+function isActivePath(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 function AdminNavIcon({
   icon,
   active,
@@ -70,14 +127,28 @@ function AdminNavIcon({
       return (
         <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
           <path d="M7 4h7l5 5v11H7z" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M14 4v5h5M10 13h6M10 17h6M10 9h2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <path
+            d="M14 4v5h5M10 13h6M10 17h6M10 9h2"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "leads":
       return (
         <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
-          <path d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 13a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M4 19c1.3-3.3 4-4.8 6.3-4.8S15.3 15.7 16.6 19M14.8 18.5c.8-2 2.4-3 4.2-3 1 0 2.1.3 3 .9" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <path
+            d="M9 11a3 3 0 100-6 3 3 0 000 6zM17 13a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+          />
+          <path
+            d="M4 19c1.3-3.3 4-4.8 6.3-4.8S15.3 15.7 16.6 19M14.8 18.5c.8-2 2.4-3 4.2-3 1 0 2.1.3 3 .9"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "client-hub":
@@ -90,15 +161,78 @@ function AdminNavIcon({
     case "jobs":
       return (
         <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
-          <path d="M8 7V5.5A1.5 1.5 0 019.5 4h5A1.5 1.5 0 0116 5.5V7M4 8h16v9.5A1.5 1.5 0 0118.5 19h-13A1.5 1.5 0 014 17.5z" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M4 11.5c2.7 1.2 5.4 1.8 8 1.8s5.3-.6 8-1.8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <path
+            d="M8 7V5.5A1.5 1.5 0 019.5 4h5A1.5 1.5 0 0116 5.5V7M4 8h16v9.5A1.5 1.5 0 0118.5 19h-13A1.5 1.5 0 014 17.5z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+          />
+          <path
+            d="M4 11.5c2.7 1.2 5.4 1.8 8 1.8s5.3-.6 8-1.8"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
         </svg>
       );
     case "applications":
       return (
         <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
-          <path d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.7" />
-          <path d="M7 9l5 4 5-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M6 5h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+          />
+          <path
+            d="M7 9l5 4 5-4"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case "notifications":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <path d="M6 9a6 6 0 1 1 12 0v4l2 2H4l2-2z" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M10 19a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.7" />
+        </svg>
+      );
+    case "documents":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <path d="M7 4h8l4 4v11a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M15 4v4h4M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case "support":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <path d="M5 6.5h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H10l-5 3v-3H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" stroke="currentColor" strokeWidth="1.7" />
+        </svg>
+      );
+    case "activity":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <path d="M4 13h4l2-5 4 10 2-5h4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "profile":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <circle cx="12" cy="8.5" r="3.5" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M5 19c1.5-3.6 4.5-5.4 7-5.4s5.5 1.8 7 5.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case "settings":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7" />
+          <path
+            d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6h.2a2 2 0 1 1 0 4h-.2a1 1 0 0 0-.9.6Z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+          />
         </svg>
       );
   }
@@ -120,12 +254,12 @@ export function AdminShell({
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const currentItem = navItems.find((item) => item.href === pathname) ?? navItems[0];
+  const currentItem = allNavItems.find((item) => isActivePath(pathname, item.href)) ?? allNavItems[0];
   const initials = getInitials(userName);
 
   return (
     <section className="min-h-screen bg-[#f5f2ee] text-slate-950">
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-72 lg:flex-col bg-slate-950 px-5 py-8 text-white">
+      <aside className="hidden bg-slate-950 px-5 py-8 text-white lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-80 lg:flex-col">
         <div className="px-3">
           <h1 className="text-[1.9rem] font-light tracking-[-0.04em] text-white">Tacklers Consulting</h1>
           <p className="mt-2 text-[11px] uppercase tracking-[0.32em] text-slate-400">
@@ -133,30 +267,72 @@ export function AdminShell({
           </p>
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 px-1">
-          {navItems.map((item) => {
-            const active = pathname === item.href;
+        <nav className="mt-10 flex-1 overflow-y-auto px-1">
+          <p className="px-4 text-[10px] font-bold uppercase tracking-[0.26em] text-slate-500">
+            Core Workspaces
+          </p>
+          <div className="mt-3 space-y-1">
+            {primaryNavItems.map((item) => {
+              const active = isActivePath(pathname, item.href);
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center gap-4 rounded-r-2xl border-l-4 px-4 py-3 transition-all duration-300 ${
-                  active
-                    ? "border-[#8a0917] bg-[#8a0917]/22 text-white"
-                    : "border-transparent text-slate-400 hover:border-white/10 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <AdminNavIcon icon={item.icon} active={active} />
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold tracking-tight">{item.label}</p>
-                  <p className={`mt-1 text-xs leading-5 ${active ? "text-white/70" : "text-slate-500 group-hover:text-white/60"}`}>
-                    {item.subtitle}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group flex items-center gap-4 rounded-r-2xl border-l-4 px-4 py-3 transition-all duration-300 ${
+                    active
+                      ? "border-[#8a0917] bg-[#8a0917]/22 text-white"
+                      : "border-transparent text-slate-400 hover:border-white/10 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <AdminNavIcon icon={item.icon} active={active} />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold tracking-tight">{item.label}</p>
+                    <p
+                      className={`mt-1 text-xs leading-5 ${
+                        active ? "text-white/70" : "text-slate-500 group-hover:text-white/60"
+                      }`}
+                    >
+                      {item.subtitle}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          <p className="mt-8 px-4 text-[10px] font-bold uppercase tracking-[0.26em] text-slate-500">
+            Operations & Access
+          </p>
+          <div className="mt-3 space-y-1">
+            {secondaryNavItems.map((item) => {
+              const active = isActivePath(pathname, item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group flex items-center gap-4 rounded-r-2xl border-l-4 px-4 py-3 transition-all duration-300 ${
+                    active
+                      ? "border-[#8a0917] bg-[#8a0917]/22 text-white"
+                      : "border-transparent text-slate-400 hover:border-white/10 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <AdminNavIcon icon={item.icon} active={active} />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold tracking-tight">{item.label}</p>
+                    <p
+                      className={`mt-1 text-xs leading-5 ${
+                        active ? "text-white/70" : "text-slate-500 group-hover:text-white/60"
+                      }`}
+                    >
+                      {item.subtitle}
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
@@ -195,7 +371,7 @@ export function AdminShell({
         </div>
       </aside>
 
-      <div className="lg:pl-72">
+      <div className="lg:pl-80">
         <header className="sticky top-0 z-30 border-b border-black/5 bg-white/80 backdrop-blur-xl">
           <div className="px-4 py-4 sm:px-6 lg:px-10">
             <div className="flex flex-col gap-4">
@@ -240,8 +416,8 @@ export function AdminShell({
               </div>
 
               <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
-                {navItems.map((item) => {
-                  const active = pathname === item.href;
+                {allNavItems.map((item) => {
+                  const active = isActivePath(pathname, item.href);
 
                   return (
                     <Link

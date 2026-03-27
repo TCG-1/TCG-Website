@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
 import { Container, PageHero } from "@/components/sections";
 
 export const metadata: Metadata = {
@@ -19,17 +20,7 @@ export default function AssessmentPage() {
       <section className="section-gap">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="card overflow-hidden p-0">
-              <iframe
-                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ11USKg535CHbRA9WSL0S5pk5gn6mcWHMmSaJ3Vxj5WqV614xUELPlmSnmukgDUtpXGvoCIEcA2?gv=true"
-                title="Google Calendar on-site assessment scheduling"
-                style={{ border: 0 }}
-                width="100%"
-                height="600"
-                frameBorder="0"
-                loading="lazy"
-              />
-            </div>
+            <LeadCaptureForm title="Request your on-site assessment" variant="on_site_assessment" />
             <div className="grid gap-6">
               <div className="card grid gap-4 sm:grid-cols-2">
                 <div>
@@ -48,6 +39,13 @@ export default function AssessmentPage() {
                   <p className="eyebrow">Mon-Fri 9:00 AM - 5:00 PM</p>
                   <p className="mt-3 text-slate-600">Typical availability for consultation and planning discussions.</p>
                 </div>
+              </div>
+              <div className="card">
+                <p className="eyebrow">What we ask up front</p>
+                <p className="mt-4 leading-8 text-slate-600">
+                  Site location, operational context, and urgency help us decide whether an assessment is the
+                  right move and what level of preparation is needed before we respond.
+                </p>
               </div>
               <div className="card">
                 <p className="eyebrow">Our approach</p>

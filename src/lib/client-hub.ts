@@ -24,6 +24,11 @@ export const DASHBOARD_ICON_NAMES = [
   "video",
   "insight",
   "architecture",
+  "user",
+  "shield",
+  "document",
+  "message",
+  "clock",
 ] as const;
 
 export type DashboardIconName = (typeof DASHBOARD_ICON_NAMES)[number];

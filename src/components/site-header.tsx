@@ -89,9 +89,6 @@ export function SiteHeader() {
             </svg>
             Sign in
           </Link>
-          <Link href="/sign-up" className="button-light">
-            Sign up
-          </Link>
           <Link href="/book-a-discovery-call" className="button-light">
             Book now
           </Link>
@@ -147,13 +144,6 @@ export function SiteHeader() {
               className="button-light justify-center"
             >
               Sign in
-            </Link>
-            <Link
-              href="/sign-up"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="button-light justify-center"
-            >
-              Sign up
             </Link>
             <Link
               href="/book-a-discovery-call"

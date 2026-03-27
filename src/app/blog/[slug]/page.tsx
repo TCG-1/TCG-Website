@@ -4,14 +4,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Container } from "@/components/sections";
-import { blogPosts } from "@/lib/site-data";
+import { getPublishedBlogEntries, getPublishedBlogEntryBySlug } from "@/lib/blog-content";
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  const blogPosts = await getPublishedBlogEntries();
   return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const post = blogPosts.find((item) => item.slug === params.slug);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublishedBlogEntryBySlug(slug);
 
   if (!post) {
     return { title: "Post not found" };
@@ -23,8 +31,13 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((item) => item.slug === params.slug);
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const post = await getPublishedBlogEntryBySlug(slug);
 
   if (!post) {
     notFound();

@@ -9,9 +9,12 @@ import {
   SectionHeader,
   StepsGrid,
 } from "@/components/sections";
-import { blogPosts, brandTagline, globalCta, homeData, homeFaqs } from "@/lib/site-data";
+import { getPublishedBlogEntries } from "@/lib/blog-content";
+import { brandTagline, globalCta, homeData, homeFaqs } from "@/lib/site-data";
 
-export default function Home() {
+export default async function Home() {
+  const blogPosts = await getPublishedBlogEntries();
+
   const serviceItems = [
     {
       title: "Cost Management",

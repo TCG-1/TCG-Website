@@ -7,6 +7,7 @@ import {
   normalizeText,
   sanitizeFileName,
 } from "@/lib/careers";
+import { handleCareerApplicationLead } from "@/lib/inbound-submissions";
 import { careersBucket, createSupabaseAdminClient, getSupabaseConfigError } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Please upload a PDF, DOC, or DOCX file." }, { status: 400 });
   }
 
-  let jobId: string | null = requestedJobId || null;
+  const jobId: string | null = requestedJobId || null;
   let jobTitleSnapshot = requestedJobTitle || TALENT_NETWORK_LABEL;
 
   if (jobId) {
@@ -101,6 +102,20 @@ export async function POST(request: Request) {
     await supabase.storage.from(careersBucket).remove([filePath]);
     return Response.json({ error: insertError.message }, { status: 500 });
   }
+
+  await Promise.allSettled([
+    handleCareerApplicationLead({
+      coverNote,
+      email,
+      fullName,
+      jobTitle: jobTitleSnapshot,
+      linkedinUrl,
+      location,
+      phone,
+      portfolioUrl,
+      resumeFilename: resume.name,
+    }),
+  ]);
 
   return Response.json(
     {

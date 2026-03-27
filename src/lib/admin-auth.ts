@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const ADMIN_SESSION_COOKIE = "tcg_admin_session";
-const ADMIN_SESSION_MAX_AGE = 60 * 60 * 12;
+const ADMIN_SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 const DEV_ADMIN_EMAIL = "hello@tacklersconsulting.com";
 const DEV_ADMIN_NAME = "Tacklers Admin";
 const DEV_ADMIN_PASSWORD = "Hello@123";

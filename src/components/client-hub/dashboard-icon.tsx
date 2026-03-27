@@ -82,6 +82,40 @@ export function DashboardIcon({
           <path d="M19.4 15a1 1 0 0 0 .2 1.1l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1 1 0 0 0-1.1-.2 1 1 0 0 0-.6.9V20a2 2 0 1 1-4 0v-.2a1 1 0 0 0-.6-.9 1 1 0 0 0-1.1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1 1 0 0 0 .2-1.1 1 1 0 0 0-.9-.6H4a2 2 0 1 1 0-4h.2a1 1 0 0 0 .9-.6 1 1 0 0 0-.2-1.1l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1 1 0 0 0 1.1.2 1 1 0 0 0 .6-.9V4a2 2 0 1 1 4 0v.2a1 1 0 0 0 .6.9 1 1 0 0 0 1.1-.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1 1 0 0 0-.2 1.1 1 1 0 0 0 .9.6h.2a2 2 0 1 1 0 4h-.2a1 1 0 0 0-.9.6Z" />
         </svg>
       );
+    case "user":
+      return (
+        <svg {...sharedProps}>
+          <circle cx="12" cy="8.5" r="3.5" />
+          <path d="M5 19c1.5-3.6 4.5-5.4 7-5.4s5.5 1.8 7 5.4" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg {...sharedProps}>
+          <path d="M12 3l7 3v5c0 4.7-2.9 7.8-7 10-4.1-2.2-7-5.3-7-10V6z" />
+          <path d="M9.3 12.1l1.8 1.8 3.6-3.9" />
+        </svg>
+      );
+    case "document":
+      return (
+        <svg {...sharedProps}>
+          <path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2z" />
+          <path d="M14 3.5v4h4M9 12h6M9 16h6" />
+        </svg>
+      );
+    case "message":
+      return (
+        <svg {...sharedProps}>
+          <path d="M5 6.5h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H10l-5 3v-3H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z" />
+        </svg>
+      );
+    case "clock":
+      return (
+        <svg {...sharedProps}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+      );
     case "recycle":
       return (
         <svg {...sharedProps}>

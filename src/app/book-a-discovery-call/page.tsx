@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
 import { Container, PageHero } from "@/components/sections";
 
 export const metadata: Metadata = {
@@ -19,17 +20,7 @@ export default function DiscoveryCallPage() {
       <section className="section-gap">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="card p-0 overflow-hidden">
-              <iframe
-                src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ30hoCekVJo3SEbVVZznlLkhN4KWMKuZl445pdJhBQO7abTEU5zs-bpR_90gti0uS8LJWNBPyCt?gv=true"
-                title="Google Calendar appointment scheduling"
-                style={{ border: 0 }}
-                width="100%"
-                height="600"
-                frameBorder="0"
-                loading="lazy"
-              />
-            </div>
+            <LeadCaptureForm title="Request your discovery call" variant="discovery_call" />
             <div className="grid gap-6">
               <div className="card">
                 <p className="eyebrow">What to expect</p>
@@ -38,6 +29,13 @@ export default function DiscoveryCallPage() {
                   <li>Preliminary roadmap for lean transformation</li>
                   <li>Transparent view of how support could be structured</li>
                 </ul>
+              </div>
+              <div className="card">
+                <p className="eyebrow">Why the form is better</p>
+                <p className="mt-4 leading-8 text-slate-600">
+                  We now collect the context we actually need before we reply, so the follow-up is more
+                  useful than a generic scheduling link.
+                </p>
               </div>
               <div className="card">
                 <p className="eyebrow">Need help?</p>

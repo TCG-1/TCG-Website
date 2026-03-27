@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
 import {
-  ContactForm,
   Container,
   CtaBanner,
   FaqList,
@@ -67,7 +67,7 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-            <ContactForm />
+            <LeadCaptureForm title="Send a message" variant="general_contact" />
           </div>
         </Container>
       </section>

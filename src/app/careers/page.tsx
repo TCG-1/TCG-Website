@@ -25,7 +25,7 @@ export default function CareersPage() {
             <SectionHeader
               eyebrow="Open positions"
               title="Current roles and applications"
-              body="Choose a live role or join the talent network. Applications, notes, and attachments go straight into the recruitment workspace."
+              body="Choose a live role or join the talent network. Applications, attachments, and lead records now sync into one recruitment workflow."
               center
             />
             <CareersPortal />

@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { Container, PageHero } from "@/components/sections";
-import { blogPosts } from "@/lib/site-data";
+import { getPublishedBlogEntries } from "@/lib/blog-content";
 
 export const metadata: Metadata = {
   title: "Lean Insights & Success Stories",
@@ -11,7 +11,11 @@ export const metadata: Metadata = {
     "Practical perspectives on operational excellence, Lean strategy, and building sustainable internal capability.",
 };
 
-export default function BlogIndexPage() {
+export const dynamic = "force-dynamic";
+
+export default async function BlogIndexPage() {
+  const blogPosts = await getPublishedBlogEntries();
+
   return (
     <>
       <PageHero
