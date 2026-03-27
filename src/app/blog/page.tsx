@@ -2,14 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, PageHero } from "@/components/sections";
 import { getPublishedBlogEntries } from "@/lib/blog-content";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBlogIndexJsonLd, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Lean Insights & Success Stories",
+const blogIndexSeo = {
   description:
-    "Practical perspectives on operational excellence, Lean strategy, and building sustainable internal capability.",
-};
+    "Read Tacklers Consulting Group articles on Lean transformation, operational excellence, leadership routines, and practical improvement work.",
+  image: "/media/photo-1515169067868-5387ec356754-6a0fcd5a.jpg",
+  title: "Lean Transformation Blog | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: blogIndexSeo.description,
+  image: blogIndexSeo.image,
+  path: "/blog",
+  title: blogIndexSeo.title,
+});
 
 export const dynamic = "force-dynamic";
 
@@ -18,17 +29,32 @@ export default async function BlogIndexPage() {
 
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: blogIndexSeo.description,
+            path: "/blog",
+            title: blogIndexSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+          ]),
+          buildBlogIndexJsonLd(blogPosts.map((post) => ({ slug: post.slug, title: post.title }))),
+        ]}
+      />
       <PageHero
         eyebrow="Our blogs"
         title="Lean Insights & Success Stories"
         body="Practical perspectives on operational excellence, industry-specific Lean strategy, and building sustainable internal capability."
-        primary={{ label: "Book a discovery call", href: "/book-a-discovery-call" }}
-        secondary={{ label: "Request an on-site assessment", href: "/request-an-on-site-assessment" }}
+        primary={{ label: "Book a discovery call", href: "/discovery-call" }}
+        secondary={{ label: "Request an on-site assessment", href: "/on-site-assessment" }}
+        image={blogIndexSeo.image}
       />
 
       <section className="section-gap">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
             {blogPosts.map((post) => (
               <article
                 key={post.slug}

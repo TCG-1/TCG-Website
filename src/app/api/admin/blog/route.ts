@@ -1,9 +1,9 @@
 import {
   createAdminAuditEntry,
-  createBlogSlug,
   ensureAdminPortalContext,
   readBlogBody,
   serializeBlogSections,
+  slugifyText,
 } from "@/lib/portal-data";
 import { ensureBlogSeedData } from "@/lib/portal-seed";
 
@@ -18,6 +18,38 @@ function normalizeText(value: unknown) {
 function normalizeOptionalText(value: unknown) {
   const normalized = normalizeText(value);
   return normalized || null;
+}
+
+function normalizeBoolean(value: unknown) {
+  return value === true || value === "true";
+}
+
+async function resolveUniqueSlug(
+  supabase: Awaited<ReturnType<typeof ensureAdminPortalContext>>["supabase"],
+  requestedSlug: string,
+) {
+  const baseSlug = slugifyText(requestedSlug) || "blog-post";
+  let candidate = baseSlug;
+  let iteration = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("id")
+      .eq("slug", candidate)
+      .limit(1);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data?.length) {
+      return candidate;
+    }
+
+    candidate = `${baseSlug}-${iteration}`;
+    iteration += 1;
+  }
 }
 
 function toResponseError(error: unknown, fallback: string) {
@@ -69,10 +101,16 @@ export async function POST(request: Request) {
     const { supabase } = await ensureAdminPortalContext();
     const body = (await request.json()) as Record<string, unknown>;
     const title = normalizeText(body.title);
+    const requestedSlug = normalizeText(body.slug) || title;
     const excerpt = normalizeText(body.excerpt);
     const postBody = normalizeText(body.body);
     const category = normalizeOptionalText(body.category);
+    const canonicalUrl = normalizeOptionalText(body.canonicalUrl);
     const coverUrl = normalizeOptionalText(body.coverUrl);
+    const noIndex = normalizeBoolean(body.noIndex);
+    const ogImageUrl = normalizeOptionalText(body.ogImageUrl);
+    const seoDescription = normalizeOptionalText(body.seoDescription) ?? excerpt;
+    const seoTitle = normalizeOptionalText(body.seoTitle);
     const status = normalizeText(body.status).toLowerCase() || "draft";
 
     if (!title || !excerpt || !postBody) {
@@ -83,15 +121,22 @@ export async function POST(request: Request) {
       return Response.json({ error: "Invalid blog status." }, { status: 400 });
     }
 
+    const slug = await resolveUniqueSlug(supabase, requestedSlug);
+
     const { data: post, error: postError } = await supabase
       .from("blog_posts")
       .insert([
         {
+          canonical_url: canonicalUrl,
           category,
           cover_url: coverUrl,
           excerpt,
+          noindex: noIndex,
+          og_image_url: ogImageUrl,
           published_at: status === "published" ? new Date().toISOString() : null,
-          slug: createBlogSlug(title),
+          seo_description: seoDescription,
+          seo_title: seoTitle,
+          slug,
           status,
           title,
         },
@@ -119,6 +164,10 @@ export async function POST(request: Request) {
       entityId: post.id,
       entityTable: "blog_posts",
       payload: {
+        canonicalUrl,
+        noIndex,
+        seoTitle,
+        slug,
         status,
         title,
       },

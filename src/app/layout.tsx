@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Playfair_Display } from "next/font/google";
 import { AppShell } from "@/components/app-shell";
+import { rootMetadata } from "@/lib/site-seo";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -14,11 +15,7 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Tacklers Consulting Group",
-  description:
-    "Lean transformation and operational excellence consulting for UK organisations.",
-};
+export const metadata: Metadata = rootMetadata;
 
 export default function RootLayout({
   children,

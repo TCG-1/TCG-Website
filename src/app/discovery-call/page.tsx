@@ -1,26 +1,53 @@
 import type { Metadata } from "next";
 
 import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, PageHero } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Book a discovery call",
+const discoveryCallSeo = {
   description:
-    "Request a discovery call with Tacklers Consulting Group to discuss your operational bottlenecks and next steps.",
-};
+    "Book a discovery call with Tacklers Consulting Group to discuss bottlenecks, improvement priorities, and the right next step for your organisation.",
+  image: "/media/Strategy-Deployment-cb6e4118.jpeg",
+  title: "Discovery Call | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: discoveryCallSeo.description,
+  image: discoveryCallSeo.image,
+  path: "/discovery-call",
+  title: discoveryCallSeo.title,
+});
 
 export default function DiscoveryCallPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: discoveryCallSeo.description,
+            path: "/discovery-call",
+            title: discoveryCallSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Book a discovery call", path: "/discovery-call" },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow="Book now"
         title="Book a discovery call"
-        body="Select a time window that works best for you to discuss current bottlenecks, where work gets stuck, and whether a discovery call or on-site assessment is the right first step."
+        body="Start with a focused conversation about where work is getting stuck, what matters most right now, and whether a discovery call or on-site assessment is the best first move."
+        primary={{ label: "Start your request", href: "#lead-capture-form" }}
+        secondary={{ label: "Request an on-site assessment", href: "/on-site-assessment" }}
+        image={discoveryCallSeo.image}
       />
       <section className="section-gap">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <LeadCaptureForm title="Request your discovery call" variant="discovery_call" />
+            <LeadCaptureForm id="lead-capture-form" title="Request your discovery call" variant="discovery_call" />
             <div className="grid gap-6">
               <div className="card">
                 <p className="eyebrow">What to expect</p>

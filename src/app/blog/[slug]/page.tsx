@@ -3,8 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BlogRichContent } from "@/components/blog/blog-rich-content";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/sections";
 import { getPublishedBlogEntries, getPublishedBlogEntryBySlug } from "@/lib/blog-content";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -22,13 +26,25 @@ export async function generateMetadata({
   const post = await getPublishedBlogEntryBySlug(slug);
 
   if (!post) {
-    return { title: "Post not found" };
+    return createPageMetadata({
+      description: "The requested blog article could not be found.",
+      image: "/media/photo-1515169067868-5387ec356754-6a0fcd5a.jpg",
+      noIndex: true,
+      path: `/blog/${slug}`,
+      title: "Post not found",
+    });
   }
 
-  return {
-    title: `${post.title} | Tacklers Blog`,
-    description: post.excerpt,
-  };
+  return createPageMetadata({
+    description: post.seoDescription ?? post.excerpt,
+    image: post.ogImageUrl ?? post.cover,
+    noIndex: post.noIndex,
+    path: post.canonicalPath || `/blog/${post.slug}`,
+    publishedTime: post.publishedAt,
+    title: post.seoTitle ?? `${post.title} | Tacklers Consulting Group`,
+    type: "article",
+    updatedTime: post.updatedAt,
+  });
 }
 
 export default async function BlogPostPage({
@@ -45,6 +61,29 @@ export default async function BlogPostPage({
 
   return (
     <article>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: post.seoDescription ?? post.excerpt,
+            path: post.canonicalPath || `/blog/${post.slug}`,
+            title: post.seoTitle ?? post.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: post.canonicalPath || `/blog/${post.slug}` },
+          ]),
+          buildArticleJsonLd({
+            canonicalPath: post.canonicalPath,
+            coverImage: post.ogImageUrl ?? post.cover,
+            dateModified: post.updatedAt,
+            datePublished: post.publishedAt,
+            description: post.seoDescription ?? post.excerpt,
+            slug: post.slug,
+            title: post.seoTitle ?? post.title,
+          }),
+        ]}
+      />
       <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
         <Image
           src={post.cover}
@@ -65,10 +104,10 @@ export default async function BlogPostPage({
               <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
               <span>{post.date}</span>
             </div>
-            <h1 className="display-title mt-5 text-[#8a0917]">
+            <h1 className="display-title mt-5 text-slate-950">
               {post.title}
             </h1>
-            <p className="mt-6 max-w-3xl text-xl leading-8 text-slate-800">
+            <p className="body-copy mt-6 max-w-3xl text-slate-800">
               {post.excerpt}
             </p>
           </div>
@@ -81,12 +120,10 @@ export default async function BlogPostPage({
             <div className="mt-10 overflow-hidden rounded-[2rem] border border-white/60 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
               <Image src={post.cover} alt={post.title} width={1600} height={900} className="h-[420px] w-full object-cover" />
             </div>
-          <div className="prose prose-lg mt-12 max-w-none prose-headings:text-slate-950 prose-p:text-slate-700">
-            {post.content.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            <div className="mt-12">
+              <BlogRichContent blocks={post.sections} />
+            </div>
           </div>
-        </div>
         </Container>
       </section>
     </article>

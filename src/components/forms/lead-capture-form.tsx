@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { SubmissionSuccessModal } from "@/components/forms/submission-success-modal";
 import { requestJson } from "@/components/portal/use-live-api";
 
 type FormVariant = "discovery_call" | "lean_training" | "on_site_assessment" | "general_contact";
@@ -9,6 +10,7 @@ type FormVariant = "discovery_call" | "lean_training" | "on_site_assessment" | "
 type LeadCaptureFormProps = {
   className?: string;
   ctaLabel?: string;
+  id?: string;
   intro?: string;
   title: string;
   variant: FormVariant;
@@ -85,10 +87,11 @@ function getVariantCopy(variant: FormVariant) {
   }
 }
 
-export function LeadCaptureForm({ className = "", ctaLabel, intro, title, variant }: LeadCaptureFormProps) {
+export function LeadCaptureForm({ className = "", ctaLabel, id, intro, title, variant }: LeadCaptureFormProps) {
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
   const [notice, setNotice] = useState<Notice>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const copy = useMemo(() => getVariantCopy(variant), [variant]);
 
@@ -99,6 +102,7 @@ export function LeadCaptureForm({ className = "", ctaLabel, intro, title, varian
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice(null);
+    setSuccessMessage("");
     setIsSubmitting(true);
 
     try {
@@ -144,7 +148,7 @@ export function LeadCaptureForm({ className = "", ctaLabel, intro, title, varian
         method: "POST",
       });
 
-      setNotice({ message: payload.message, tone: "success" });
+      setSuccessMessage(payload.message);
       setForm(INITIAL_STATE);
     } catch (submitError) {
       setNotice({
@@ -157,11 +161,12 @@ export function LeadCaptureForm({ className = "", ctaLabel, intro, title, varian
   }
 
   return (
-    <form className={`card grid gap-5 ${className}`.trim()} onSubmit={handleSubmit}>
-      <div>
-        <h3 className="text-2xl font-bold text-[#8a0917]">{title}</h3>
-        <p className="mt-2 text-slate-700">{intro ?? copy.intro}</p>
-      </div>
+    <>
+      <form id={id} className={`card grid gap-5 ${className}`.trim()} onSubmit={handleSubmit}>
+        <div>
+          <h3 className="text-2xl font-bold text-[#8a0917]">{title}</h3>
+          <p className="mt-2 text-slate-700">{intro ?? copy.intro}</p>
+        </div>
 
       <input
         type="text"
@@ -469,19 +474,23 @@ export function LeadCaptureForm({ className = "", ctaLabel, intro, title, varian
         />
       </label>
 
-      {notice ? (
-        <div
-          className={`rounded-2xl px-4 py-3 text-sm font-medium ${
-            notice.tone === "success" ? "bg-emerald-50 text-emerald-700" : "bg-[#fff4f6] text-[#8a0917]"
-          }`}
-        >
-          {notice.message}
-        </div>
-      ) : null}
+        {notice ? (
+          <div className="rounded-2xl bg-[#fff4f6] px-4 py-3 text-sm font-medium text-[#8a0917]">
+            {notice.message}
+          </div>
+        ) : null}
 
-      <button type="submit" className="button-primary w-full justify-center" disabled={isSubmitting}>
-        {isSubmitting ? "Sending..." : ctaLabel ?? copy.ctaLabel}
-      </button>
-    </form>
+        <button type="submit" className="button-primary w-full justify-center" disabled={isSubmitting}>
+          {isSubmitting ? "Sending..." : ctaLabel ?? copy.ctaLabel}
+        </button>
+      </form>
+
+      <SubmissionSuccessModal
+        open={Boolean(successMessage)}
+        title="Thanks, we have it"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+      />
+    </>
   );
 }

@@ -1,12 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
+import { SubmissionSuccessModal } from "@/components/forms/submission-success-modal";
 import { createClient } from "@/lib/supabase/client";
+
+type AuthMode = "sign_in" | "sign_up";
 
 type PortalSignInFormProps = {
   initialMessage?: string;
+  initialMode?: AuthMode;
 };
 
 function GoogleIcon() {
@@ -32,112 +36,276 @@ function GoogleIcon() {
   );
 }
 
-export function PortalSignInForm({ initialMessage = "" }: PortalSignInFormProps) {
+export function PortalSignInForm({
+  initialMessage = "",
+  initialMode = "sign_in",
+}: PortalSignInFormProps) {
   const router = useRouter();
   const supabase = createClient();
+  const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGooglePending, setIsGooglePending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  return (
-    <form
-      className="grid gap-5 rounded-[2rem] border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
-      onSubmit={async (event) => {
-        event.preventDefault();
-        setError("");
-        setIsSubmitting(true);
+  useEffect(() => {
+    setMode(initialMode);
+    setError("");
+    setSuccessMessage("");
+  }, [initialMode]);
 
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+  async function handleGoogleSignIn() {
+    setError("");
+    setSuccessMessage("");
+    setIsGooglePending(true);
 
-        if (signInError) {
-          setError(signInError.message || "Unable to sign in right now.");
-          setIsSubmitting(false);
+    const redirectTo = `${window.location.origin}/auth/callback?next=/client-hub`;
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
+      options: {
+        redirectTo,
+      },
+      provider: "google",
+    });
+
+    if (googleError) {
+      setError(googleError.message || "Unable to start Google sign-in.");
+      setIsGooglePending(false);
+    }
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setSuccessMessage("");
+    setIsSubmitting(true);
+
+    try {
+      if (mode === "sign_up") {
+        if (!fullName.trim()) {
+          setError("Please enter your full name.");
           return;
         }
 
-        router.replace("/client-hub");
-        router.refresh();
-      }}
-    >
-      <div>
-        <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">User access</p>
-        <h1 className="mt-3 text-4xl font-light tracking-[-0.04em] text-slate-950">Sign in</h1>
-        <p className="mt-4 text-base leading-7 text-slate-600">
-          Access your Tacklers user dashboard and stay signed in until you log out manually.
-        </p>
-      </div>
+        if (password.length < 8) {
+          setError("Use a password with at least 8 characters.");
+          return;
+        }
 
-      <button
-        type="button"
-        onClick={async () => {
-          setError("");
-          setIsGooglePending(true);
+        if (password !== confirmPassword) {
+          setError("Passwords do not match.");
+          return;
+        }
 
-          const redirectTo = `${window.location.origin}/auth/callback?next=/client-hub`;
-          const { error: googleError } = await supabase.auth.signInWithOAuth({
-            options: {
-              redirectTo,
+        const redirectTo = `${window.location.origin}/auth/callback?next=/client-hub`;
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName.trim(),
             },
-            provider: "google",
-          });
+            emailRedirectTo: redirectTo,
+          },
+        });
 
-          if (googleError) {
-            setError(googleError.message || "Unable to start Google sign-in.");
-            setIsGooglePending(false);
-          }
-        }}
-        disabled={isSubmitting || isGooglePending}
-        className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#8a0917]/20 hover:text-[#8a0917] disabled:cursor-not-allowed disabled:opacity-70"
+        if (signUpError) {
+          setError(signUpError.message || "Unable to create your account right now.");
+          return;
+        }
+
+        if (data.session) {
+          router.replace("/client-hub");
+          router.refresh();
+          return;
+        }
+
+        setMode("sign_in");
+        setPassword("");
+        setConfirmPassword("");
+        setSuccessMessage(
+          "Your account has been created. Check your email to confirm it, then sign in to reach your dashboard.",
+        );
+        return;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message || "Unable to sign in right now.");
+        return;
+      }
+
+      router.replace("/client-hub");
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <>
+      <form
+        className="grid gap-5 rounded-[2rem] border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
+        onSubmit={handleSubmit}
       >
-        <GoogleIcon />
-        {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
-      </button>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">User access</p>
+          <div className="mt-4 inline-flex rounded-full border border-black/5 bg-slate-100 p-1">
+            <button
+              type="button"
+              onClick={() => {
+                setMode("sign_in");
+                setError("");
+                setSuccessMessage("");
+              }}
+              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
+                mode === "sign_in" ? "bg-[#8a0917] text-white" : "text-slate-500 hover:text-[#8a0917]"
+              }`}
+            >
+              Sign in
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode("sign_up");
+                setError("");
+                setSuccessMessage("");
+              }}
+              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
+                mode === "sign_up" ? "bg-[#8a0917] text-white" : "text-slate-500 hover:text-[#8a0917]"
+              }`}
+            >
+              Sign up
+            </button>
+          </div>
+          <h1 className="mt-4 text-4xl font-light tracking-[-0.04em] text-slate-950">
+            {mode === "sign_in" ? "Sign in" : "Create your account"}
+          </h1>
+          <p className="mt-4 text-base leading-7 text-slate-600">
+            {mode === "sign_in"
+              ? "Access your Tacklers user dashboard and stay signed in until you log out manually."
+              : "Create a user account to access your Tacklers dashboard, documents, and live programme updates."}
+          </p>
+        </div>
 
-      <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-        <span className="h-px flex-1 bg-slate-200" />
-        <span>or</span>
-        <span className="h-px flex-1 bg-slate-200" />
-      </div>
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={isSubmitting || isGooglePending}
+          className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#8a0917]/20 hover:text-[#8a0917] disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          <GoogleIcon />
+          {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
+        </button>
 
-      <label className="grid gap-2 text-sm font-medium text-slate-700">
-        Email
-        <input
-          className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-          type="email"
-          placeholder="you@company.com"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          autoComplete="email"
-        />
-      </label>
+        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+          <span className="h-px flex-1 bg-slate-200" />
+          <span>or</span>
+          <span className="h-px flex-1 bg-slate-200" />
+        </div>
 
-      <label className="grid gap-2 text-sm font-medium text-slate-700">
-        Password
-        <input
-          className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          autoComplete="current-password"
-        />
-      </label>
+        {mode === "sign_up" ? (
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
+            Full name
+            <input
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+              type="text"
+              placeholder="Your full name"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              autoComplete="name"
+              required
+            />
+          </label>
+        ) : null}
 
-      {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
-      {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
+          Email
+          <input
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            autoComplete="email"
+            required
+          />
+        </label>
 
-      <button
-        type="submit"
-        className="inline-flex w-full items-center justify-center rounded-full bg-[#8a0917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
-        disabled={isSubmitting || isGooglePending}
-      >
-        {isSubmitting ? "Signing in..." : "Sign in to dashboard"}
-      </button>
-    </form>
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
+          Password
+          <input
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+            type="password"
+            placeholder={mode === "sign_in" ? "Enter your password" : "Create a password"}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            autoComplete={mode === "sign_in" ? "current-password" : "new-password"}
+            required
+          />
+        </label>
+
+        {mode === "sign_up" ? (
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
+            Confirm password
+            <input
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+              type="password"
+              placeholder="Re-enter your password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              autoComplete="new-password"
+              required
+            />
+          </label>
+        ) : null}
+
+        {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
+        {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}
+
+        <button
+          type="submit"
+          className="inline-flex w-full items-center justify-center rounded-full bg-[#8a0917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
+          disabled={isSubmitting || isGooglePending}
+        >
+          {isSubmitting
+            ? mode === "sign_in"
+              ? "Signing in..."
+              : "Creating account..."
+            : mode === "sign_in"
+              ? "Sign in to dashboard"
+              : "Create account"}
+        </button>
+
+        <p className="text-center text-sm text-slate-600">
+          {mode === "sign_in" ? "Need an account?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setMode(mode === "sign_in" ? "sign_up" : "sign_in");
+              setError("");
+              setSuccessMessage("");
+            }}
+            className="font-semibold text-[#8a0917]"
+          >
+            {mode === "sign_in" ? "Sign up" : "Sign in"}
+          </button>
+        </p>
+      </form>
+
+      <SubmissionSuccessModal
+        open={Boolean(successMessage)}
+        title="Account created"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+      />
+    </>
   );
 }

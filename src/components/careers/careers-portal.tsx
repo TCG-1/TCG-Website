@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 
+import { SubmissionSuccessModal } from "@/components/forms/submission-success-modal";
 import {
   TALENT_NETWORK_LABEL,
   type CareerJob,
@@ -9,7 +10,7 @@ import {
   splitMultilineText,
 } from "@/lib/careers";
 
-type Notice = { type: "success" | "error"; message: string } | null;
+type Notice = { message: string; type: "error" } | null;
 
 export function CareersPortal() {
   const [jobs, setJobs] = useState<CareerJob[]>([]);
@@ -17,6 +18,7 @@ export function CareersPortal() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
+  const [successMessage, setSuccessMessage] = useState("");
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -58,8 +60,9 @@ export function CareersPortal() {
   const selectedJob = jobs.find((job) => job.id === selectedJobId) ?? null;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-      <div className="grid gap-4">
+    <>
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="grid gap-4">
         <div className="card">
           <p className="eyebrow">Open positions</p>
           <h3 className="mt-3 text-2xl font-bold text-[#8a0917]">Current opportunities</h3>
@@ -150,49 +153,47 @@ export function CareersPortal() {
         ) : null}
       </div>
 
-      <form
-        id="career-application-form"
-        ref={formRef}
-        className="card grid gap-5 self-start"
-        onSubmit={(event) => {
-          event.preventDefault();
-          const form = event.currentTarget;
-          const formData = new FormData(form);
-          formData.set("jobId", selectedJob?.id ?? "");
-          formData.set("jobTitleSnapshot", selectedJob?.title ?? TALENT_NETWORK_LABEL);
-          setNotice(null);
+        <form
+          id="career-application-form"
+          ref={formRef}
+          className="card grid gap-5 self-start"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const formData = new FormData(form);
+            formData.set("jobId", selectedJob?.id ?? "");
+            formData.set("jobTitleSnapshot", selectedJob?.title ?? TALENT_NETWORK_LABEL);
+            setNotice(null);
+            setSuccessMessage("");
 
-          startTransition(async () => {
-            try {
-              const response = await fetch("/api/careers/applications", {
-                method: "POST",
-                body: formData,
-              });
-              const payload = (await response.json()) as { error?: string; message?: string };
+            startTransition(async () => {
+              try {
+                const response = await fetch("/api/careers/applications", {
+                  method: "POST",
+                  body: formData,
+                });
+                const payload = (await response.json()) as { error?: string; message?: string };
 
-              if (!response.ok) {
+                if (!response.ok) {
+                  setNotice({
+                    type: "error",
+                    message: payload.error ?? "Unable to submit your application right now.",
+                  });
+                  return;
+                }
+
+                form.reset();
+                setSelectedJobId("");
+                setSuccessMessage(payload.message ?? "Application received. We will review it shortly.");
+              } catch {
                 setNotice({
                   type: "error",
-                  message: payload.error ?? "Unable to submit your application right now.",
+                  message: "Unable to submit your application right now.",
                 });
-                return;
               }
-
-              form.reset();
-              setSelectedJobId("");
-              setNotice({
-                type: "success",
-                message: payload.message ?? "Application received. We will review it shortly.",
-              });
-            } catch {
-              setNotice({
-                type: "error",
-                message: "Unable to submit your application right now.",
-              });
-            }
-          });
-        }}
-      >
+            });
+          }}
+        >
         <div>
           <p className="eyebrow">Apply now</p>
           <h3 className="mt-3 text-2xl font-bold text-[#8a0917]">Application manager</h3>
@@ -272,22 +273,24 @@ export function CareersPortal() {
           <span className="text-xs text-slate-500">Accepted formats: PDF, DOC, DOCX. Max 10 MB.</span>
         </label>
 
-        {notice ? (
-          <div
-            className={`rounded-2xl px-4 py-3 text-sm font-medium ${
-              notice.type === "success"
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-[#fff4f6] text-[#8a0917]"
-            }`}
-          >
-            {notice.message}
-          </div>
-        ) : null}
+          {notice ? (
+            <div className="rounded-2xl bg-[#fff4f6] px-4 py-3 text-sm font-medium text-[#8a0917]">
+              {notice.message}
+            </div>
+          ) : null}
 
-        <button type="submit" className="button-primary w-full justify-center" disabled={isPending}>
-          {isPending ? "Submitting…" : "Send application"}
-        </button>
-      </form>
-    </div>
+          <button type="submit" className="button-primary w-full justify-center" disabled={isPending}>
+            {isPending ? "Submitting…" : "Send application"}
+          </button>
+        </form>
+      </div>
+
+      <SubmissionSuccessModal
+        open={Boolean(successMessage)}
+        title="Application sent"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+      />
+    </>
   );
 }

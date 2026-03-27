@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   CardGrid,
   Container,
@@ -10,7 +12,29 @@ import {
   StepsGrid,
 } from "@/components/sections";
 import { getPublishedBlogEntries } from "@/lib/blog-content";
+import { createPageMetadata } from "@/lib/site-seo";
 import { brandTagline, globalCta, homeData, homeFaqs } from "@/lib/site-data";
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/structured-data";
+
+const homeSeo = {
+  description:
+    "Tacklers Consulting Group helps UK organisations reduce waste, improve productivity, and build operational excellence capability that lasts.",
+  image: homeData.hero.image,
+  title: "Operational Excellence Consulting UK | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: homeSeo.description,
+  image: homeSeo.image,
+  keywords: [
+    "operational excellence consulting uk",
+    "lean transformation uk",
+    "gemba consulting",
+    "continuous improvement partner",
+  ],
+  path: "/",
+  title: homeSeo.title,
+});
 
 export default async function Home() {
   const blogPosts = await getPublishedBlogEntries();
@@ -19,42 +43,42 @@ export default async function Home() {
     {
       title: "Cost Management",
       body: "Cost reduction works when it is tied to how work actually runs. When it is not, it turns into pressure and short-term fixes.",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
       cta: "View Programme",
       image: "/media/Cost-Management-f9a07bf6.jpeg",
     },
     {
       title: "Executive Leadership Coaching",
       body: "This is where many improvements win or lose. Good projects can stall when leaders do not have a clear operating rhythm.",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
       cta: "View Programme",
       image: "/media/Executive-Leadership-Coaching-1588bf3d.jpeg",
     },
     {
       title: "Lean Training",
       body: "Training has to connect to real work or it fades fast. We keep it practical.",
-      href: "/lean-services",
+      href: "/lean-training-uk",
       cta: "View Programme",
       image: "/media/Lean-Training-060b97e6.jpeg",
     },
     {
       title: "Lean Transformation",
       body: "Lean transformation is not a workshop series. It is a change in how work is managed, improved, and sustained.",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
       cta: "View Programme",
       image: "/media/Lean-Transformation-ee5c9aae.jpeg",
     },
     {
       title: "People Strategy",
       body: "If the people side is ignored, the process side will not last. That is not a philosophy, it is just reality.",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
       cta: "View Program",
       image: "/media/photo-1521737604893-d14cc237f11d-b93a2a8e.jpg",
     },
     {
       title: "Manufacturing Support",
       body: "Manufacturing environments feel small until you trace one delay and realise how many parts it touches.",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
       cta: "View Program",
       image: "/media/Manufacturing-Support-f5a8f8f1.jpeg",
     },
@@ -62,6 +86,7 @@ export default async function Home() {
 
   return (
     <div className="text-center">
+      <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
       <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
         <Image
           src="/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg"
@@ -86,10 +111,10 @@ export default async function Home() {
               improve flow, and retain the expertise your organisation depends on.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Link href="/book-a-discovery-call" className="button-primary">
+              <Link href="/discovery-call" className="button-primary">
                 Book a discovery call
               </Link>
-              <Link href="/request-an-on-site-assessment" className="button-secondary">
+              <Link href="/on-site-assessment" className="button-secondary">
                 Request an on-site assessment
               </Link>
             </div>
@@ -182,7 +207,7 @@ export default async function Home() {
         </Container>
       </section>
 
-      <section className="section-gap bg-slate-950 text-white">
+      <section className="section-gap bg-[#2d060c] text-white">
         <Container>
           <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr]">
             <div className="overflow-hidden rounded-[2rem] border border-white/10">
@@ -194,21 +219,26 @@ export default async function Home() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <div>
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.05] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.2)] sm:p-10">
               <p className="eyebrow text-white/60">People-first Lean</p>
               <h2 className="section-title text-white">People-first Lean, the way it should be</h2>
-              <p className="mt-5 text-lg leading-8 text-white/80">
+              <p className="mt-5 text-lg leading-8 text-white/82">
                 Lean has a reputation problem. I think we all know why. Too many organisations use it to
                 justify reducing headcount, then wonder why trust disappears.
               </p>
-              <p className="mt-4 text-lg leading-8 text-white/80">
+              <p className="mt-4 text-lg leading-8 text-white/82">
                 Our approach is different. We focus on reducing waste, building capability, and
                 redeploying talent into higher-value work. It is more work up front, but it holds because
                 organisations keep the expertise they have worked hard to build.
               </p>
-              <Link href="/about-tacklers-consulting-group" className="mt-6 inline-flex button-ghost">
-                Know more
-              </Link>
+              <div className="mt-7 flex justify-center">
+                <Link href="/about" className="button-light">
+                  Learn more
+                </Link>
+              </div>
+              <p className="mt-5 text-sm uppercase tracking-[0.18em] text-white/55">
+                Build capability. Retain expertise. Improve flow without eroding trust.
+              </p>
             </div>
           </div>
         </Container>
@@ -222,7 +252,7 @@ export default async function Home() {
             body="Either is fine. We’ll tell you what makes sense once we see how work really flows."
             center
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {serviceItems.map((item) => (
               <article
                 key={item.title}
@@ -253,7 +283,7 @@ export default async function Home() {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link href="/operational-excellence-services-uk" className="button-secondary">
+            <Link href="/operational-excellence-consulting-uk" className="button-secondary">
               View All Services
             </Link>
           </div>
@@ -330,7 +360,7 @@ export default async function Home() {
                 <li>Private Pilot&apos;s License - PPL (A)</li>
                 <li>Bachelor&apos;s Degree, Aerospace Technology</li>
               </ul>
-              <Link href="/about-tacklers-consulting-group" className="button-secondary mt-7">
+              <Link href="/about" className="button-secondary mt-7">
                 Read More
               </Link>
             </div>

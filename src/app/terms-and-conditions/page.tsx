@@ -1,19 +1,45 @@
 import type { Metadata } from "next";
 
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, LegalSection, PageHero } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description: "Terms and conditions for Tacklers Consulting Group.",
-};
+const termsSeo = {
+  description:
+    "Review the Tacklers Consulting Group terms and conditions covering website use, intellectual property, service agreements, and liability.",
+  image: "/media/photo-1552664730-d307ca884978-3b59fe94.jpg",
+  title: "Terms and Conditions | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: termsSeo.description,
+  image: termsSeo.image,
+  path: "/terms-and-conditions",
+  title: termsSeo.title,
+});
 
 export default function TermsPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: termsSeo.description,
+            path: "/terms-and-conditions",
+            title: termsSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Terms & Conditions", path: "/terms-and-conditions" },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow="Legal & compliance"
         title="Terms & Conditions"
         body="Please read these terms carefully before using our services. Last updated: October 2025."
+        image={termsSeo.image}
       />
       <section className="section-gap">
         <Container>

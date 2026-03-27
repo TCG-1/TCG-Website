@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
+import { JsonLd } from "@/components/seo/json-ld";
 import {
   Container,
   CtaBanner,
@@ -9,23 +10,48 @@ import {
   PageHero,
   SectionHeader,
 } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
 import { contactFaqs, globalCta } from "@/lib/site-data";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Contact Tacklers Consulting Group",
+const contactSeo = {
   description:
-    "Get in touch with Tacklers Consulting Group for Lean transformation, operational excellence support, or a discovery call.",
-};
+    "Contact Tacklers Consulting Group to discuss Lean transformation, operational excellence consulting, discovery calls, and on-site improvement work across the UK.",
+  image: "/media/photo-1554224155-6726b3ff858f-9273a89e.jpg",
+  title: "Contact Tacklers Consulting Group | UK Lean Consultants",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: contactSeo.description,
+  image: contactSeo.image,
+  path: "/contact",
+  title: contactSeo.title,
+});
 
 export default function ContactPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: contactSeo.description,
+            path: "/contact",
+            title: contactSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Contact Us", path: "/contact" },
+          ]),
+          buildFaqJsonLd(contactFaqs),
+        ]}
+      />
       <PageHero
         eyebrow="Get in touch"
         title="Contact Tacklers Consulting Group"
         body="If you are exploring Lean transformation or operational excellence support, start here. You do not need a long pitch from us. A short conversation is usually enough to see if we are a good fit."
-        primary={{ label: "Book a discovery call", href: "/book-a-discovery-call" }}
-        secondary={{ label: "Request an on-site assessment", href: "/request-an-on-site-assessment" }}
+        primary={{ label: "Book a discovery call", href: "/discovery-call" }}
+        secondary={{ label: "Request an on-site assessment", href: "/on-site-assessment" }}
+        image={contactSeo.image}
       />
 
       <section className="section-gap">
@@ -39,7 +65,7 @@ export default function ContactPage() {
                   Tacklers Consulting Group works on-site at client locations across the UK. We do not operate a public walk-in office.
                 </p>
                 <p className="mt-4 text-slate-600">The best way to start is by phone, email, or a discovery call.</p>
-                <Link className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]" href="/book-a-discovery-call">
+                <Link className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]" href="/discovery-call">
                   Book a discovery call
                 </Link>
               </div>
@@ -74,7 +100,7 @@ export default function ContactPage() {
 
       <section className="section-gap bg-slate-50">
         <Container>
-          <SectionHeader eyebrow="Common questions" title="Frequently asked questions" />
+          <SectionHeader eyebrow="Common questions" title="Frequently asked questions" center />
           <FaqList items={contactFaqs} />
         </Container>
       </section>

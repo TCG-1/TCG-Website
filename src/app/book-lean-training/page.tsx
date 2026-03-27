@@ -1,26 +1,53 @@
 import type { Metadata } from "next";
 
 import { LeadCaptureForm } from "@/components/forms/lead-capture-form";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, PageHero } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Book Your Lean Training Session",
+const bookLeanTrainingSeo = {
   description:
-    "Request a Lean training session for leaders and teams that need practical skills tied to real work.",
-};
+    "Request a Lean training session from Tacklers Consulting Group for leaders and teams who need practical capability building tied to real work.",
+  image: "/media/photo-1454165804606-c3d57bc86b40-354f8fd9.jpg",
+  title: "Book Lean Training | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: bookLeanTrainingSeo.description,
+  image: bookLeanTrainingSeo.image,
+  path: "/book-lean-training",
+  title: bookLeanTrainingSeo.title,
+});
 
 export default function TrainingBookingPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: bookLeanTrainingSeo.description,
+            path: "/book-lean-training",
+            title: bookLeanTrainingSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Book Lean Training", path: "/book-lean-training" },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow="Lean training"
         title="Book Your Lean Training Session"
-        body="If you are looking for Lean training UK teams can actually use, you are in the right place. We keep it close to real work so it builds capability that lasts."
+        body="Tell us who the training is for, what capability needs to grow, and how the delivery should support live operational priorities."
+        primary={{ label: "Start your request", href: "#lead-capture-form" }}
+        secondary={{ label: "Explore Lean training", href: "/lean-training-uk" }}
+        image={bookLeanTrainingSeo.image}
       />
       <section className="section-gap">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <LeadCaptureForm title="Plan your Lean training request" variant="lean_training" />
+            <LeadCaptureForm id="lead-capture-form" title="Plan your Lean training request" variant="lean_training" />
             <div className="grid gap-6">
               <div className="card grid gap-4 sm:grid-cols-2">
                 <div>
@@ -52,7 +79,7 @@ export default function TrainingBookingPage() {
                 <p className="mt-4 leading-8 text-slate-600">
                   We do not push theory overload or feel-good workshops that vanish the next week. The goal is useful capability that teams can apply immediately in their own environment.
                 </p>
-                <a href="/lean-services" className="mt-6 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]">
+                <a href="/lean-training-uk" className="mt-6 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]">
                   Explore lean services
                 </a>
               </div>

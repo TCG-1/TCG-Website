@@ -45,15 +45,6 @@ type EmailPayload = {
 const ADMIN_EMAIL = "hello@tacklersconsulting.com";
 const DEFAULT_FROM_EMAIL = `Tacklers Consulting Group <${ADMIN_EMAIL}>`;
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
-const LOW_SIGNAL_MESSAGES = new Set([
-	"call me",
-	"hello",
-	"help",
-	"hi",
-	"need help",
-	"test",
-]);
-
 let logoDataUriPromise: Promise<string | null> | null = null;
 
 function normalizeText(value: unknown) {
@@ -73,27 +64,6 @@ function toTitle(value: string) {
 
 function isValidEmail(value: string) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
-function isLikelyLowQualityMessage(value: string) {
-	const normalized = value.toLowerCase().replace(/\s+/g, " ").trim();
-
-	if (!normalized || normalized.length < 24) {
-		return true;
-	}
-
-	if (LOW_SIGNAL_MESSAGES.has(normalized)) {
-		return true;
-	}
-
-	const uniqueWords = new Set(
-		normalized
-			.split(/[^a-z0-9]+/)
-			.map((item) => item.trim())
-			.filter((item) => item.length > 2),
-	);
-
-	return uniqueWords.size < 4;
 }
 
 function escapeHtml(value: string) {
@@ -406,7 +376,7 @@ async function saveSupplementaryRecord({
 					full_name: fullName,
 					message,
 					phone: phone ?? null,
-					source_page: "/contact-us",
+					source_page: "/contact",
 					work_email: email,
 				},
 			]);
@@ -465,7 +435,7 @@ export function validateInquirySubmission({
 		return "Please include a phone number if you want us to call you back.";
 	}
 
-	if (isLikelyLowQualityMessage(message)) {
+	if (!normalizeOptionalText(message)) {
 		return "Please share a little more context so we can route your enquiry properly.";
 	}
 

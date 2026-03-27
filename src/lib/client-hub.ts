@@ -167,7 +167,7 @@ const DEFAULT_CLIENT_HUB_CONTENT: ClientHubContent = {
     ],
     footerLinks: [
       { label: "Privacy Policy", href: "/privacy-policy" },
-      { label: "Client Terms", href: "/terms-condition" },
+      { label: "Client Terms", href: "/terms-and-conditions" },
       { label: "Contact Support", href: "/support" },
     ],
   },

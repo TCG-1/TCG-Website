@@ -1,19 +1,45 @@
 import type { Metadata } from "next";
 
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, LegalSection, PageHero } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Privacy policy for Tacklers Consulting Group.",
-};
+const privacySeo = {
+  description:
+    "Read how Tacklers Consulting Group collects, uses, stores, and protects personal data across its website, services, and recruitment workflows.",
+  image: "/media/photo-1552664730-d307ca884978-c9ac175b.jpg",
+  title: "Privacy Policy | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: privacySeo.description,
+  image: privacySeo.image,
+  path: "/privacy-policy",
+  title: privacySeo.title,
+});
 
 export default function PrivacyPolicyPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: privacySeo.description,
+            path: "/privacy-policy",
+            title: privacySeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Privacy Policy", path: "/privacy-policy" },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow="Legal & compliance"
         title="Privacy Policy"
         body="Transparency matters. Here is how we collect, use, and protect your data. Effective date: October 2025."
+        image={privacySeo.image}
       />
       <section className="section-gap">
         <Container>

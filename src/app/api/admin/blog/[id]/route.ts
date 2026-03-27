@@ -1,8 +1,8 @@
 import {
   createAdminAuditEntry,
   ensureAdminPortalContext,
-  readBlogBody,
   serializeBlogSections,
+  slugifyText,
 } from "@/lib/portal-data";
 
 export const runtime = "nodejs";
@@ -22,6 +22,40 @@ function normalizeOptionalText(value: unknown) {
   return normalized || null;
 }
 
+function normalizeBoolean(value: unknown) {
+  return value === true || value === "true";
+}
+
+async function resolveUniqueSlug(
+  supabase: Awaited<ReturnType<typeof ensureAdminPortalContext>>["supabase"],
+  requestedSlug: string,
+  postId: string,
+) {
+  const baseSlug = slugifyText(requestedSlug) || "blog-post";
+  let candidate = baseSlug;
+  let iteration = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("id")
+      .eq("slug", candidate)
+      .neq("id", postId)
+      .limit(1);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data?.length) {
+      return candidate;
+    }
+
+    candidate = `${baseSlug}-${iteration}`;
+    iteration += 1;
+  }
+}
+
 function toResponseError(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message : fallback;
   const status = message === "Unauthorized." ? 401 : 500;
@@ -34,10 +68,16 @@ export async function PATCH(request: Request, context: RouteContext) {
     const { id } = await context.params;
     const body = (await request.json()) as Record<string, unknown>;
     const title = normalizeText(body.title);
+    const requestedSlug = normalizeText(body.slug) || title;
     const excerpt = normalizeText(body.excerpt);
     const postBody = normalizeText(body.body);
     const category = normalizeOptionalText(body.category);
+    const canonicalUrl = normalizeOptionalText(body.canonicalUrl);
     const coverUrl = normalizeOptionalText(body.coverUrl);
+    const noIndex = normalizeBoolean(body.noIndex);
+    const ogImageUrl = normalizeOptionalText(body.ogImageUrl);
+    const seoDescription = normalizeOptionalText(body.seoDescription) ?? excerpt;
+    const seoTitle = normalizeOptionalText(body.seoTitle);
     const status = normalizeText(body.status).toLowerCase() || "draft";
 
     if (!title || !excerpt || !postBody) {
@@ -48,13 +88,21 @@ export async function PATCH(request: Request, context: RouteContext) {
       return Response.json({ error: "Invalid blog status." }, { status: 400 });
     }
 
+    const slug = await resolveUniqueSlug(supabase, requestedSlug, id);
+
     const { data: post, error: postError } = await supabase
       .from("blog_posts")
       .update({
+        canonical_url: canonicalUrl,
         category,
         cover_url: coverUrl,
         excerpt,
+        noindex: noIndex,
+        og_image_url: ogImageUrl,
         published_at: status === "published" ? new Date().toISOString() : null,
+        seo_description: seoDescription,
+        seo_title: seoTitle,
+        slug,
         status,
         title,
       })
@@ -84,6 +132,10 @@ export async function PATCH(request: Request, context: RouteContext) {
       entityId: post.id,
       entityTable: "blog_posts",
       payload: {
+        canonicalUrl,
+        noIndex,
+        seoTitle,
+        slug,
         status,
         title,
       },

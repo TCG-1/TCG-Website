@@ -1,5 +1,9 @@
 import type { User } from "@supabase/supabase-js";
 
+import {
+  serializeRichTextToSections,
+  serializeSectionsToRichText,
+} from "@/lib/blog-rich-text";
 import { getAdminUser } from "@/lib/admin-auth";
 import { getPortalUser, getPortalUserDisplayName } from "@/lib/portal-auth";
 import { createSupabaseAdminClient, getSupabaseConfigError } from "@/lib/supabase/admin";
@@ -161,6 +165,11 @@ export type BlogPostRecord = {
   excerpt: string;
   category: string | null;
   cover_url: string | null;
+  canonical_url: string | null;
+  noindex: boolean;
+  og_image_url: string | null;
+  seo_description: string | null;
+  seo_title: string | null;
   status: string;
   published_at: string | null;
   created_at: string;
@@ -298,22 +307,11 @@ export function slugifyText(value: string) {
 }
 
 export function serializeBlogSections(body: string) {
-  return body
-    .split(/\n{2,}/)
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((item, index) => ({
-      body: item,
-      section_type: "paragraph",
-      sort_order: index,
-    }));
+  return serializeRichTextToSections(body);
 }
 
 export function readBlogBody(sections: BlogPostSectionRecord[]) {
-  return sections
-    .sort((left, right) => left.sort_order - right.sort_order)
-    .map((section) => section.body)
-    .join("\n\n");
+  return serializeSectionsToRichText(sections);
 }
 
 export async function ensureAdminPortalContext() {

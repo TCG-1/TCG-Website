@@ -1,22 +1,48 @@
 import type { Metadata } from "next";
 
 import { CareersPortal } from "@/components/careers/careers-portal";
+import { JsonLd } from "@/components/seo/json-ld";
 import { CardGrid, Container, PageHero, SectionHeader } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Careers at Tacklers Consulting Group",
+const careersSeo = {
   description:
-    "Explore job positions at Tacklers Consulting Group and submit applications with attachment uploads through the careers portal.",
-};
+    "Explore careers at Tacklers Consulting Group, view open roles, and apply for Lean consulting and operational excellence opportunities.",
+  image: "/media/photo-1522202176988-66273c2fd55f-259dd5c3.jpg",
+  title: "Careers | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: careersSeo.description,
+  image: careersSeo.image,
+  path: "/careers",
+  title: careersSeo.title,
+});
 
 export default function CareersPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: careersSeo.description,
+            path: "/careers",
+            title: careersSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Careers", path: "/careers" },
+          ]),
+        ]}
+      />
       <PageHero
         eyebrow="Careers at TCG"
         title="Build something that holds."
         body="We hire for people who want to work where the real problems live. Explore open positions below or join the talent network for future roles."
         primary={{ label: "View open roles", href: "#careers-portal" }}
+        secondary={{ label: "Join the talent network", href: "#career-application-form" }}
+        image={careersSeo.image}
       />
 
       <section className="section-gap bg-slate-50">

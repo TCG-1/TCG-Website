@@ -75,17 +75,26 @@ export function SectionHeader({
   title,
   body,
   center = false,
+  tone = "default",
 }: {
   eyebrow?: string;
   title: string;
   body?: string;
   center?: boolean;
+  tone?: "default" | "light";
 }) {
+  const eyebrowClassName =
+    tone === "light" ? "eyebrow text-white/70" : "eyebrow";
+  const titleClassName =
+    tone === "light" ? "section-title text-white" : "section-title";
+  const bodyClassName =
+    tone === "light" ? "body-copy mt-4 text-white/80" : "body-copy mt-4";
+
   return (
     <div className={center ? "mx-auto mb-12 max-w-3xl text-center" : "mb-12 max-w-3xl"}>
-      {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-      <h2 className="section-title">{title}</h2>
-      {body ? <p className="body-copy mt-4">{body}</p> : null}
+      {eyebrow ? <p className={eyebrowClassName}>{eyebrow}</p> : null}
+      <h2 className={titleClassName}>{title}</h2>
+      {body ? <p className={bodyClassName}>{body}</p> : null}
     </div>
   );
 }

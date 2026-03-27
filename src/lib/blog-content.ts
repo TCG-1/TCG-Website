@@ -1,25 +1,58 @@
+import { normalizeBlogRenderBlocks } from "@/lib/blog-rich-text";
 import { readBlogBody } from "@/lib/portal-data";
 import { ensureBlogSeedData } from "@/lib/portal-seed";
 import { blogPosts as staticBlogPosts } from "@/lib/site-data";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type PublishedBlogEntry = {
+  canonicalPath?: string | null;
   category: string;
   content: string[];
   cover: string;
   date: string;
   excerpt: string;
+  noIndex: boolean;
+  ogImageUrl: string | null;
+  publishedAt: string | null;
+  sections: ReturnType<typeof normalizeBlogRenderBlocks>;
+  seoDescription: string | null;
+  seoTitle: string | null;
   slug: string;
   title: string;
+  updatedAt: string | null;
 };
 
 const FALLBACK_COVER = "/media/photo-1517976487492-5750f3195933-200958be.jpg";
+
+function createFallbackEntries(): PublishedBlogEntry[] {
+  return staticBlogPosts.map((post) => ({
+    canonicalPath: post.canonicalPath ?? null,
+    category: post.category,
+    content: post.content,
+    cover: post.cover,
+    date: post.date,
+    excerpt: post.excerpt,
+    noIndex: post.noIndex ?? false,
+    ogImageUrl: post.ogImageUrl ?? null,
+    publishedAt: post.publishedAt ?? null,
+    sections: post.content.map((item) => ({
+      body: item,
+      items: [],
+      type: "paragraph" as const,
+    })),
+    seoDescription: post.seoDescription ?? post.excerpt,
+    seoTitle: post.seoTitle ?? null,
+    slug: post.slug,
+    title: post.title,
+    updatedAt: post.updatedAt ?? post.publishedAt ?? null,
+  }));
+}
 
 export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return staticBlogPosts;
+    return createFallbackEntries();
   }
 
   try {
@@ -54,16 +87,19 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
     });
 
     if (!posts?.length) {
-      return staticBlogPosts;
+      return createFallbackEntries();
     }
 
     return posts.map((post) => {
-      const paragraphs = readBlogBody(sectionsByPostId.get(post.id) ?? [])
+      const sectionRows = sectionsByPostId.get(post.id) ?? [];
+      const body = readBlogBody(sectionRows);
+      const paragraphs = body
         .split(/\n{2,}/)
         .map((item) => item.trim())
         .filter(Boolean);
 
       return {
+        canonicalPath: post.canonical_url ?? null,
         category: post.category ?? "Lean Insights",
         content: paragraphs.length ? paragraphs : [post.excerpt],
         cover: post.cover_url ?? FALLBACK_COVER,
@@ -71,12 +107,19 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
           ? new Date(post.published_at).toLocaleDateString("en-GB", { dateStyle: "medium" })
           : "Draft",
         excerpt: post.excerpt,
+        noIndex: post.noindex ?? false,
+        ogImageUrl: post.og_image_url ?? post.cover_url ?? null,
+        publishedAt: post.published_at ?? null,
+        sections: normalizeBlogRenderBlocks(sectionRows),
+        seoDescription: post.seo_description ?? post.excerpt,
+        seoTitle: post.seo_title ?? null,
         slug: post.slug,
         title: post.title,
+        updatedAt: post.updated_at ?? null,
       };
     });
   } catch {
-    return staticBlogPosts;
+    return createFallbackEntries();
   }
 }
 

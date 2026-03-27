@@ -197,7 +197,7 @@ export function ClientHubShell({
           </div>
 
           <Link
-            href="/book-a-discovery-call"
+            href="/discovery-call"
             className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#62000b_0%,#8a0917_100%)] px-4 py-3 text-xs font-bold uppercase tracking-[0.24em] text-white transition hover:opacity-90"
           >
             {content.meta.ctaLabel}

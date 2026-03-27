@@ -17,13 +17,20 @@ export type FaqItem = {
 };
 
 export type BlogPost = {
-  slug: string;
-  title: string;
-  excerpt: string;
   category: string;
-  date: string;
+  canonicalPath?: string;
   cover: string;
   content: string[];
+  date: string;
+  excerpt: string;
+  noIndex?: boolean;
+  ogImageUrl?: string;
+  publishedAt?: string;
+  seoDescription?: string;
+  seoTitle?: string;
+  slug: string;
+  title: string;
+  updatedAt?: string;
 };
 
 export const brandTagline =
@@ -52,28 +59,28 @@ const genbaMeaningAnswer =
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/operational-excellence-services-uk" },
-  { label: "Lean Training", href: "/lean-services" },
+  { label: "Services", href: "/operational-excellence-consulting-uk" },
+  { label: "Lean Training", href: "/lean-training-uk" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact-us" },
-  { label: "About Us", href: "/about-tacklers-consulting-group" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "About Us", href: "/about" },
 ];
 
 export const footerData = {
   description:
     "Empowering organizations to achieve sustainable operational excellence.",
   usefulLinks: [
-    { label: "About Us", href: "/about-tacklers-consulting-group" },
-    { label: "Services", href: "/operational-excellence-services-uk" },
+    { label: "About Us", href: "/about" },
+    { label: "Services", href: "/operational-excellence-consulting-uk" },
     { label: "Blog & Resources", href: "/blog" },
-    { label: "Contact Us", href: "/contact-us" },
+    { label: "Contact Us", href: "/contact" },
     { label: "Career", href: "/careers" },
   ],
   additionalLinks: navItems,
   legalLinks: [
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Support", href: "/support" },
-    { label: "Terms & Condition", href: "/terms-condition" },
+    { label: "Terms & Conditions", href: "/terms-and-conditions" },
   ],
   socialLinks: ["Facebook", "X-twitter", "Youtube", "Instagram", "Whatsapp"],
   coverageNote:
@@ -88,10 +95,10 @@ export const globalCta = {
     "Ready to reduce waste, improve productivity, and optimize your team's capabilities?",
   body:
     "Book a discovery call or request an on-site assessment. We'll work with you to identify opportunities for improvement, define an implementation plan that suits your organisation's needs, and establish key milestones for success.",
-  primary: { label: "Book a discovery call", href: "/book-a-discovery-call" },
+  primary: { label: "Book a discovery call", href: "/discovery-call" },
   secondary: {
     label: "Request an on-site assessment",
-    href: "/request-an-on-site-assessment",
+    href: "/on-site-assessment",
   },
 };
 
@@ -102,10 +109,10 @@ export const homeData = {
     subtitle: "Lean transformation that reduces waste and retains expertise.",
     body:
       "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We work on-site at Gemba with your teams to reduce waste, clear bottlenecks, and improve flow.",
-    primary: { label: "Book a discovery call", href: "/book-a-discovery-call" },
+    primary: { label: "Book a discovery call", href: "/discovery-call" },
     secondary: {
       label: "Request an on-site assessment",
-      href: "/request-an-on-site-assessment",
+      href: "/on-site-assessment",
     },
     image:
       "/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg",
@@ -146,42 +153,42 @@ export const homeData = {
       body: "Cost reduction works when it is tied to how work actually runs.",
       image:
         "/media/photo-1554224155-6726b3ff858f-9273a89e.jpg",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
     },
     {
       title: "Executive Leadership Coaching",
       body: "Good projects stall because leaders did not have a clear operating rhythm.",
       image:
         "/media/photo-1552664730-d307ca884978-3b59fe94.jpg",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
     },
     {
       title: "Lean Training",
       body: "Training has to connect to real work or it fades fast.",
       image:
         "/media/photo-1454165804606-c3d57bc86b40-354f8fd9.jpg",
-      href: "/lean-services",
+      href: "/lean-training-uk",
     },
     {
       title: "Lean Transformation",
       body: "A change in how work is managed, improved, and sustained.",
       image:
         "/media/photo-1461749280684-dccba630e2f6-28fdc020.jpg",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
     },
     {
       title: "People Strategy",
       body: "If the people side is ignored, the process side will not last.",
       image:
         "/media/photo-1521737604893-d14cc237f11d-b93a2a8e.jpg",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
     },
     {
       title: "Manufacturing Support",
       body: "Tracing delays to see how many parts they touch.",
       image:
         "/media/Manufacturing-Support-f5a8f8f1.jpeg",
-      href: "/operational-excellence-services-uk",
+      href: "/operational-excellence-consulting-uk",
     },
   ],
   industries: [
@@ -331,19 +338,19 @@ export const leanProgrammes = [
     title: "Lean Fundamentals",
     body: "Master the core principles of value, waste identification, and continuous improvement culture.",
     cta: "Explore details",
-    href: "/book-lean-training-session",
+    href: "/book-lean-training",
   },
   {
     title: "Value Stream Mapping",
     body: "Learn to visualise your process flow and identify the bottlenecks that delay value.",
     cta: "Master VSM",
-    href: "/book-lean-training-session",
+    href: "/book-lean-training",
   },
   {
     title: "Kaizen Facilitation",
     body: "Develop the skills to lead improvement events that create rapid and sustainable results.",
     cta: "View details",
-    href: "/book-lean-training-session",
+    href: "/book-lean-training",
   },
 ];
 

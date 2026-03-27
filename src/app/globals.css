@@ -44,9 +44,7 @@ img {
 }
 
 .hero-surface {
-  background:
-    radial-gradient(circle at top right, rgba(138, 9, 23, 0.09), transparent 32%),
-    linear-gradient(180deg, #ffffff 0%, #fff7f8 100%);
+  background: #fff7f8;
 }
 
 .brand-highlight-bg {
@@ -62,12 +60,7 @@ img {
 }
 
 .hero-soft-gradient {
-  background: linear-gradient(
-    135deg,
-    rgba(248, 249, 250, 0.94) 0%,
-    rgba(248, 249, 250, 0.86) 55%,
-    rgba(248, 249, 250, 0.74) 100%
-  );
+  background: rgba(248, 249, 250, 0.84);
 }
 
 .hero-title-emphasis {

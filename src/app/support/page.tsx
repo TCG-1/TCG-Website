@@ -1,22 +1,50 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { JsonLd } from "@/components/seo/json-ld";
 import { Container, FaqList, PageHero, SectionHeader } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
 import { supportFaqs } from "@/lib/site-data";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Support | Tacklers Consulting Group",
+const supportSeo = {
   description:
-    "Support information for existing Tacklers clients and prospective partners with questions about Lean transformation and delivery support.",
-};
+    "Get help from Tacklers Consulting Group with client support, operational questions, and on-site coordination for ongoing improvement work.",
+  image: "/media/photo-1517976487492-5750f3195933-200958be.jpg",
+  title: "Support | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: supportSeo.description,
+  image: supportSeo.image,
+  path: "/support",
+  title: supportSeo.title,
+});
 
 export default function SupportPage() {
   return (
     <>
+      <JsonLd
+        data={[
+          buildWebPageJsonLd({
+            description: supportSeo.description,
+            path: "/support",
+            title: supportSeo.title,
+          }),
+          buildBreadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Support", path: "/support" },
+          ]),
+          buildFaqJsonLd(supportFaqs),
+        ]}
+      />
       <PageHero
         eyebrow="Help center"
         title="How can we support you?"
-        body="Whether you are an existing client needing operational support or a prospective partner with questions, our team is here to help."
+        body="Whether you need client support, on-site coordination, or a practical next step for a new challenge, our team will help you get to the right conversation quickly."
+        primary={{ label: "Book a discovery call", href: "/discovery-call" }}
+        secondary={{ label: "Arrange on-site support", href: "/on-site-assessment" }}
+        image={supportSeo.image}
       />
 
       <section className="section-gap">
@@ -39,7 +67,7 @@ export default function SupportPage() {
             <div className="card">
               <h2 className="text-2xl font-semibold text-slate-950">On-site support</h2>
               <p className="mt-4 text-slate-600">We support clients at their locations across the UK and do not operate a public office for visits.</p>
-              <Link href="/request-an-on-site-assessment" className="mt-6 inline-flex text-[#8a0917]">
+              <Link href="/on-site-assessment" className="mt-6 inline-flex text-[#8a0917]">
                 Arrange an on-site conversation
               </Link>
             </div>
@@ -49,14 +77,16 @@ export default function SupportPage() {
 
       <section className="section-gap bg-slate-50">
         <Container>
-          <SectionHeader eyebrow="FAQ" title="Frequently asked questions" />
-          <FaqList items={supportFaqs} />
+          <SectionHeader eyebrow="FAQ" title="Frequently asked questions" center />
+          <div className="mx-auto max-w-4xl">
+            <FaqList items={supportFaqs} />
+          </div>
         </Container>
       </section>
 
       <section className="section-gap">
         <Container>
-          <div className="card max-w-3xl">
+          <div className="card mx-auto max-w-3xl text-center">
             <p className="eyebrow">Still need help?</p>
             <h2 className="section-title">Reach out directly</h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">

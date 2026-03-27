@@ -1,31 +1,23 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { Container } from "@/components/sections";
+import { createPageMetadata } from "@/lib/site-seo";
+
+const signUpSeo = {
+  description:
+    "Create a Tacklers Consulting Group portal account, then access your dashboard, documents, and live programme updates.",
+  image: "/media/Cost-Management-f9a07bf6.jpeg",
+  title: "Create Account | Tacklers Consulting Group",
+} as const;
+
+export const metadata: Metadata = createPageMetadata({
+  description: signUpSeo.description,
+  image: signUpSeo.image,
+  noIndex: true,
+  path: "/sign-up",
+  title: signUpSeo.title,
+});
 
 export default function SignUpPage() {
-  return (
-    <section className="section-gap">
-      <Container>
-        <div className="mx-auto max-w-xl">
-          <div className="card grid gap-5">
-            <div>
-              <p className="eyebrow">Admin access</p>
-              <h1 className="section-title">Sign up is disabled</h1>
-              <p className="mt-3 text-slate-600">
-                Admin accounts are provisioned through deployment environment variables for Vercel,
-                not through public registration.
-              </p>
-            </div>
-
-            <p className="text-center text-sm text-slate-600">
-              Return to{" "}
-              <Link href="/sign-in" className="font-semibold text-[#8a0917]">
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </div>
-      </Container>
-    </section>
-  );
+  redirect("/sign-in?mode=sign-up");
 }
