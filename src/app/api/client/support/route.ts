@@ -4,6 +4,7 @@ import {
   ensureClientPortalContext,
   toSupportTicketNumber,
 } from "@/lib/portal-data";
+import { sendSupportTicketCreatedEmails } from "@/lib/support-email";
 
 export const runtime = "nodejs";
 
@@ -172,6 +173,17 @@ export async function POST(request: Request) {
       entityTable: "support_tickets",
       eventType: "support_ticket_created",
       title: subject,
+    });
+
+    await sendSupportTicketCreatedEmails({
+      category,
+      clientName: client.name,
+      messageBody,
+      priority,
+      requesterEmail: account.email,
+      requesterName: account.full_name,
+      subject,
+      ticketNumber: ticket.ticket_number,
     });
 
     return Response.json({ ticket }, { status: 201 });

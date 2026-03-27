@@ -141,18 +141,18 @@ export type ClientHubContent = {
 
 const DEFAULT_CLIENT_HUB_CONTENT: ClientHubContent = {
   meta: {
-    pageTitle: "Client Hub | Tacklers Consulting",
-    brandName: "Tacklers Consulting",
-    brandSubtitle: "Bespoke advisory workspace",
-    sidebarTitle: "Client Hub",
-    sidebarSubtitle: "Programme access",
-    greetingLabel: "Portfolio Overview",
+    pageTitle: "Lean Training Hub | Tacklers Consulting",
+    brandName: "Tacklers Training Hub",
+    brandSubtitle: "Lean capability journey",
+    sidebarTitle: "Lean Training Hub",
+    sidebarSubtitle: "Learning workspace",
+    greetingLabel: "Training overview",
     greetingName: "Audrey",
     greetingBody:
-      "Your lean transformation programme is currently ahead of schedule. We have identified 12 new value-adding opportunities in the Aerospace MAIT stream.",
-    searchPlaceholder: "Search programme data...",
-    ctaLabel: "Enquire Now",
-    footerCopy: "© 2026 Tacklers Consulting Group • Bespoke Advisory Services",
+      "Your team can now track sessions, syllabus coverage, exams, learning packs, and progress from one training-focused workspace.",
+    searchPlaceholder: "Search sessions, modules, and resources...",
+    ctaLabel: "Ask for coaching support",
+    footerCopy: "© 2026 Tacklers Consulting Group • Lean training delivery workspace",
   },
   navigation: {
     primary: [

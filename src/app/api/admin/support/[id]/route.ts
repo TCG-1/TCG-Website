@@ -2,6 +2,7 @@ import {
   createAdminAuditEntry,
   ensureAdminPortalContext,
 } from "@/lib/portal-data";
+import { sendSupportAdminReplyEmail } from "@/lib/support-email";
 
 export const runtime = "nodejs";
 
@@ -104,6 +105,25 @@ export async function PATCH(request: Request, context: RouteContext) {
 
       if (messageError) {
         throw new Error(messageError.message);
+      }
+
+      if (ticket.requester_client_account_id) {
+        const { data: requester } = await supabase
+          .from("client_accounts")
+          .select("email")
+          .eq("id", ticket.requester_client_account_id)
+          .maybeSingle();
+
+        if (requester?.email) {
+          await sendSupportAdminReplyEmail({
+            adminName: account.full_name,
+            messageBody,
+            status: ticket.status,
+            subject: ticket.subject,
+            ticketNumber: ticket.ticket_number,
+            to: requester.email,
+          });
+        }
       }
 
       if (ticket.requester_client_account_id) {

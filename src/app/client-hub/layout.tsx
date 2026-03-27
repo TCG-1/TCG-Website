@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: content.meta.pageTitle,
     description:
-      "Client dashboard for programmes, mentoring schedules, knowledge resources, notifications, documents, and transformation progress.",
+      "Lean training hub for sessions, syllabus, exams, resources, learner progress, and support.",
   };
 }
 

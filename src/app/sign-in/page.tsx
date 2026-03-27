@@ -35,12 +35,12 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     searchParams,
   ]);
 
-  if (portalUser) {
-    redirect("/client-hub");
-  }
-
   if (adminAuth.user) {
     redirect("/admin");
+  }
+
+  if (portalUser) {
+    redirect("/client-hub");
   }
 
   const adminInitialMessage =

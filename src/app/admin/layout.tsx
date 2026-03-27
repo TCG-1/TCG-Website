@@ -5,7 +5,7 @@ import { requireAdminUser } from "@/lib/admin-auth";
 
 export const metadata: Metadata = {
   title: "Admin Panel | Tacklers Consulting Group",
-  description: "Tacklers admin area for blog and lead management.",
+  description: "Tacklers training operations admin for cohorts, sessions, learners, assessments, resources, and portal control.",
   robots: { index: false, follow: false },
 };
 

@@ -2,6 +2,7 @@ import {
   createClientActivityEntry,
   ensureClientPortalContext,
 } from "@/lib/portal-data";
+import { sendSupportClientReplyEmail } from "@/lib/support-email";
 
 export const runtime = "nodejs";
 
@@ -113,6 +114,15 @@ export async function PATCH(request: Request, context: RouteContext) {
           })),
         );
       }
+
+      await sendSupportClientReplyEmail({
+        clientName: client.name,
+        messageBody,
+        requesterEmail: account.email,
+        requesterName: account.full_name,
+        subject: ticket.subject,
+        ticketNumber: ticket.ticket_number,
+      });
     }
 
     await createClientActivityEntry({

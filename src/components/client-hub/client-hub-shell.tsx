@@ -15,23 +15,62 @@ type WorkspaceItem = {
   icon: DashboardIconName;
 };
 
+const learningItems: WorkspaceItem[] = [
+  {
+    href: "/client-hub",
+    label: "Training Overview",
+    subtitle: "What is next, what is due, and where the cohort stands",
+    icon: "dashboard",
+  },
+  {
+    href: "/client-hub/schedule",
+    label: "Session Calendar",
+    subtitle: "Live workshops, coaching, timing, and preparation",
+    icon: "calendar",
+  },
+  {
+    href: "/client-hub/syllabus",
+    label: "Syllabus",
+    subtitle: "Modules, learning outcomes, and pathway coverage",
+    icon: "book",
+  },
+  {
+    href: "/client-hub/assessments",
+    label: "Exams & Tasks",
+    subtitle: "Knowledge checks, practical work, and feedback",
+    icon: "check",
+  },
+  {
+    href: "/client-hub/resources",
+    label: "Resources",
+    subtitle: "Workbooks, templates, revision guides, and packs",
+    icon: "document",
+  },
+  {
+    href: "/client-hub/progress",
+    label: "Progress",
+    subtitle: "Attendance, confidence, completion, and readiness",
+    icon: "chart",
+  },
+];
+
 const workspaceItems: WorkspaceItem[] = [
   {
     href: "/client-hub/notifications",
     label: "Notifications",
-    subtitle: "Alerts, updates, and reminders",
+    subtitle: "Announcements, reminders, and release alerts",
     icon: "bell",
   },
   {
     href: "/client-hub/documents",
     label: "Documents",
-    subtitle: "Shared files and access control",
+    subtitle: "Shared non-learning files and governance packs",
     icon: "document",
   },
   {
     href: "/client-hub/support",
     label: "Support",
-    subtitle: "Help, tickets, and requests",
+    subtitle: "Questions, ticket updates, and help requests",
     icon: "message",
   },
   {
@@ -77,12 +116,7 @@ export function ClientHubShell({
   const [isLoggingOut, startTransition] = useTransition();
 
   const currentArea =
-    workspaceItems.find((item) => isActivePath(pathname, item.href)) ?? {
-      href: "/client-hub",
-      label: content.meta.sidebarTitle,
-      subtitle: content.meta.sidebarSubtitle,
-      icon: "dashboard" as const,
-    };
+    [...learningItems, ...workspaceItems].find((item) => isActivePath(pathname, item.href)) ?? learningItems[0];
 
   return (
     <div
@@ -96,26 +130,26 @@ export function ClientHubShell({
           </div>
           <div>
             <p className="text-lg font-extrabold text-[#7d0b16] [font-family:var(--font-client-headline)]">
-              {content.meta.brandName}
+              Tacklers Training Hub
             </p>
             <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">
-              {content.meta.brandSubtitle}
+              Lean capability journey
             </p>
           </div>
         </div>
 
         <div className="mt-10">
           <p className="px-4 text-[10px] font-bold uppercase tracking-[0.26em] text-slate-400">
-            Programme Workspace
+            Learning Journey
           </p>
           <div className="mt-3 space-y-2">
-            {content.navigation.primary.map((item, index) => {
-              const active = pathname === "/client-hub" && index === 0;
+            {learningItems.map((item) => {
+              const active = isActivePath(pathname, item.href);
 
               return (
                 <Link
-                  key={`${item.label}-${item.section}`}
-                  href={getDashboardHref(pathname, item.section)}
+                  key={item.href}
+                  href={item.href}
                   className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
                     active
                       ? "bg-white text-[#7d0b16] shadow-sm ring-1 ring-[#ead7d3]"
@@ -166,10 +200,15 @@ export function ClientHubShell({
             Quick Links
           </p>
           <div className="mt-3 space-y-2">
-            {content.navigation.secondary.map((item) =>
+            {[
+              { href: "/client-hub/notifications", label: "Notifications", icon: "bell" as const },
+              { href: "/client-hub/support", label: "Support", icon: "message" as const },
+              { href: "/client-hub/settings", label: "Settings", icon: "settings" as const },
+              { href: "#logout", label: "Logout", icon: "logout" as const },
+            ].map((item) =>
               item.icon === "logout" ? (
                 <button
-                  key={`${item.label}-${item.section}`}
+                  key={item.label}
                   type="button"
                   onClick={() => {
                     startTransition(async () => {
@@ -185,8 +224,8 @@ export function ClientHubShell({
                 </button>
               ) : (
                 <Link
-                  key={`${item.label}-${item.section}`}
-                  href={getDashboardHref(pathname, item.section)}
+                  key={item.href}
+                  href={item.href}
                   className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-slate-500 transition hover:bg-white hover:text-[#7d0b16]"
                 >
                   <DashboardIcon name={item.icon} className="h-5 w-5" />
@@ -197,10 +236,10 @@ export function ClientHubShell({
           </div>
 
           <Link
-            href="/discovery-call"
+            href="/client-hub/support"
             className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#62000b_0%,#8a0917_100%)] px-4 py-3 text-xs font-bold uppercase tracking-[0.24em] text-white transition hover:opacity-90"
           >
-            {content.meta.ctaLabel}
+            Ask for coaching support
           </Link>
 
           <div className="mt-6 rounded-[1.5rem] border border-[#e6dad5] bg-white/70 p-5">
@@ -214,10 +253,10 @@ export function ClientHubShell({
                 />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#2b2929]">{userDisplayName}</p>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{userEmail}</p>
-              </div>
+              <p className="text-sm font-semibold text-[#2b2929]">{userDisplayName}</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{userEmail}</p>
             </div>
+          </div>
             <Link
               href="/client-hub/profile"
               className="mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8e6200] transition hover:gap-3"
@@ -234,7 +273,7 @@ export function ClientHubShell({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-[#8e6200]">
-                {content.meta.sidebarTitle}
+                Lean Training Hub
               </p>
               <div className="mt-1 text-xl font-light tracking-tight text-[#7d0b16] [font-family:var(--font-client-headline)]">
                 {currentArea.label}
@@ -249,7 +288,7 @@ export function ClientHubShell({
                 </span>
                 <input
                   className="w-full rounded-full border border-[#e3d9d4] bg-[#f2eeeb] py-2 pl-10 pr-4 text-sm outline-none transition focus:border-[#c87e75] sm:w-72"
-                  placeholder={content.meta.searchPlaceholder}
+                  placeholder="Search modules, sessions, resources..."
                   type="text"
                 />
               </label>
@@ -299,7 +338,7 @@ export function ClientHubShell({
         {children}
 
         <footer className="flex flex-col gap-4 border-t border-[#ede3df] px-6 py-8 text-[11px] font-bold uppercase tracking-[0.24em] text-slate-400 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <div>{content.meta.footerCopy}</div>
+          <div>© 2026 Tacklers Consulting Group • Lean training delivery workspace</div>
           <div className="flex flex-wrap gap-5">
             {content.navigation.footerLinks.map((link) => (
               <Link key={`${link.label}-${link.href}`} href={link.href} className="transition hover:text-[#7d0b16]">

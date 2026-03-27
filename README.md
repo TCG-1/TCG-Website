@@ -60,6 +60,14 @@ NEXT_PUBLIC_SUPABASE_URL=
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
 SUPABASE_CAREERS_BUCKET=career-applications
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM_NAME=Tacklers Consulting Group
+SMTP_FROM_EMAIL=
+SMTP_ADMIN_EMAIL=
 
 ADMIN_EMAIL=
 ADMIN_PASSWORD=
@@ -71,6 +79,7 @@ Notes:
 
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-only.
 - `SUPABASE_URL` is optional if you already set `NEXT_PUBLIC_SUPABASE_URL`.
+- SMTP is used for enquiry, careers, and support emails. For Google Workspace or Gmail app passwords, `smtp.gmail.com` on port `465` with `SMTP_SECURE=true` is the intended setup.
 - `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` are required for production admin access.
 
 ## Supabase setup

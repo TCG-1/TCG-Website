@@ -1,6 +1,5 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
+import { buildDetailList, buildTextSummary, renderEmailShell } from "@/lib/branded-email";
+import { getAdminInboxEmail, sendEmail } from "@/lib/smtp";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type InquiryKind =
@@ -34,19 +33,6 @@ type CareerLeadInput = {
 	resumeFilename: string;
 };
 
-type EmailPayload = {
-	html: string;
-	replyTo?: string;
-	subject: string;
-	text: string;
-	to: string | string[];
-};
-
-const ADMIN_EMAIL = "hello@tacklersconsulting.com";
-const DEFAULT_FROM_EMAIL = `Tacklers Consulting Group <${ADMIN_EMAIL}>`;
-const RESEND_ENDPOINT = "https://api.resend.com/emails";
-let logoDataUriPromise: Promise<string | null> | null = null;
-
 function normalizeText(value: unknown) {
 	return typeof value === "string" ? value.trim() : "";
 }
@@ -64,15 +50,6 @@ function toTitle(value: string) {
 
 function isValidEmail(value: string) {
 	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
-function escapeHtml(value: string) {
-	return value
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/\"/g, "&quot;")
-		.replace(/'/g, "&#39;");
 }
 
 function toSource(kind: InquiryKind) {
@@ -156,108 +133,6 @@ function buildStructuredMessage({
 	return sections.join("\n\n");
 }
 
-function buildTextSummary(details: Array<{ label: string; value: string }>) {
-	return details.map((item) => `${item.label}: ${item.value}`).join("\n");
-}
-
-function buildDetailList(details: Array<{ label: string; value: string }>) {
-	return details
-		.map(
-			(item) => `
-				<tr>
-					<td style="padding:10px 12px;border-bottom:1px solid #f1e5e2;font-size:13px;font-weight:700;color:#8a0917;vertical-align:top;">${escapeHtml(item.label)}</td>
-					<td style="padding:10px 12px;border-bottom:1px solid #f1e5e2;font-size:14px;line-height:1.6;color:#334155;vertical-align:top;">${escapeHtml(item.value)}</td>
-				</tr>`,
-		)
-		.join("");
-}
-
-function renderEmailShell({
-	intro,
-	sections,
-	subject,
-}: {
-	intro: string;
-	sections: string;
-	subject: string;
-}) {
-	return getLogoDataUri().then((logoDataUri) => {
-		const logoMarkup = logoDataUri
-			? `<img src="${logoDataUri}" alt="Tacklers Consulting Group" width="150" style="display:block;height:auto;max-width:150px;" />`
-			: `<div style="font-size:22px;font-weight:800;letter-spacing:0.02em;color:#ffffff;">Tacklers Consulting Group</div>`;
-
-		return `
-			<div style="margin:0;padding:0;background:#f6f7fb;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
-				<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f6f7fb;padding:24px 12px;">
-					<tr>
-						<td align="center">
-							<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 18px 60px rgba(15,23,42,0.08);">
-								<tr>
-									<td style="background:linear-gradient(135deg,#690711 0%,#8a0917 58%,#b31223 100%);padding:28px 32px;">
-										${logoMarkup}
-										<div style="margin-top:18px;font-size:11px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:#fdd835;">Operational Excellence Consulting</div>
-										<div style="margin-top:10px;font-size:30px;font-weight:300;line-height:1.1;color:#ffffff;">${escapeHtml(subject)}</div>
-									</td>
-								</tr>
-								<tr>
-									<td style="padding:32px 32px 20px;">
-										<p style="margin:0 0 18px;font-size:15px;line-height:1.8;color:#475569;">${escapeHtml(intro)}</p>
-										${sections}
-									</td>
-								</tr>
-								<tr>
-									<td style="padding:24px 32px;background:#fff8df;border-top:1px solid #f5e59e;">
-										<div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#7d5d00;">Tacklers Consulting Group</div>
-										<p style="margin:10px 0 0;font-size:13px;line-height:1.7;color:#5b6472;">hello@tacklersconsulting.com • +44 7932 105847 • On-site at client locations across the UK</p>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-			</div>`;
-	});
-}
-
-async function getLogoDataUri() {
-	if (!logoDataUriPromise) {
-		logoDataUriPromise = readFile(path.join(process.cwd(), "public", "media", "TCG Logo.png"))
-			.then((buffer) => `data:image/png;base64,${buffer.toString("base64")}`)
-			.catch(() => null);
-	}
-
-	return logoDataUriPromise;
-}
-
-async function sendEmail({ html, replyTo, subject, text, to }: EmailPayload) {
-	const apiKey = process.env.RESEND_API_KEY;
-
-	if (!apiKey) {
-		console.warn("Skipping email delivery because RESEND_API_KEY is missing.");
-		return;
-	}
-
-	const response = await fetch(RESEND_ENDPOINT, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			from: process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM_EMAIL,
-			html,
-			reply_to: replyTo,
-			subject,
-			text,
-			to: Array.isArray(to) ? to : [to],
-		}),
-	});
-
-	if (!response.ok) {
-		const payload = (await response.json().catch(() => ({}))) as { message?: string };
-		throw new Error(payload.message ?? "Email delivery failed.");
-	}
-}
 
 async function createAdminNotifications({
 	body,
@@ -558,11 +433,11 @@ export async function handleInquirySubmission(input: InquirySubmissionInput) {
 			replyTo: email,
 			subject: adminSubject,
 			text: `${adminIntro}\n\n${buildTextSummary(detailRows)}`,
-			to: ADMIN_EMAIL,
+			to: getAdminInboxEmail(),
 		}),
 		sendEmail({
 			html: thanksHtml,
-			replyTo: ADMIN_EMAIL,
+			replyTo: getAdminInboxEmail(),
 			subject: thanksSubject,
 			text: `${thanksIntro}\n\n${buildTextSummary(detailRows)}`,
 			to: email,
@@ -667,11 +542,11 @@ export async function handleCareerApplicationLead(input: CareerLeadInput) {
 			replyTo: email,
 			subject: adminSubject,
 			text: `New application received.\n\n${buildTextSummary(detailRows)}`,
-			to: ADMIN_EMAIL,
+			to: getAdminInboxEmail(),
 		}),
 		sendEmail({
 			html: thanksHtml,
-			replyTo: ADMIN_EMAIL,
+			replyTo: getAdminInboxEmail(),
 			subject: "Thank you for your application to Tacklers Consulting Group",
 			text: `Thank you for applying for ${jobTitle}. We have received your details and CV.`,
 			to: email,

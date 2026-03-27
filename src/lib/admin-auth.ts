@@ -3,6 +3,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
+
 const ADMIN_SESSION_COOKIE = "tcg_admin_session";
 const ADMIN_SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 const DEV_ADMIN_EMAIL = "hello@tacklersconsulting.com";
@@ -129,6 +131,16 @@ export function getAdminConfigError() {
   return config.configured ? null : config.error;
 }
 
+export function isAdminEmail(email?: string | null) {
+  const config = getAdminConfig();
+
+  if (!config.configured || !email) {
+    return false;
+  }
+
+  return safeEqual(email.trim().toLowerCase(), config.user.email);
+}
+
 export function validateAdminCredentials(email: string, password: string) {
   const config = getAdminConfig();
 
@@ -169,26 +181,30 @@ export async function getAdminUser() {
 
   const cookieStore = await cookies();
   const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  const sessionEmail = token ? readSessionEmail(token, config) : null;
 
-  if (!token) {
+  if (sessionEmail) {
     return {
       configured: true as const,
-      user: null,
+      user: config.user,
     };
   }
 
-  const email = readSessionEmail(token, config);
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user: portalUser },
+  } = await supabase.auth.getUser();
 
-  if (!email) {
+  if (isAdminEmail(portalUser?.email)) {
     return {
       configured: true as const,
-      user: null,
+      user: config.user,
     };
   }
 
   return {
     configured: true as const,
-    user: config.user,
+    user: null,
   };
 }
 

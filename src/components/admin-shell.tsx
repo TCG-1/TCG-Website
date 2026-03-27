@@ -10,6 +10,7 @@ type AdminNavItem = {
   subtitle: string;
   icon:
     | "dashboard"
+    | "calendar"
     | "blog"
     | "leads"
     | "client-hub"
@@ -27,25 +28,64 @@ const primaryNavItems: AdminNavItem[] = [
   {
     href: "/admin",
     label: "Dashboard",
-    subtitle: "Portal overview and quick controls",
+    subtitle: "Training operations overview and risk control",
     icon: "dashboard",
   },
   {
+    href: "/admin/training",
+    label: "Programmes",
+    subtitle: "Cohorts, pathways, syllabus, and sponsor setup",
+    icon: "client-hub",
+  },
+  {
+    href: "/admin/sessions",
+    label: "Sessions",
+    subtitle: "Upcoming delivery, facilitators, attendance, and readiness",
+    icon: "calendar",
+  },
+  {
+    href: "/admin/learners",
+    label: "Learners",
+    subtitle: "Rosters, engagement, at-risk learners, and coaching actions",
+    icon: "leads",
+  },
+  {
+    href: "/admin/assessments",
+    label: "Assessments",
+    subtitle: "Exam windows, practical tasks, grading, and feedback release",
+    icon: "applications",
+  },
+  {
+    href: "/admin/resources",
+    label: "Resources",
+    subtitle: "Workbooks, facilitator packs, revision guides, and releases",
+    icon: "documents",
+  },
+  {
+    href: "/admin/progress",
+    label: "Progress",
+    subtitle: "Attendance, completion, certification, and training health",
+    icon: "activity",
+  },
+];
+
+const secondaryNavItems: AdminNavItem[] = [
+  {
     href: "/admin/blog",
     label: "Blog",
-    subtitle: "Articles, categories, and publishing",
+    subtitle: "Website articles, categories, and publishing",
     icon: "blog",
   },
   {
     href: "/admin/leads",
     label: "Leads",
-    subtitle: "Discovery calls, assessments, and contact flow",
-    icon: "leads",
+    subtitle: "Discovery calls, assessments, and inbound enquiries",
+    icon: "dashboard",
   },
   {
     href: "/admin/client-hub",
-    label: "Client Hub",
-    subtitle: "Client dashboard content and portal control",
+    label: "Portal Content",
+    subtitle: "Client-facing portal copy, hero content, and dashboard editor",
     icon: "client-hub",
   },
   {
@@ -60,9 +100,6 @@ const primaryNavItems: AdminNavItem[] = [
     subtitle: "Candidate review and attachment workflow",
     icon: "applications",
   },
-];
-
-const secondaryNavItems: AdminNavItem[] = [
   {
     href: "/admin/notifications",
     label: "Notifications",
@@ -121,6 +158,13 @@ function AdminNavIcon({
       return (
         <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
           <path d="M4 5h7v6H4zM13 5h7v4h-7zM13 11h7v8h-7zM4 13h7v6H4z" stroke="currentColor" strokeWidth="1.7" />
+        </svg>
+      );
+    case "calendar":
+      return (
+        <svg viewBox="0 0 24 24" className={`h-5 w-5 ${className}`} fill="none" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.7" />
+          <path d="M16 3v4M8 3v4M3 10h18" stroke="currentColor" strokeWidth="1.7" />
         </svg>
       );
     case "blog":
@@ -302,7 +346,7 @@ export function AdminShell({
           </div>
 
           <p className="mt-8 px-4 text-[10px] font-bold uppercase tracking-[0.26em] text-slate-500">
-            Operations & Access
+            Website, Hiring & Platform
           </p>
           <div className="mt-3 space-y-1">
             {secondaryNavItems.map((item) => {
