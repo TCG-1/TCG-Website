@@ -218,12 +218,15 @@ export function TrainingSessionForm({
   const [form, setForm] = useState({
     cohortId: cohorts[0]?.id ?? "",
     endsAt: "",
+    facilitatorNotes: "",
+    followUpActions: "",
     locationLabel: "Client site training room",
     moduleId: modules[0]?.id ?? "",
     preworkText: "",
     readinessStatus: "not_ready",
     startsAt: "",
     title: "",
+    virtualLink: "",
   });
 
   return (
@@ -238,12 +241,15 @@ export function TrainingSessionForm({
               body: JSON.stringify({
                 ...form,
                 endsAt: form.endsAt || null,
+                facilitatorNotes: form.facilitatorNotes || null,
+                followUpActions: form.followUpActions || null,
                 moduleId: form.moduleId || null,
                 preworkItems: form.preworkText
                   .split(/\r?\n/)
                   .map((item) => item.trim())
                   .filter(Boolean),
                 startsAt: form.startsAt || null,
+                virtualLink: form.virtualLink || null,
               }),
               method: "POST",
             });
@@ -251,9 +257,12 @@ export function TrainingSessionForm({
             setForm((current) => ({
               ...current,
               endsAt: "",
+              facilitatorNotes: "",
+              followUpActions: "",
               preworkText: "",
               startsAt: "",
               title: "",
+              virtualLink: "",
             }));
             router.refresh();
           } catch (error) {
@@ -342,6 +351,16 @@ export function TrainingSessionForm({
         />
       </FormField>
 
+      <FormField label="Virtual link">
+        <input
+          className={textInputClassName()}
+          type="url"
+          value={form.virtualLink}
+          onChange={(event) => setForm((current) => ({ ...current, virtualLink: event.target.value }))}
+          placeholder="https://meet.google.com/..."
+        />
+      </FormField>
+
       <FormField label="Prework checklist">
         <textarea
           className={`${textInputClassName()} min-h-28`}
@@ -350,6 +369,25 @@ export function TrainingSessionForm({
           placeholder={"One item per line\nReview workbook\nBring one process example"}
         />
       </FormField>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <FormField label="Facilitator notes">
+          <textarea
+            className={`${textInputClassName()} min-h-24`}
+            value={form.facilitatorNotes}
+            onChange={(event) => setForm((current) => ({ ...current, facilitatorNotes: event.target.value }))}
+            placeholder="Internal trainer context, setup details, or coaching notes."
+          />
+        </FormField>
+        <FormField label="Follow-up actions">
+          <textarea
+            className={`${textInputClassName()} min-h-24`}
+            value={form.followUpActions}
+            onChange={(event) => setForm((current) => ({ ...current, followUpActions: event.target.value }))}
+            placeholder="Actions learners should take after the session."
+          />
+        </FormField>
+      </div>
 
       {notice ? <Notice message={notice.message} tone={notice.tone} /> : null}
 
@@ -384,7 +422,7 @@ export function TrainingLearnerForm({ cohorts }: { cohorts: ReferenceOption[] })
               body: JSON.stringify(form),
               method: "POST",
             });
-            setNotice({ message: "Learner enrolled in the cohort.", tone: "success" });
+            setNotice({ message: "Learner invited and added to the cohort.", tone: "success" });
             setForm((current) => ({
               ...current,
               email: "",
@@ -480,7 +518,10 @@ export function TrainingAssessmentForm({
     cohortId: cohorts[0]?.id ?? "",
     dueAt: "",
     instructions: "",
+    maxAttempts: "2",
+    maxScore: "100",
     moduleId: modules[0]?.id ?? "",
+    passScore: "80",
     title: "",
   });
 
@@ -496,7 +537,10 @@ export function TrainingAssessmentForm({
               body: JSON.stringify({
                 ...form,
                 dueAt: form.dueAt || null,
+                maxAttempts: form.maxAttempts ? Number(form.maxAttempts) : null,
+                maxScore: form.maxScore ? Number(form.maxScore) : null,
                 moduleId: form.moduleId || null,
+                passScore: form.passScore ? Number(form.passScore) : null,
               }),
               method: "POST",
             });
@@ -505,6 +549,9 @@ export function TrainingAssessmentForm({
               ...current,
               dueAt: "",
               instructions: "",
+              maxAttempts: "2",
+              maxScore: "100",
+              passScore: "80",
               title: "",
             }));
             router.refresh();
@@ -575,6 +622,33 @@ export function TrainingAssessmentForm({
             onChange={(event) => setForm((current) => ({ ...current, dueAt: event.target.value }))}
           />
         </FormField>
+        <FormField label="Max score">
+          <input
+            className={textInputClassName()}
+            inputMode="decimal"
+            value={form.maxScore}
+            onChange={(event) => setForm((current) => ({ ...current, maxScore: event.target.value }))}
+            placeholder="100"
+          />
+        </FormField>
+        <FormField label="Pass score">
+          <input
+            className={textInputClassName()}
+            inputMode="decimal"
+            value={form.passScore}
+            onChange={(event) => setForm((current) => ({ ...current, passScore: event.target.value }))}
+            placeholder="80"
+          />
+        </FormField>
+        <FormField label="Max attempts">
+          <input
+            className={textInputClassName()}
+            inputMode="numeric"
+            value={form.maxAttempts}
+            onChange={(event) => setForm((current) => ({ ...current, maxAttempts: event.target.value }))}
+            placeholder="2"
+          />
+        </FormField>
       </div>
 
       <FormField label="Instructions">
@@ -614,8 +688,11 @@ export function TrainingResourceForm({
     moduleId: modules[0]?.id ?? "",
     programmeId: programmes[0]?.id ?? "",
     resourceKind: "workbook",
+    status: "released",
     summary: "",
     title: "",
+    versionLabel: "v1.0",
+    visibleFrom: "",
   });
 
   return (
@@ -633,7 +710,10 @@ export function TrainingResourceForm({
                 href: form.href || null,
                 moduleId: form.moduleId || null,
                 programmeId: form.programmeId || null,
+                status: form.status,
                 summary: form.summary || null,
+                versionLabel: form.versionLabel || null,
+                visibleFrom: form.visibleFrom || null,
               }),
               method: "POST",
             });
@@ -643,6 +723,8 @@ export function TrainingResourceForm({
               href: "",
               summary: "",
               title: "",
+              versionLabel: "v1.0",
+              visibleFrom: "",
             }));
             router.refresh();
           } catch (error) {
@@ -733,6 +815,25 @@ export function TrainingResourceForm({
             <option value="facilitator_pack">Facilitator pack</option>
           </select>
         </FormField>
+        <FormField label="Status">
+          <select
+            className={textInputClassName()}
+            value={form.status}
+            onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))}
+          >
+            <option value="draft">Draft</option>
+            <option value="released">Released</option>
+            <option value="retired">Retired</option>
+          </select>
+        </FormField>
+        <FormField label="Version label">
+          <input
+            className={textInputClassName()}
+            value={form.versionLabel}
+            onChange={(event) => setForm((current) => ({ ...current, versionLabel: event.target.value }))}
+            placeholder="v1.0"
+          />
+        </FormField>
       </div>
 
       <FormField label="Link or download URL">
@@ -750,6 +851,15 @@ export function TrainingResourceForm({
           value={form.summary}
           onChange={(event) => setForm((current) => ({ ...current, summary: event.target.value }))}
           placeholder="What this resource is for and when it should be used."
+        />
+      </FormField>
+
+      <FormField label="Visible from">
+        <input
+          className={textInputClassName()}
+          type="datetime-local"
+          value={form.visibleFrom}
+          onChange={(event) => setForm((current) => ({ ...current, visibleFrom: event.target.value }))}
         />
       </FormField>
 
@@ -775,6 +885,7 @@ export function LearnerAssessmentSubmitForm({
   const [isPending, startTransition] = useTransition();
   const [notice, setNotice] = useState<{ message: string; tone: "error" | "success" } | null>(null);
   const [submissionText, setSubmissionText] = useState(existingSubmission ?? "");
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
 
   return (
     <form
@@ -784,11 +895,24 @@ export function LearnerAssessmentSubmitForm({
         setNotice(null);
         startTransition(async () => {
           try {
-            await requestJson(`/api/client/training/assessments/${assessmentId}`, {
-              body: JSON.stringify({ submissionText }),
+            const formData = new FormData();
+            formData.set("submissionText", submissionText);
+            if (evidenceFile) {
+              formData.set("evidenceFile", evidenceFile);
+            }
+
+            const response = await fetch(`/api/client/training/assessments/${assessmentId}`, {
+              body: formData,
               method: "POST",
             });
+            const payload = (await response.json().catch(() => ({}))) as { error?: string };
+
+            if (!response.ok) {
+              throw new Error(payload.error ?? "Unable to submit your evidence.");
+            }
+
             setNotice({ message: "Assessment evidence submitted.", tone: "success" });
+            setEvidenceFile(null);
             router.refresh();
           } catch (error) {
             setNotice({
@@ -809,6 +933,19 @@ export function LearnerAssessmentSubmitForm({
           required
         />
       </FormField>
+
+      <FormField label="Evidence file">
+        <input
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.txt,.png,.jpg,.jpeg"
+          className={textInputClassName()}
+          disabled={disabled || isPending}
+          onChange={(event) => setEvidenceFile(event.target.files?.[0] ?? null)}
+          type="file"
+        />
+      </FormField>
+      <p className="text-xs leading-6 text-slate-500">
+        Accepted formats: PDF, Office docs, CSV, TXT, PNG, JPG, and JPEG up to 10 MB.
+      </p>
 
       {notice ? <Notice message={notice.message} tone={notice.tone} /> : null}
 

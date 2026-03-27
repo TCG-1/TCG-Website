@@ -114,6 +114,12 @@ export default function AdminSupportPage() {
   const { data, error, isLoading, refresh } = useLiveApi<AdminSupportPayload>(
     "/api/admin/support",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [
+        { table: "support_tickets" },
+        { table: "support_ticket_messages" },
+      ],
+    },
   );
   const [notice, setNotice] = useState<Notice>(null);
   const [selectedTicketId, setSelectedTicketId] = useState("");

@@ -1,9 +1,13 @@
 import { TrainingSessionForm } from "@/components/training-portal/training-action-forms";
+import { TrainingAttendanceManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { getAdminSessionWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 
 export default async function AdminSessionsPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, sessionWorkspace] = await Promise.all([
+    getAdminTrainingWorkspace(),
+    getAdminSessionWorkspace(),
+  ]);
 
   return (
     <div className="space-y-10">
@@ -25,6 +29,13 @@ export default async function AdminSessionsPage() {
         description="Create the live workshop, link it to a module, and publish the preparation checklist that learners will see."
       >
         <TrainingSessionForm cohorts={workspace.references.cohorts} modules={workspace.references.modules} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Attendance capture and reminders"
+        description="Mark who attended, who missed, complete the session, and push reminders into the learner portal."
+      >
+        <TrainingAttendanceManager canManage={sessionWorkspace.canManage} sessions={sessionWorkspace.sessions} />
       </PortalPanel>
     </div>
   );

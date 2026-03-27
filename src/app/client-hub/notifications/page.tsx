@@ -51,6 +51,9 @@ export default function ClientHubNotificationsPage() {
   const { data, error, isLoading, refresh } = useLiveApi<ClientNotificationsPayload>(
     "/api/client/notifications",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [{ table: "notifications" }],
+    },
   );
 
   async function markRead(id: string, isRead: boolean) {

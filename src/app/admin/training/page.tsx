@@ -1,10 +1,11 @@
 import { TrainingCohortForm } from "@/components/training-portal/training-action-forms";
+import { TrainingCohortManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalList, PortalPanel, PortalWorkflow } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { getAdminCohortWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 import { trainingBlueprint } from "@/lib/training-portal";
 
 export default async function AdminTrainingProgrammesPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, cohortWorkspace] = await Promise.all([getAdminTrainingWorkspace(), getAdminCohortWorkspace()]);
 
   return (
     <div className="space-y-10">
@@ -37,6 +38,18 @@ export default async function AdminTrainingProgrammesPage() {
           managers={workspace.references.managers}
           programmes={workspace.references.programmes}
           trainers={workspace.references.trainers}
+        />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Cohort lifecycle operations"
+        description="Edit cohort ownership, reschedule delivery windows, or cancel the entire cohort and cascade the update into the learner portal."
+      >
+        <TrainingCohortManager
+          canManage={cohortWorkspace.canManage}
+          cohorts={cohortWorkspace.cohorts}
+          managers={cohortWorkspace.references.managers}
+          trainers={cohortWorkspace.references.trainers}
         />
       </PortalPanel>
     </div>

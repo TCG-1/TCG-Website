@@ -1,5 +1,6 @@
 import { LearnerAssessmentSubmitForm } from "@/components/training-portal/training-action-forms";
-import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
+import { LearnerAssessmentLifecycle } from "@/components/training-portal/training-execution-panels";
+import { PortalIntro, PortalPanel } from "@/components/training-portal/portal-primitives";
 import { getClientTrainingWorkspace } from "@/lib/training-system";
 
 export default async function ClientHubAssessmentsPage() {
@@ -18,7 +19,7 @@ export default async function ClientHubAssessmentsPage() {
           title="Assessment queue"
           description="Released quizzes, practical work, and re-sit actions."
         >
-          <PortalList items={workspace.assessments} />
+          <LearnerAssessmentLifecycle assessments={workspace.assessments} roleLabel={workspace.roleLabel} />
         </PortalPanel>
 
         <PortalPanel
@@ -44,12 +45,22 @@ export default async function ClientHubAssessmentsPage() {
           title="Submit assessment evidence"
           description="Learners can post their evidence directly into the marking queue without leaving the training workspace."
         >
-          {workspace.assessments.length ? (
-            <LearnerAssessmentSubmitForm
-              assessmentId={workspace.assessments[0].assessmentId}
-              existingSubmission={workspace.assessments[0].submissionText}
-              disabled={!workspace.assessments[0].canSubmit}
-            />
+          {workspace.assessments.some((assessment) => assessment.canSubmit) ? (
+            <div className="space-y-6">
+              {workspace.assessments.filter((assessment) => assessment.canSubmit).map((assessment) => (
+                <div key={assessment.assessmentId} className="rounded-[1.5rem] border border-[#ece1dc] bg-[#faf7f5] p-5">
+                  <h3 className="text-lg font-semibold tracking-tight text-slate-950">{assessment.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{assessment.instructions ?? assessment.note}</p>
+                  <div className="mt-4">
+                    <LearnerAssessmentSubmitForm
+                      assessmentId={assessment.assessmentId}
+                      existingSubmission={assessment.submissionText}
+                      disabled={!assessment.canSubmit}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <p className="text-sm leading-6 text-slate-600">No live assessments are waiting for a learner submission.</p>
           )}

@@ -228,11 +228,11 @@ export function TestimonialGrid({
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       {items.map((item) => (
-        <blockquote key={item.author} className="card bg-slate-950 text-white">
-          <p className="text-lg leading-8 text-white/90">“{item.quote}”</p>
-          <footer className="mt-6">
-            <div className="font-semibold">{item.author}</div>
-            <div className="text-sm uppercase tracking-[0.18em] text-white/60">{item.role}</div>
+        <blockquote key={item.author} className="card border-2 border-[#8a0917]/20 bg-gradient-to-br from-slate-50 to-slate-100">
+          <p className="text-lg leading-8 text-slate-800 italic">{`"${item.quote}"`}</p>
+          <footer className="mt-6 border-t border-slate-200 pt-4">
+            <div className="font-bold text-[#8a0917]">{item.author}</div>
+            <div className="text-sm uppercase tracking-[0.18em] text-slate-600">{item.role}</div>
           </footer>
         </blockquote>
       ))}
@@ -256,10 +256,10 @@ export function CtaBanner({
   return (
     <section className="py-20">
       <Container>
-        <div className="rounded-[2rem] bg-gradient-to-br from-[#FDD835] via-[#f6cf2d] to-[#ebc620] px-8 py-14 text-center text-slate-950 shadow-[0_30px_90px_rgba(253,216,53,0.35)] sm:px-10 lg:px-14">
-          {eyebrow ? <p className="eyebrow text-slate-900/75">{eyebrow}</p> : null}
-          <h2 className="section-title mx-auto max-w-4xl text-slate-950">{title}</h2>
-          <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-slate-900/80">{body}</p>
+        <div className="rounded-[2rem] bg-gradient-to-br from-[#FDD835] via-[#f9d76c] to-[#f0c932] px-8 py-14 text-center shadow-[0_30px_90px_rgba(253,216,53,0.3)] sm:px-10 lg:px-14">
+          {eyebrow ? <p className="eyebrow text-[#795900]">{eyebrow}</p> : null}
+          <h2 className="section-title mx-auto max-w-4xl text-[#8a0917]">{title}</h2>
+          <p className="mx-auto mt-4 max-w-3xl text-lg leading-8 text-[#5a3612]">{body}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link href={primary.href} className="button-primary">
               {primary.label}

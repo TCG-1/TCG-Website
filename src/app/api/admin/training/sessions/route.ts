@@ -13,12 +13,15 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       cohortId?: string;
       endsAt?: string | null;
+      facilitatorNotes?: string | null;
+      followUpActions?: string | null;
       locationLabel?: string | null;
       moduleId?: string | null;
       preworkItems?: string[];
       readinessStatus?: string;
       startsAt?: string | null;
       title?: string;
+      virtualLink?: string | null;
     };
 
     if (!body.cohortId || !body.title) {
@@ -28,12 +31,15 @@ export async function POST(request: Request) {
     const session = await createTrainingSession({
       cohortId: body.cohortId,
       endsAt: body.endsAt ?? null,
+      facilitatorNotes: body.facilitatorNotes ?? null,
+      followUpActions: body.followUpActions ?? null,
       locationLabel: body.locationLabel ?? null,
       moduleId: body.moduleId ?? null,
       preworkItems: Array.isArray(body.preworkItems) ? body.preworkItems : [],
       readinessStatus: body.readinessStatus,
       startsAt: body.startsAt ?? null,
       title: body.title,
+      virtualLink: body.virtualLink ?? null,
     });
 
     return Response.json({ session }, { status: 201 });

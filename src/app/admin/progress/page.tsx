@@ -1,9 +1,12 @@
+import { TrainingCertificationManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalKeyline, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
-import { trainingBlueprint } from "@/lib/training-portal";
+import { getAdminCertificationWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 
 export default async function AdminProgressPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, certificationWorkspace] = await Promise.all([
+    getAdminTrainingWorkspace(),
+    getAdminCertificationWorkspace(),
+  ]);
 
   return (
     <div className="space-y-10">
@@ -28,16 +31,10 @@ export default async function AdminProgressPage() {
       </PortalPanel>
 
       <PortalPanel
-        title="Missing scope now surfaced"
-        description="The redesign exposes the delivery capabilities the old structure did not solve."
+        title="Certification review"
+        description="Award or revoke certificates once attendance, assessment performance, and readiness signals meet the delivery standard."
       >
-        <div className="space-y-3 text-sm leading-6 text-slate-600">
-          {trainingBlueprint.missingScope.map((item) => (
-            <div key={item} className="rounded-[1.4rem] border border-[#ece1dc] bg-[#faf7f5] p-4">
-              {item}
-            </div>
-          ))}
-        </div>
+        <TrainingCertificationManager workspace={certificationWorkspace} />
       </PortalPanel>
     </div>
   );

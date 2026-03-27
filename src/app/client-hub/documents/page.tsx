@@ -52,6 +52,12 @@ export default function ClientHubDocumentsPage() {
   const { data, error, isLoading, refresh } = useLiveApi<ClientDocumentsPayload>(
     "/api/client/documents",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [
+        { table: "document_collections" },
+        { table: "documents" },
+      ],
+    },
   );
 
   return (

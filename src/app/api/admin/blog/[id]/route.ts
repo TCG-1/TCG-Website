@@ -67,25 +67,26 @@ export async function PATCH(request: Request, context: RouteContext) {
     const { supabase } = await ensureAdminPortalContext();
     const { id } = await context.params;
     const body = (await request.json()) as Record<string, unknown>;
-    const title = normalizeText(body.title);
-    const requestedSlug = normalizeText(body.slug) || title;
-    const excerpt = normalizeText(body.excerpt);
+    const rawTitle = normalizeText(body.title);
     const postBody = normalizeText(body.body);
     const category = normalizeOptionalText(body.category);
     const canonicalUrl = normalizeOptionalText(body.canonicalUrl);
     const coverUrl = normalizeOptionalText(body.coverUrl);
     const noIndex = normalizeBoolean(body.noIndex);
     const ogImageUrl = normalizeOptionalText(body.ogImageUrl);
+    const status = normalizeText(body.status).toLowerCase() || "draft";
+    const title = rawTitle || (status === "draft" ? "Untitled draft" : "");
+    const requestedSlug = normalizeText(body.slug) || title;
+    const excerpt = normalizeText(body.excerpt) || (status === "draft" ? "Draft excerpt in progress." : "");
     const seoDescription = normalizeOptionalText(body.seoDescription) ?? excerpt;
     const seoTitle = normalizeOptionalText(body.seoTitle);
-    const status = normalizeText(body.status).toLowerCase() || "draft";
-
-    if (!title || !excerpt || !postBody) {
-      return Response.json({ error: "Title, excerpt, and body are required." }, { status: 400 });
-    }
 
     if (!BLOG_STATUSES.has(status)) {
       return Response.json({ error: "Invalid blog status." }, { status: 400 });
+    }
+
+    if (!title || !excerpt || (!postBody && status !== "draft")) {
+      return Response.json({ error: "Title, excerpt, and body are required." }, { status: 400 });
     }
 
     const slug = await resolveUniqueSlug(supabase, requestedSlug, id);
@@ -121,7 +122,9 @@ export async function PATCH(request: Request, context: RouteContext) {
       post_id: id,
     }));
 
-    const { error: sectionsError } = await supabase.from("blog_post_sections").insert(sectionRows);
+    const { error: sectionsError } = sectionRows.length
+      ? await supabase.from("blog_post_sections").insert(sectionRows)
+      : { error: null };
 
     if (sectionsError) {
       throw new Error(sectionsError.message);

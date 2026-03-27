@@ -15,6 +15,24 @@ type PortalSignInFormProps = {
 
 const ADMIN_PORTAL_EMAIL = "hello@tacklersconsulting.com";
 
+async function persistPortalSession(accessToken: string, refreshToken: string) {
+  const response = await fetch("/api/auth/session", {
+    body: JSON.stringify({
+      accessToken,
+      refreshToken,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+  const payload = (await response.json().catch(() => ({}))) as { error?: string };
+
+  if (!response.ok) {
+    throw new Error(payload.error ?? "Unable to persist the portal session.");
+  }
+}
+
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -120,6 +138,7 @@ export function PortalSignInForm({
         }
 
         if (data.session) {
+          await persistPortalSession(data.session.access_token, data.session.refresh_token);
           router.replace("/client-hub");
           router.refresh();
           return;
@@ -156,7 +175,7 @@ export function PortalSignInForm({
         return;
       }
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
       });
@@ -166,7 +185,13 @@ export function PortalSignInForm({
         return;
       }
 
-      router.replace("/sign-in");
+      if (!data.session) {
+        setError("No portal session was returned. Please try again.");
+        return;
+      }
+
+      await persistPortalSession(data.session.access_token, data.session.refresh_token);
+      router.replace("/client-hub");
       router.refresh();
     } finally {
       setIsSubmitting(false);

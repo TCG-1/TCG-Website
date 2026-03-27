@@ -14,14 +14,29 @@ export async function POST(
 ) {
   try {
     const { id } = await context.params;
-    const body = (await request.json()) as { submissionText?: string };
-    const submissionText = body.submissionText?.trim() ?? "";
+    const contentType = request.headers.get("content-type") ?? "";
+    let submissionText = "";
+    let evidenceFile: File | null = null;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      submissionText = String(formData.get("submissionText") ?? "").trim();
+      const evidenceCandidate = formData.get("evidenceFile");
+      evidenceFile = evidenceCandidate instanceof File && evidenceCandidate.size ? evidenceCandidate : null;
+    } else {
+      const body = (await request.json()) as { submissionText?: string };
+      submissionText = body.submissionText?.trim() ?? "";
+    }
 
     if (!submissionText) {
       return Response.json({ error: "Submission text is required." }, { status: 400 });
     }
 
-    const submission = await submitTrainingAssessment(id, submissionText);
+    const submission = await submitTrainingAssessment({
+      assessmentId: id,
+      evidenceFile,
+      submissionText,
+    });
 
     return Response.json({ submission }, { status: 201 });
   } catch (error) {

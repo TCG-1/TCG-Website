@@ -2,8 +2,14 @@
 
 import { useEffect, useEffectEvent, useState } from "react";
 
+import { createClient } from "@/lib/supabase/client";
+
 type LiveApiOptions = {
   pollMs?: number;
+  realtimeTables?: Array<{
+    schema?: string;
+    table: string;
+  }>;
 };
 
 export async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit) {
@@ -27,6 +33,7 @@ export function useLiveApi<T>(endpoint: string, initialData: T, options?: LiveAp
   const [data, setData] = useState<T>(initialData);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const realtimeTablesKey = JSON.stringify(options?.realtimeTables ?? []);
 
   const load = useEffectEvent(async () => {
     try {
@@ -49,10 +56,35 @@ export function useLiveApi<T>(endpoint: string, initialData: T, options?: LiveAp
       void load();
     }, options?.pollMs ?? 15000);
 
+    const realtimeTables = options?.realtimeTables ?? [];
+    const supabase = realtimeTables.length ? createClient() : null;
+    const channel = realtimeTables.length ? supabase?.channel(`live-api-${endpoint}`) : null;
+
+    realtimeTables.forEach((item) => {
+      channel?.on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: item.schema ?? "public",
+          table: item.table,
+        },
+        () => {
+          void load();
+        },
+      );
+    });
+
+    if (channel) {
+      void channel.subscribe();
+    }
+
     return () => {
       window.clearInterval(intervalId);
+      if (supabase && channel) {
+        void supabase.removeChannel(channel);
+      }
     };
-  }, [endpoint, load, options?.pollMs]);
+  }, [endpoint, load, options?.pollMs, realtimeTablesKey]);
 
   return {
     data,

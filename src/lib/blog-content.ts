@@ -37,6 +37,7 @@ function createFallbackEntries(): PublishedBlogEntry[] {
     publishedAt: post.publishedAt ?? null,
     sections: post.content.map((item) => ({
       body: item,
+      image: null,
       items: [],
       type: "paragraph" as const,
     })),

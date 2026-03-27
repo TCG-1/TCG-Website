@@ -1,4 +1,10 @@
-export type BlogSectionType = "bullet_list" | "heading" | "paragraph" | "quote";
+export type BlogSectionType = "bullet_list" | "heading" | "image" | "paragraph" | "quote";
+
+export type BlogImagePayload = {
+  alt: string;
+  caption: string;
+  src: string;
+};
 
 export type BlogSectionShape = {
   body: string;
@@ -8,9 +14,56 @@ export type BlogSectionShape = {
 
 export type BlogRenderBlock = {
   body: string;
+  image: BlogImagePayload | null;
   items: string[];
   type: BlogSectionType;
 };
+
+function createImagePayload(src: string, alt = "", caption = ""): BlogImagePayload {
+  return {
+    alt: alt.trim(),
+    caption: caption.trim(),
+    src: src.trim(),
+  };
+}
+
+export function parseBlogImagePayload(value: string): BlogImagePayload | null {
+  const normalized = value.trim();
+
+  if (!normalized) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(normalized) as Partial<BlogImagePayload>;
+    if (typeof parsed?.src === "string" && parsed.src.trim()) {
+      return createImagePayload(parsed.src, parsed.alt ?? "", parsed.caption ?? "");
+    }
+  } catch {
+    // Fall through to legacy string parsing.
+  }
+
+  const lines = normalized.split("\n").map((line) => line.trim()).filter(Boolean);
+  const firstLine = lines[0] ?? "";
+  const imageMatch = firstLine.match(/^!\[(.*?)\]\((.*?)\)$/);
+
+  if (imageMatch?.[2]?.trim()) {
+    const captionLine = lines.find((line, index) => index > 0 && /^::\s*/.test(line));
+    return createImagePayload(imageMatch[2], imageMatch[1] ?? "", captionLine?.replace(/^::\s*/, "") ?? "");
+  }
+
+  if (/^(https?:\/\/|\/)/.test(firstLine)) {
+    const altLine = lines[1]?.replace(/^alt:\s*/i, "") ?? "";
+    const captionLine = lines.find((line, index) => index > 1 && /^caption:\s*/i.test(line));
+    return createImagePayload(firstLine, altLine, captionLine?.replace(/^caption:\s*/i, "") ?? "");
+  }
+
+  return null;
+}
+
+function serializeBlogImagePayload(payload: BlogImagePayload) {
+  return JSON.stringify(payload);
+}
 
 function normalizeLineBreaks(value: string) {
   return value.replace(/\r\n/g, "\n").trim();
@@ -31,6 +84,16 @@ export function serializeRichTextToSections(body: string) {
     .map((block, index) => {
       const lines = normalizeBlock(block);
       const firstLine = lines[0] ?? "";
+
+      const imagePayload = parseBlogImagePayload(lines.join("\n"));
+
+      if (imagePayload?.src) {
+        return {
+          body: serializeBlogImagePayload(imagePayload),
+          section_type: "image" as const,
+          sort_order: index,
+        };
+      }
 
       if (/^#{2,}\s+/.test(firstLine)) {
         return {
@@ -74,6 +137,17 @@ export function serializeSectionsToRichText(sections: BlogSectionShape[]) {
       switch (section.section_type) {
         case "heading":
           return `## ${content}`;
+        case "image": {
+          const image = parseBlogImagePayload(content);
+
+          if (!image?.src) {
+            return "";
+          }
+
+          return [`![${image.alt} ](${image.src})`.replace(" ](", "]("), image.caption ? `:: ${image.caption}` : ""]
+            .filter(Boolean)
+            .join("\n");
+        }
         case "quote":
           return content
             .split("\n")
@@ -97,7 +171,7 @@ export function normalizeBlogRenderBlocks(sections: BlogSectionShape[]): BlogRen
     .slice()
     .sort((left, right) => left.sort_order - right.sort_order)
     .map((section) => {
-      const type = (["heading", "paragraph", "quote", "bullet_list"].includes(section.section_type)
+      const type = (["heading", "paragraph", "quote", "bullet_list", "image"].includes(section.section_type)
         ? section.section_type
         : "paragraph") as BlogSectionType;
       const body = section.body.trim();
@@ -108,12 +182,14 @@ export function normalizeBlogRenderBlocks(sections: BlogSectionShape[]): BlogRen
               .map((line) => line.trim())
               .filter(Boolean)
           : [];
+      const image = type === "image" ? parseBlogImagePayload(body) : null;
 
       return {
         body,
+        image,
         items,
         type,
       };
     })
-    .filter((section) => section.body.length > 0);
+    .filter((section) => section.type === "image" ? Boolean(section.image?.src) : section.body.length > 0);
 }

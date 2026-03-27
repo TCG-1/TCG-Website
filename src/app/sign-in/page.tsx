@@ -28,6 +28,10 @@ type SignInPageProps = {
   searchParams: Promise<{ error?: string | string[]; mode?: string | string[]; view?: string | string[] }>;
 };
 
+function readSearchParam(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const [portalUser, adminAuth, resolvedSearchParams] = await Promise.all([
     getPortalUser(),
@@ -43,16 +47,20 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     redirect("/client-hub");
   }
 
+  const errorParam = readSearchParam(resolvedSearchParams.error);
+  const viewParam = readSearchParam(resolvedSearchParams.view);
+  const modeParam = readSearchParam(resolvedSearchParams.mode);
+
   const adminInitialMessage =
-    resolvedSearchParams.error === "admin-config"
+    errorParam === "admin-config"
       ? "Admin access is not configured for this deployment yet."
       : "";
   const portalInitialMessage =
-    resolvedSearchParams.error === "oauth"
+    errorParam === "oauth"
       ? "Google sign-in could not be completed. Please try again."
       : "";
-  const showAdminView = resolvedSearchParams.view === "admin";
-  const initialPortalMode = resolvedSearchParams.mode === "sign-up" ? "sign_up" : "sign_in";
+  const showAdminView = viewParam === "admin";
+  const initialPortalMode = modeParam === "sign-up" ? "sign_up" : "sign_in";
 
   return (
     <section className="section-gap">
@@ -91,7 +99,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
                   ? "Use the standard user sign-in flow for client dashboard access, Google sign-in, and account creation."
                   : "Admins can still sign in separately without mixing the client portal flow into the same screen."}
               </p>
-              <Link href={showAdminView ? "/sign-in" : "/sign-in?view=admin"} className="button-secondary mt-6">
+              <Link href={showAdminView ? "/sign-in" : "/sign-in/admin"} className="button-secondary mt-6">
                 {showAdminView ? "Back to user access" : "Open admin sign in"}
               </Link>
             </div>

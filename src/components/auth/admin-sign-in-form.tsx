@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 type AdminSignInFormProps = {
   initialMessage?: string;
 };
 
 export function AdminSignInForm({ initialMessage = "" }: AdminSignInFormProps) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   return (
     <form
@@ -36,8 +39,7 @@ export function AdminSignInForm({ initialMessage = "" }: AdminSignInFormProps) {
               return;
             }
 
-            router.replace("/admin");
-            router.refresh();
+            window.location.assign("/admin");
           } catch {
             setError("Unable to sign in right now.");
           }
@@ -73,8 +75,13 @@ export function AdminSignInForm({ initialMessage = "" }: AdminSignInFormProps) {
       </label>
       {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
       {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}
-      <button type="submit" className="button-primary w-full justify-center" disabled={isPending}>
-        {isPending ? "Signing in..." : "Sign in"}
+      <button
+        type="submit"
+        className="button-primary w-full justify-center"
+        disabled={!isHydrated || isPending}
+        data-auth-ready={isHydrated ? "true" : "false"}
+      >
+        {!isHydrated ? "Preparing sign in..." : isPending ? "Signing in..." : "Sign in"}
       </button>
       <p className="text-center text-sm text-slate-600">
         Need access?{" "}

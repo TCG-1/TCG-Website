@@ -15,7 +15,10 @@ export async function POST(request: Request) {
       cohortId?: string;
       dueAt?: string | null;
       instructions?: string | null;
+      maxAttempts?: number | null;
+      maxScore?: number | null;
       moduleId?: string | null;
+      passScore?: number | null;
       title?: string;
     };
 
@@ -28,7 +31,10 @@ export async function POST(request: Request) {
       cohortId: body.cohortId,
       dueAt: body.dueAt ?? null,
       instructions: body.instructions ?? null,
+      maxAttempts: typeof body.maxAttempts === "number" ? body.maxAttempts : null,
+      maxScore: typeof body.maxScore === "number" ? body.maxScore : null,
       moduleId: body.moduleId ?? null,
+      passScore: typeof body.passScore === "number" ? body.passScore : null,
       title: body.title,
     });
 

@@ -68,6 +68,12 @@ export default function AdminDocumentsPage() {
   const { data, error, isLoading, refresh } = useLiveApi<AdminDocumentsPayload>(
     "/api/admin/documents",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [
+        { table: "document_collections" },
+        { table: "documents" },
+      ],
+    },
   );
   const [notice, setNotice] = useState<Notice>(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState("");

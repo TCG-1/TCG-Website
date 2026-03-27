@@ -416,6 +416,7 @@ export async function handleInquirySubmission(input: InquirySubmissionInput) {
 			</table>
 		`,
 		subject: thanksSubject,
+		userName: fullName,
 	});
 
 	await Promise.allSettled([

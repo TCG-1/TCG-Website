@@ -1,9 +1,13 @@
 import { TrainingResourceForm } from "@/components/training-portal/training-action-forms";
+import { TrainingResourceManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { getAdminResourceWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 
 export default async function AdminResourcesPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, resourceWorkspace] = await Promise.all([
+    getAdminTrainingWorkspace(),
+    getAdminResourceWorkspace(),
+  ]);
 
   return (
     <div className="space-y-10">
@@ -35,6 +39,20 @@ export default async function AdminResourcesPage() {
           cohorts={workspace.references.cohorts}
           modules={workspace.references.modules}
           programmes={workspace.references.programmes}
+        />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Versioning and retirement"
+        description="Update version labels, change visibility, retire outdated packs, and keep learners on the right material set."
+      >
+        <TrainingResourceManager
+          references={{
+            cohorts: workspace.references.cohorts,
+            modules: workspace.references.modules,
+            programmes: workspace.references.programmes,
+          }}
+          workspace={resourceWorkspace}
         />
       </PortalPanel>
     </div>

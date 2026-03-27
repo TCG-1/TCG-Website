@@ -84,6 +84,13 @@ export default async function Home() {
     },
   ];
 
+  const founderCredentials = [
+    "Lean Six Sigma Certified",
+    "Private Pilot's License - PPL (A)",
+    "Bachelor's Degree",
+    "Aerospace Technology",
+  ];
+
   return (
     <div className="text-center">
       <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
@@ -332,37 +339,79 @@ export default async function Home() {
         </Container>
       </section>
 
-      <section className="section-gap bg-slate-50">
+      <section className="section-gap overflow-hidden bg-white">
         <Container>
-          <div className="grid items-center gap-10 lg:grid-cols-[0.75fr_1.25fr]">
-            <div className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white">
-              <Image
-                src="/media/Audrey-Nyamande-1-cd36ad87.jpeg"
-                alt="Audrey Nyamande-Trigg"
-                width={640}
-                height={760}
-                className="h-full w-full object-cover"
-              />
+          <div className="grid items-center gap-12 text-left lg:grid-cols-12 lg:gap-20">
+            <div className="flex flex-col gap-10 lg:col-span-7">
+              <div className="space-y-5">
+                <p className="eyebrow text-[#795900]">Our leadership</p>
+                <h2 className="font-sans text-[clamp(2.4rem,4.8vw,4.1rem)] font-light leading-[1.05] tracking-[-0.04em] text-[#8a0917]">
+                  Founder-led, technically grounded
+                </h2>
+                <p className="max-w-2xl text-lg leading-8 text-slate-600">
+                  Tacklers is led by Audrey Nyamande-Trigg, an aerospace engineer and Lean transformation
+                  coach. She has led transformation work in high-stakes engineering environments and
+                  brings that same practical discipline into every engagement. Not to overcomplicate
+                  things. Just to make sure the work holds.
+                </p>
+              </div>
+
+              <div className="border-l-2 border-[#FDD835] pl-6">
+                <p className="text-[1.35rem] font-semibold tracking-tight text-slate-950">
+                  Audrey Nyamande-Trigg
+                </p>
+                <p className="mt-1 text-sm italic text-slate-500">Founder of TCG</p>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="font-sans text-sm font-semibold uppercase tracking-[0.24em] text-slate-900">
+                  Credentials &amp; Authority
+                </h3>
+                <ul className="grid gap-x-10 gap-y-5 sm:grid-cols-2">
+                  {founderCredentials.map((item) => (
+                    <li key={item} className="flex items-start gap-4">
+                      <span className="mt-[0.72rem] h-1 w-1 shrink-0 bg-[#FDD835]" />
+                      <span className="text-[0.98rem] font-medium leading-7 text-slate-800">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <Link href="/about" className="button-primary group gap-3 px-8 py-4 text-[0.82rem]">
+                  Read More
+                  <span aria-hidden="true" className="text-base transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              </div>
             </div>
-            <div>
-              <p className="eyebrow">Founder-led, technically grounded</p>
-              <h2 className="section-title">Audrey Nyamande-Trigg</h2>
-              <p className="mt-4 text-lg leading-8 text-slate-700">Founder of TCG</p>
-              <p className="mt-5 text-lg leading-8 text-slate-700">
-                Tacklers is led by Audrey Nyamande-Trigg, an aerospace engineer and Lean transformation
-                coach. She has led transformation work in high-stakes engineering environments and brings
-                that same practical discipline into every engagement. Not to overcomplicate things. Just
-                to make sure the work holds.
-              </p>
-              <h3 className="mt-8 text-xl font-semibold text-slate-950">Credentials & Authority</h3>
-              <ul className="mt-4 space-y-3 text-slate-700">
-                <li>Lean Six Sigma Certified</li>
-                <li>Private Pilot&apos;s License - PPL (A)</li>
-                <li>Bachelor&apos;s Degree, Aerospace Technology</li>
-              </ul>
-              <Link href="/about" className="button-secondary mt-7">
-                Read More
-              </Link>
+
+            <div className="relative lg:col-span-5">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-[#f3f3f3] shadow-[0_40px_60px_-15px_rgba(26,28,28,0.08)] lg:translate-y-6">
+                <Image
+                  src="/media/Audrey-Nyamande-1-cd36ad87.jpeg"
+                  alt="Audrey Nyamande-Trigg"
+                  width={720}
+                  height={900}
+                  className="h-full w-full object-cover grayscale-[0.08] contrast-[1.05]"
+                />
+                <div className="absolute inset-0 bg-[#8a0917]/10 mix-blend-multiply opacity-30" />
+              </div>
+
+              <div className="absolute -bottom-5 left-0 hidden rounded-[1.25rem] border border-[#8a0917]/10 bg-white px-6 py-5 shadow-[0_22px_50px_rgba(15,23,42,0.12)] lg:block">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8a0917] text-xl text-white">
+                    ✦
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold uppercase tracking-[0.24em] text-[#795900]">
+                      Methodology
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-900">Technically grounded</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </Container>

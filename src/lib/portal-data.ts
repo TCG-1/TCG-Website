@@ -23,11 +23,14 @@ export type AdminAccountRecord = {
 };
 
 export type ClientAccountRecord = {
+  activated_at?: string | null;
   id: string;
+  invited_at?: string | null;
   client_id: string | null;
   auth_user_id: string | null;
   email: string;
   full_name: string;
+  onboarding_completed_at?: string | null;
   role_title: string | null;
   avatar_url: string | null;
   phone: string | null;
@@ -380,6 +383,23 @@ export async function ensureClientPortalContext() {
       ? user.user_metadata.avatar_url.trim()
       : null;
 
+  const { data: existingAccountData, error: existingAccountError } = await supabase
+    .from("client_accounts")
+    .select("*")
+    .eq("email", user.email)
+    .limit(1)
+    .maybeSingle();
+
+  if (existingAccountError) {
+    throw new Error(existingAccountError.message);
+  }
+
+  const existingAccount = (existingAccountData ?? null) as ClientAccountRecord | null;
+
+  if (existingAccount && ["archived", "inactive", "revoked"].includes(existingAccount.status)) {
+    throw new Error("This client portal account is not currently active. Contact Tacklers support for access.");
+  }
+
   const { data: upsertedAccount, error: accountError } = await supabase
     .from("client_accounts")
     .upsert(
@@ -390,7 +410,7 @@ export async function ensureClientPortalContext() {
         full_name: fullName,
         last_signed_in_at: new Date().toISOString(),
         role_title: roleTitle,
-        status: "active",
+        status: existingAccount?.status ?? "active",
       },
       {
         onConflict: "email",
@@ -403,7 +423,26 @@ export async function ensureClientPortalContext() {
     throw new Error(accountError?.message ?? "Unable to load client account.");
   }
 
-  const account = upsertedAccount as ClientAccountRecord;
+  let account = upsertedAccount as ClientAccountRecord;
+
+  if (account.status !== "active" || !account.activated_at) {
+    const { data: activatedAccount, error: activationError } = await supabase
+      .from("client_accounts")
+      .update({
+        activated_at: account.activated_at ?? new Date().toISOString(),
+        status: "active",
+      })
+      .eq("id", account.id)
+      .select("*")
+      .single();
+
+    if (activationError || !activatedAccount) {
+      throw new Error(activationError?.message ?? "Unable to activate client account.");
+    }
+
+    account = activatedAccount as ClientAccountRecord;
+  }
+
   const client = await ensureClientWorkspaceForAccount({
     account,
     supabase,

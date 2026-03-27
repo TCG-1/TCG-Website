@@ -80,6 +80,12 @@ export default function ClientHubSupportPage() {
   const { data, error, isLoading, refresh } = useLiveApi<ClientSupportPayload>(
     "/api/client/support",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [
+        { table: "support_tickets" },
+        { table: "support_ticket_messages" },
+      ],
+    },
   );
   const [notice, setNotice] = useState<Notice>(null);
   const [selectedTicketId, setSelectedTicketId] = useState("");

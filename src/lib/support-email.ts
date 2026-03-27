@@ -59,6 +59,7 @@ export async function sendSupportTicketCreatedEmails({
       </table>
     `,
     subject: `Support request received: ${ticketNumber}`,
+    userName: requesterName,
   });
 
   await Promise.allSettled([

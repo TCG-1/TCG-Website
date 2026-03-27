@@ -44,6 +44,28 @@ type AdminNotificationsPayload = {
   };
 };
 
+type TrainingReminderPayload = {
+  lastActivityAt: string | null;
+  recent: Array<{
+    created_at: string;
+    id: string;
+    recipient_scope: string;
+    reminder_kind: string;
+    target_entity_type: string;
+  }>;
+  stale: boolean;
+  stats: {
+    kinds: number;
+    last24Hours: number;
+    total: number;
+  };
+  summaryByKind: Array<{
+    count: number;
+    kind: string;
+    lastSentAt: string;
+  }>;
+};
+
 type Notice = { message: string; tone: "error" | "success" } | null;
 
 const EMPTY_PAYLOAD: AdminNotificationsPayload = {
@@ -57,6 +79,18 @@ const EMPTY_PAYLOAD: AdminNotificationsPayload = {
     total: 0,
     unread: 0,
   },
+};
+
+const EMPTY_REMINDER_PAYLOAD: TrainingReminderPayload = {
+  lastActivityAt: null,
+  recent: [],
+  stale: true,
+  stats: {
+    kinds: 0,
+    last24Hours: 0,
+    total: 0,
+  },
+  summaryByKind: [],
 };
 
 function priorityTone(priority: string) {
@@ -82,7 +116,18 @@ export default function AdminNotificationsPage() {
   const { data, error, isLoading, refresh } = useLiveApi<AdminNotificationsPayload>(
     "/api/admin/notifications",
     EMPTY_PAYLOAD,
+    {
+      realtimeTables: [{ table: "notifications" }],
+    },
   );
+  const {
+    data: reminderData,
+    error: reminderError,
+    isLoading: remindersLoading,
+    refresh: refreshReminders,
+  } = useLiveApi<TrainingReminderPayload>("/api/admin/training/reminders", EMPTY_REMINDER_PAYLOAD, {
+    realtimeTables: [{ table: "training_reminder_log" }, { table: "notifications" }],
+  });
   const [notice, setNotice] = useState<Notice>(null);
   const [form, setForm] = useState({
     body: "",
@@ -148,6 +193,32 @@ export default function AdminNotificationsPage() {
     }
   }
 
+  async function runReminderAutomation() {
+    try {
+      const payload = await requestJson<{
+        result: {
+          assessments: number;
+          certificatesAwarded: number;
+          certificatesReady: number;
+          grading: number;
+          sessions: number;
+        };
+      }>("/api/admin/training/reminders", {
+        method: "POST",
+      });
+      setNotice({
+        message: `Reminder automation completed. ${payload.result.sessions} session, ${payload.result.assessments} assessment, ${payload.result.grading} grading, ${payload.result.certificatesReady} certificate-ready, and ${payload.result.certificatesAwarded} certificate-awarded reminders were sent.`,
+        tone: "success",
+      });
+      await Promise.all([refresh(), refreshReminders()]);
+    } catch (runError) {
+      setNotice({
+        message: runError instanceof Error ? runError.message : "Unable to run reminder automation.",
+        tone: "error",
+      });
+    }
+  }
+
   return (
     <div className="space-y-10">
       <section className="max-w-4xl">
@@ -173,6 +244,9 @@ export default function AdminNotificationsPage() {
 
       {error ? (
         <div className="rounded-2xl bg-red-50 px-5 py-4 text-sm text-red-700">{error}</div>
+      ) : null}
+      {reminderError ? (
+        <div className="rounded-2xl bg-red-50 px-5 py-4 text-sm text-red-700">{reminderError}</div>
       ) : null}
 
       <section className="grid gap-5 md:grid-cols-3">
@@ -272,6 +346,104 @@ export default function AdminNotificationsPage() {
         </section>
 
         <aside className="space-y-6">
+          <section className="rounded-[1.75rem] border border-black/5 bg-white p-8 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Reminder operations console</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  Monitor reminder cadence, detect stale automation, and trigger an operational run when delivery needs it.
+                </p>
+              </div>
+              <span
+                className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${
+                  reminderData.stale ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"
+                }`}
+              >
+                {reminderData.stale ? "Stale" : "Healthy"}
+              </span>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              <div className="rounded-[1.2rem] bg-slate-50 p-4">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Total logs</p>
+                <p className="mt-3 text-2xl font-bold tracking-tight text-slate-950">{reminderData.stats.total}</p>
+              </div>
+              <div className="rounded-[1.2rem] bg-slate-50 p-4">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Last 24 hours</p>
+                <p className="mt-3 text-2xl font-bold tracking-tight text-slate-950">{reminderData.stats.last24Hours}</p>
+              </div>
+              <div className="rounded-[1.2rem] bg-slate-50 p-4">
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Reminder kinds</p>
+                <p className="mt-3 text-2xl font-bold tracking-tight text-slate-950">{reminderData.stats.kinds}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  void runReminderAutomation();
+                }}
+                className="rounded-full bg-[#8a0917] px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#690711]"
+              >
+                Run reminder automation
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  void refreshReminders();
+                }}
+                className="rounded-full border border-slate-200 px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-600 transition hover:border-[#8a0917]/30 hover:text-[#8a0917]"
+              >
+                {remindersLoading ? "Loading..." : "Refresh console"}
+              </button>
+              <span className="text-xs uppercase tracking-[0.18em] text-slate-400">
+                Last activity {reminderData.lastActivityAt ? formatTimestamp(reminderData.lastActivityAt) : "not recorded"}
+              </span>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {reminderData.summaryByKind.length ? reminderData.summaryByKind.map((item) => (
+                <div key={item.kind} className="rounded-[1.2rem] border border-slate-100 bg-slate-50 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-950">{item.kind.replace(/_/g, " ")}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">
+                        Last sent {formatTimestamp(item.lastSentAt)}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                      {item.count}
+                    </span>
+                  </div>
+                </div>
+              )) : (
+                <div className="rounded-[1.2rem] border border-slate-100 bg-slate-50 p-4 text-sm text-slate-500">
+                  No reminder activity has been recorded yet.
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 rounded-[1.2rem] border border-slate-100 bg-slate-50 p-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Recent log entries</p>
+              <div className="mt-3 space-y-3">
+                {reminderData.recent.length ? reminderData.recent.slice(0, 8).map((item) => (
+                  <div key={item.id} className="text-sm leading-6 text-slate-600">
+                    <span className="font-semibold text-slate-950">{item.reminder_kind.replace(/_/g, " ")}</span>
+                    {" • "}
+                    {item.recipient_scope}
+                    {" • "}
+                    {item.target_entity_type}
+                    {" • "}
+                    {formatTimestamp(item.created_at)}
+                  </div>
+                )) : (
+                  <p className="text-sm leading-6 text-slate-500">Reminder log entries will appear here after the first run.</p>
+                )}
+              </div>
+            </div>
+          </section>
+
           <section className="rounded-[1.75rem] border border-black/5 bg-[#ece7df] p-8 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-950">Send notification</h2>
             <div className="mt-6 space-y-4">

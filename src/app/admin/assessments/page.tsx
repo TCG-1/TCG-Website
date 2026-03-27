@@ -1,9 +1,13 @@
 import { TrainingAssessmentForm } from "@/components/training-portal/training-action-forms";
+import { TrainingAssessmentManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { getAdminAssessmentWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 
 export default async function AdminAssessmentsPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, assessmentWorkspace] = await Promise.all([
+    getAdminTrainingWorkspace(),
+    getAdminAssessmentWorkspace(),
+  ]);
 
   return (
     <div className="space-y-10">
@@ -25,6 +29,13 @@ export default async function AdminAssessmentsPage() {
         description="Publish the next quiz, practical task, or reflection directly into the training flow with due dates and instructions."
       >
         <TrainingAssessmentForm cohorts={workspace.references.cohorts} modules={workspace.references.modules} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Grading queue and outcomes"
+        description="Grade submitted evidence, return work for reattempt, and notify learners without leaving the training workflow."
+      >
+        <TrainingAssessmentManager assessments={assessmentWorkspace.assessments} canManage={assessmentWorkspace.canManage} />
       </PortalPanel>
     </div>
   );

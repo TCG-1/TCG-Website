@@ -1,9 +1,13 @@
 import { TrainingLearnerForm } from "@/components/training-portal/training-action-forms";
+import { TrainingRoleManager } from "@/components/training-portal/training-execution-panels";
 import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
-import { getAdminTrainingWorkspace } from "@/lib/training-system";
+import { getAdminRoleWorkspace, getAdminTrainingWorkspace } from "@/lib/training-system";
 
 export default async function AdminLearnersPage() {
-  const workspace = await getAdminTrainingWorkspace();
+  const [workspace, roleWorkspace] = await Promise.all([
+    getAdminTrainingWorkspace(),
+    getAdminRoleWorkspace(),
+  ]);
 
   return (
     <div className="space-y-10">
@@ -25,6 +29,13 @@ export default async function AdminLearnersPage() {
         description="Create or reuse the client account, assign the cohort role, and make the training journey visible in the learner workspace."
       >
         <TrainingLearnerForm cohorts={workspace.references.cohorts} />
+      </PortalPanel>
+
+      <PortalPanel
+        title="Role assignment and access control"
+        description="Manage trainer, admin owner, client manager, learner, and cohort role assignments from the same operational view."
+      >
+        <TrainingRoleManager workspace={roleWorkspace} />
       </PortalPanel>
     </div>
   );

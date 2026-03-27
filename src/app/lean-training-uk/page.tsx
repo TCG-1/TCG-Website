@@ -5,6 +5,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   Container,
+  CtaBanner,
   PageHero,
   SectionHeader,
 } from "@/components/sections";
@@ -275,37 +276,7 @@ export default function LeanServicesPage() {
         </Container>
       </section>
 
-      <section className="py-16 bg-white">
-        <Container>
-          <div className="overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#690711_0%,#8a0917_48%,#a51122_100%)] px-10 py-12 text-white text-center shadow-[0_30px_90px_rgba(138,9,23,0.28)] md:px-16 md:py-16">
-            <div className="mx-auto max-w-4xl">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/70">
-                {globalCta.eyebrow}
-              </p>
-              <h3 className="section-title mt-3 text-white">
-                {globalCta.title}
-              </h3>
-              <p className="body-copy mt-4 text-white/82">
-                {globalCta.body}
-              </p>
-            </div>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Link
-                href="/discovery-call"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[#8a0917] transition hover:-translate-y-1 hover:bg-[#fff4f1]"
-              >
-                {globalCta.primary.label}
-              </Link>
-              <Link
-                href="/on-site-assessment"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-white/35 bg-white/8 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white transition hover:-translate-y-1 hover:bg-white/14"
-              >
-                {globalCta.secondary.label}
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <CtaBanner {...globalCta} />
     </>
   );
 }

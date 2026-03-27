@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LearnerTrainingOnboarding } from "@/components/training-portal/training-execution-panels";
 import {
   PortalIntro,
   PortalKeyline,
@@ -21,6 +22,8 @@ export function ClientHubView({ workspace }: { workspace: ClientTrainingWorkspac
       />
 
       <PortalMetricGrid items={workspace.metrics} />
+
+      <LearnerTrainingOnboarding onboarding={workspace.onboarding} />
 
       <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
         <PortalPanel

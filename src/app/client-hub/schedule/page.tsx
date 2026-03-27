@@ -1,4 +1,5 @@
-import { PortalIntro, PortalList, PortalPanel } from "@/components/training-portal/portal-primitives";
+import { LearnerSessionCalendar } from "@/components/training-portal/training-execution-panels";
+import { PortalIntro, PortalPanel } from "@/components/training-portal/portal-primitives";
 import { getClientTrainingWorkspace } from "@/lib/training-system";
 
 export default async function ClientHubSchedulePage() {
@@ -17,7 +18,7 @@ export default async function ClientHubSchedulePage() {
           title="Upcoming delivery"
           description="Confirmed sessions, format, timing, and facilitator ownership."
         >
-          <PortalList items={workspace.sessions} />
+          <LearnerSessionCalendar roleLabel={workspace.roleLabel} sessions={workspace.sessionCalendar} />
         </PortalPanel>
 
         <PortalPanel

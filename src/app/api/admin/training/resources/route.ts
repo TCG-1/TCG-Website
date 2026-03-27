@@ -17,8 +17,11 @@ export async function POST(request: Request) {
       moduleId?: string | null;
       programmeId?: string | null;
       resourceKind?: string;
+      status?: string;
       summary?: string | null;
       title?: string;
+      versionLabel?: string | null;
+      visibleFrom?: string | null;
     };
 
     if (!body.title) {
@@ -32,8 +35,11 @@ export async function POST(request: Request) {
       moduleId: body.moduleId ?? null,
       programmeId: body.programmeId ?? null,
       resourceKind: body.resourceKind,
+      status: body.status,
       summary: body.summary ?? null,
       title: body.title,
+      versionLabel: body.versionLabel ?? null,
+      visibleFrom: body.visibleFrom ?? null,
     });
 
     return Response.json({ resource }, { status: 201 });
