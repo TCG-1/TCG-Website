@@ -251,23 +251,27 @@ export default function Home() {
             {serviceItems.map((item) => (
               <article
                 key={item.title}
-                className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)]"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-2 hover:border-[#8a0917]/15 hover:shadow-[0_28px_90px_rgba(15,23,42,0.12)]"
               >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
                 <Image
                   src={item.image}
                   alt={item.title}
                   width={800}
                   height={480}
-                  className="h-56 w-full object-cover"
+                  className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-6">
-                  <h3 className="text-2xl font-semibold tracking-tight text-slate-950">{item.title}</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight text-slate-950 transition duration-300 group-hover:text-[#8a0917]">
+                    {item.title}
+                  </h3>
                   <p className="mt-3 text-base leading-7 text-slate-600">{item.body}</p>
                   <Link
                     href={item.href}
-                    className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917]"
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] transition duration-300 group-hover:gap-3"
                   >
                     {item.cta}
+                    <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </article>
@@ -384,23 +388,27 @@ export default function Home() {
             {blogPosts.slice(0, 3).map((post) => (
               <article
                 key={post.slug}
-                className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)]"
+                className="group relative overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-2 hover:border-[#8a0917]/15 hover:shadow-[0_28px_90px_rgba(15,23,42,0.12)]"
               >
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
                 <Image
                   src={post.cover}
                   alt={post.title}
                   width={800}
                   height={480}
-                  className="h-52 w-full object-cover"
+                  className="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
                 />
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold tracking-tight text-slate-950">{post.title}</h3>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-950 transition duration-300 group-hover:text-[#8a0917]">
+                    {post.title}
+                  </h3>
                   <p className="mt-3 text-base leading-7 text-slate-600">{post.excerpt}</p>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917]"
+                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] transition duration-300 group-hover:gap-3"
                   >
                     Read Article
+                    <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </article>

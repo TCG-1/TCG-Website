@@ -141,22 +141,35 @@ export function CardGrid({
   return (
     <div className={`grid gap-6 sm:grid-cols-2 ${cols}`}>
       {items.map((item) => (
-        <article key={item.title} className="overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)]">
+        <article
+          key={item.title}
+          className="group relative overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-2 hover:border-[#8a0917]/15 hover:shadow-[0_28px_90px_rgba(15,23,42,0.12)]"
+        >
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
           {item.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={item.image} alt={item.title} className="h-56 w-full object-cover" />
+            <div className="overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+            </div>
           ) : null}
           <div className={`p-6 ${centerText ? "text-center" : ""}`}>
-            <h3 className="text-2xl font-bold tracking-tight text-[#8a0917]">{item.title}</h3>
+            <h3 className="text-2xl font-bold tracking-tight text-[#8a0917] transition duration-300 group-hover:text-[#690711]">
+              {item.title}
+            </h3>
             <p className="mt-3 leading-7 text-slate-700">{item.body}</p>
             {item.href && item.cta ? (
               <Link
                 href={item.href}
-                className={`mt-5 inline-flex text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] ${
+                className={`mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] transition duration-300 group-hover:gap-3 ${
                   centerText ? "justify-center" : ""
                 }`}
               >
                 {item.cta}
+                <span aria-hidden="true">→</span>
               </Link>
             ) : null}
           </div>
