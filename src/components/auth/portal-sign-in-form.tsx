@@ -13,6 +13,8 @@ type PortalSignInFormProps = {
   initialMode?: AuthMode;
 };
 
+const ADMIN_PORTAL_EMAIL = "hello@tacklersconsulting.com";
+
 function GoogleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
@@ -132,8 +134,30 @@ export function PortalSignInForm({
         return;
       }
 
+      const normalizedEmail = email.trim().toLowerCase();
+
+      if (normalizedEmail === ADMIN_PORTAL_EMAIL) {
+        const response = await fetch("/api/admin/session", {
+          body: JSON.stringify({ email: normalizedEmail, password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        });
+        const payload = (await response.json()) as { error?: string };
+
+        if (!response.ok) {
+          setError(payload.error ?? "Unable to sign in right now.");
+          return;
+        }
+
+        router.replace("/admin");
+        router.refresh();
+        return;
+      }
+
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password,
       });
 
