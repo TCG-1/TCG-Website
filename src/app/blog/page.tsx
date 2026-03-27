@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 import { Container, PageHero } from "@/components/sections";
 import { blogPosts } from "@/lib/site-data";
@@ -31,10 +32,11 @@ export default function BlogIndexPage() {
               >
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
                 <div className="overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={post.cover}
                     alt={post.title}
+                    width={1200}
+                    height={720}
                     className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                 </div>

@@ -56,7 +56,7 @@ export default function ContactPage() {
                 <a className="mt-4 block text-lg font-medium text-slate-700" href="mailto:hello@tacklersconsulting.com">
                   hello@tacklersconsulting.com
                 </a>
-                <p className="mt-4 text-slate-600">We aim to respond within 24 hours.</p>
+                <p className="mt-4 text-slate-600">We aim to respond within 2 working days to all inquiries.</p>
               </div>
               <div className="card">
                 <p className="eyebrow">Operating hours</p>
@@ -79,13 +79,7 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <CtaBanner
-        eyebrow="Two ways to get started"
-        title="Book a discovery call or send a message"
-        body="Tell us what you are trying to fix and we will help you choose a practical starting point."
-        primary={globalCta.primary}
-        secondary={globalCta.secondary}
-      />
+      <CtaBanner {...globalCta} />
     </>
   );
 }

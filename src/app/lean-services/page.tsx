@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Container,
 } from "@/components/sections";
-import { globalCta, leanProgrammes, methodSteps } from "@/lib/site-data";
+import { brandTagline, globalCta, leanProgrammes, methodSteps } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "Lean Group Mentoring | Tacklers Consulting Group",
@@ -20,19 +20,13 @@ export default function LeanServicesPage() {
         <Container>
           <div className="grid items-center gap-12 pt-14 sm:pt-16 lg:grid-cols-2 lg:gap-16 lg:pt-20">
             <div>
-              <div className="mb-6 flex items-center gap-3">
-                <div className="h-px w-10 bg-[#8a0917]" />
-                <span className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">
-                  Operational Excellence Consulting
-                </span>
-              </div>
+              <p className="brand-tagline max-w-2xl">{brandTagline}</p>
               <h1 className="max-w-3xl text-[clamp(2.5rem,6vw,4.75rem)] font-light leading-[1.05] tracking-[-0.04em] text-slate-950">
-                Lean transformation that cuts waste, <span className="font-bold text-[#8a0917]">not people.</span>
+                Practical Lean training and mentoring that builds capability where work happens.
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-                Building internal capability through collaborative learning and strategic guidance.
-                Empower your team to lead the transformation and achieve sustainable ROI without the
-                theatre.
+                We help teams reduce waste, improve productivity, and strengthen daily ways of working
+                through practical learning that connects directly to real operational challenges.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link href="/book-lean-training-session" className="button-primary px-8">
@@ -56,9 +50,9 @@ export default function LeanServicesPage() {
                 />
               </div>
               <div className="absolute -bottom-6 left-0 max-w-[240px] bg-[#FDD835] p-6 shadow-2xl sm:-left-6 sm:p-8">
-                <p className="text-4xl font-extrabold text-[#8a0917]">10+ Years</p>
-                <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-slate-950">
-                  Of proven Lean methodologies transformed into results
+                <p className="text-4xl font-extrabold text-[#8a0917]">500+</p>
+                <p className="mt-2 text-[11px] font-bold uppercase leading-5 tracking-[0.12em] text-slate-950">
+                  Individuals, from front-line teams to C-Suite level, trained in Lean Principles
                 </p>
               </div>
             </div>
@@ -92,7 +86,7 @@ export default function LeanServicesPage() {
       <section className="section-gap">
         <Container>
           <div className="mb-16 text-center">
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-light tracking-[-0.03em] text-slate-950">
+            <h2 className="section-title text-slate-950">
               Mentoring <span className="font-bold text-[#8a0917]">Programmes</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-slate-500">
@@ -149,9 +143,7 @@ export default function LeanServicesPage() {
         <Container>
           <div className="relative z-10">
             <div className="mb-20 text-center">
-              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-light tracking-[-0.03em] text-white">
-                How we work: <span className="font-bold italic">The Tacklers Method</span>
-              </h2>
+              <h2 className="section-title text-white">Our Approach</h2>
               <p className="mt-4 text-red-100/75">
                 A results-focused, four-stage engagement model.
               </p>
@@ -214,7 +206,7 @@ export default function LeanServicesPage() {
                   },
                   {
                     title: "Pragmatic Mentoring",
-                    body: "No jargon-heavy classroom theory. We teach by doing, on the shop floor or in the office.",
+                    body: "No jargon-heavy classroom theory. We teach by doing in your operational environment, where teams can apply the learning immediately.",
                   },
                   {
                     title: "Cultural Transformation",

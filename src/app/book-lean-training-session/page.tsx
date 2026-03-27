@@ -14,7 +14,7 @@ export default function TrainingBookingPage() {
       <PageHero
         eyebrow="Lean training"
         title="Book Your Lean Training Session"
-        body="If you are looking for Lean training UK teams can actually use, you are in the right place. We keep it close to real work so it sticks."
+        body="If you are looking for Lean training UK teams can actually use, you are in the right place. We keep it close to real work so it builds capability that lasts."
       />
       <section className="section-gap">
         <Container>
@@ -38,7 +38,7 @@ export default function TrainingBookingPage() {
                 </div>
                 <div>
                   <p className="eyebrow">Lean certified</p>
-                  <p className="mt-3 text-slate-600">Practical training built around how teams actually work.</p>
+                  <p className="mt-3 text-slate-600">500+ individuals, from front-line teams to C-Suite level, trained in Lean Principles.</p>
                 </div>
                 <div>
                   <p className="eyebrow">Flexible scheduling</p>
@@ -52,7 +52,7 @@ export default function TrainingBookingPage() {
               <div className="card">
                 <p className="eyebrow">Our approach</p>
                 <p className="mt-4 leading-8 text-slate-600">
-                  We do not push theory overload or feel-good workshops that vanish the next week. The goal is useful capability that teams can apply immediately.
+                  We do not push theory overload or feel-good workshops that vanish the next week. The goal is useful capability that teams can apply immediately in their own environment.
                 </p>
                 <a href="/lean-services" className="mt-6 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]">
                   Explore lean services

@@ -14,7 +14,7 @@ export default function AssessmentPage() {
       <PageHero
         eyebrow="Assessment"
         title="Request an on-site assessment"
-        body="Get a clear plan for your goals. Ask questions, talk through options, and leave knowing what to do next."
+        body="Get a clear view of where to focus first, what should improve next, and what kind of support will create the greatest impact."
       />
       <section className="section-gap">
         <Container>
@@ -52,7 +52,7 @@ export default function AssessmentPage() {
               <div className="card">
                 <p className="eyebrow">Our approach</p>
                 <p className="mt-4 leading-8 text-slate-600">
-                  We keep it honest. We do not push services you do not need. If you are a good fit, we will tell you. If you are not, we will tell you that too.
+                  We keep it honest. We do not push services you do not need. If you are a good fit, we will tell you. If you need something more focused, we will help define the next step clearly.
                 </p>
                 <a href="/operational-excellence-services-uk" className="mt-6 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]">
                   Explore more services

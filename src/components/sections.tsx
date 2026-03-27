@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-import type { CardItem, FaqItem } from "@/lib/site-data";
+import { brandTagline, type CardItem, type FaqItem } from "@/lib/site-data";
 
 export function Container({ children }: { children: ReactNode }) {
   return <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>;
@@ -24,8 +24,8 @@ export function PageHero({
   image?: string;
 }) {
   const eyebrowClassName =
-    eyebrow === "Transforming Challenges Into Opportunities"
-      ? "text-sm font-serif tracking-[0.08em] text-[#8a0917]"
+    eyebrow === "Transforming Challenges Into Opportunities" || eyebrow === brandTagline
+      ? "brand-tagline"
       : "eyebrow";
 
   return (
@@ -147,12 +147,13 @@ export function CardGrid({
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
           {item.image ? (
-            <div className="overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div className="relative h-56 overflow-hidden">
+              <Image
                 src={item.image}
                 alt={item.title}
-                className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                className="object-cover transition duration-500 group-hover:scale-105"
               />
             </div>
           ) : null}

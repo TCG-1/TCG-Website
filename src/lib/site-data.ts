@@ -26,6 +26,30 @@ export type BlogPost = {
   content: string[];
 };
 
+export const brandTagline =
+  "Lean transformation that reduces waste and optimizes your team's capabilities";
+
+const bestPlaceToStartAnswer =
+  "Start with a discovery call. If more direction is needed, an on-site assessment will identify where to focus and what will deliver the greatest impact.";
+
+const supportLevelsAnswer =
+  "We offer standalone training, hands-on implementation support, on-site assessments, embedded consultants, and ongoing retainer services. The right mix depends on how much delivery support and internal capability building you need.";
+
+const supportedIndustriesAnswer =
+  "We support Aerospace, Aviation, Energy, Healthcare, Life Sciences, IT Services, the Public Sector, and Space & Defence, along with other operationally complex environments.";
+
+const peopleFirstAnswer =
+  "Our approach is people-first. We work on-site with your teams to build capability, improve flow, and redeploy talent into higher-value work as capacity opens up. We strive to deliver Lean improvements without reducing headcount so organisations retain expertise.";
+
+const leanToolsAnswer =
+  "Common tools include Value Stream Mapping, 5S, Standard Work, Visual Management, and Structured Problem Solving. We choose tools to fit your environment and operating reality rather than forcing a one-size-fits-all approach.";
+
+const resultsAnswer =
+  "Quick \"Just Do It\" actions can deliver immediate impact. Structured Kaizen activity often creates results in days or weeks, while more complex improvements follow a defined implementation plan. The gains become sustainable when daily management practices are embedded.";
+
+const genbaMeaningAnswer =
+  "Both spellings refer to the real place where the work happens. We spend time there with your team to see what is slowing flow down and what will improve performance in practice.";
+
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/operational-excellence-services-uk" },
@@ -61,9 +85,9 @@ export const footerData = {
 export const globalCta = {
   eyebrow: "Start the right conversation",
   title:
-    "Ready to eliminate waste, improve productivity, and optimize your team's capabilities?",
+    "Ready to reduce waste, improve productivity, and optimize your team's capabilities?",
   body:
-    "Book a discovery call or request an on-site assessment. We'll work with you to identify improvement opportunities, define an implementation plan that suits your organization, and establish key milestones for success.",
+    "Book a discovery call or request an on-site assessment. We'll work with you to identify opportunities for improvement, define an implementation plan that suits your organisation's needs, and establish key milestones for success.",
   primary: { label: "Book a discovery call", href: "/book-a-discovery-call" },
   secondary: {
     label: "Request an on-site assessment",
@@ -73,11 +97,11 @@ export const globalCta = {
 
 export const homeData = {
   hero: {
-    eyebrow: "Transforming Challenges Into Opportunities",
+    eyebrow: brandTagline,
     title: "Operational Excellence Consulting",
-    subtitle: "Lean transformation that cuts waste, not people.",
+    subtitle: "Lean transformation that reduces waste and retains expertise.",
     body:
-      "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We work on-site at Gemba with your teams to remove waste, clear bottlenecks, and improve flow.",
+      "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We work on-site at Gemba with your teams to reduce waste, clear bottlenecks, and improve flow.",
     primary: { label: "Book a discovery call", href: "/book-a-discovery-call" },
     secondary: {
       label: "Request an on-site assessment",
@@ -281,29 +305,24 @@ export const testimonials = [
 
 export const serviceFaqs: FaqItem[] = [
   {
-    question: "Which service should we start with?",
-    answer:
-      "Start with the problem you feel every week: delays, rework, backlog, cost pressure, or inconsistent delivery. An on-site assessment is often the best first move so you are not guessing.",
+    question: "What's the best place to start?",
+    answer: bestPlaceToStartAnswer,
   },
   {
-    question: "Do you provide training only, or delivery too?",
-    answer:
-      "Both. Training can stand alone, but many clients combine capability building with hands-on delivery support.",
+    question: "What levels of support do you offer?",
+    answer: supportLevelsAnswer,
   },
   {
-    question: "Can you support both manufacturing and service environments?",
-    answer:
-      "Yes. We work across manufacturing, regulated services, public sector, healthcare, IT services, and other operational environments.",
+    question: "What industries do you support?",
+    answer: supportedIndustriesAnswer,
   },
   {
-    question: "What makes your approach different?",
-    answer:
-      "We stay close to the work, coach leaders to sustain progress, and focus on changes that show up in real delivery rather than slide decks.",
+    question: "What makes our approach different to others?",
+    answer: peopleFirstAnswer,
   },
   {
-    question: "Do you work across the UK only?",
-    answer:
-      "We are UK-based and primarily support UK programmes, including multi-site operations.",
+    question: "How fast will we see results?",
+    answer: resultsAnswer,
   },
 ];
 
@@ -353,8 +372,9 @@ export const aboutBeliefs = [
     body: "Lean works best when people trust the process. If improvement feels like a threat, teams stop sharing issues and stop trying.",
   },
   {
-    title: "Our approach cuts waste, not people",
-    body: "We focus on capacity, capability, and performance, then help you redeploy talent into higher-value work as your system improves.",
+    title: "Our approach reduces waste without reducing headcount",
+    body:
+      "We focus on capacity, capability, and performance, then help you redeploy talent into higher-value work so your organisation retains expertise as the system improves.",
   },
   {
     title: "Hands-on beats high-level",
@@ -406,19 +426,16 @@ export const experienceDont = [
 
 export const aboutFaqs: FaqItem[] = [
   {
-    question: "What makes Tacklers different from a traditional consultancy?",
-    answer:
-      "We work on-site at Gemba with your teams and focus on changes that show up in real delivery. We also build sustain routines so results do not fade.",
+    question: "What makes our approach different to others?",
+    answer: peopleFirstAnswer,
   },
   {
-    question: "Do you only work with aerospace clients?",
-    answer:
-      "No. Aerospace is a strong area for us, but we also work across healthcare, life sciences, energy, public sector, and IT services.",
+    question: "What industries do you support?",
+    answer: supportedIndustriesAnswer,
   },
   {
-    question: "Do you offer Lean training?",
-    answer:
-      "Yes. Training can be a standalone offer or part of a wider transformation programme.",
+    question: "What levels of support do you offer?",
+    answer: supportLevelsAnswer,
   },
   {
     question: "Where are you based?",
@@ -426,9 +443,8 @@ export const aboutFaqs: FaqItem[] = [
       "We are UK-based and work on-site at client locations across the UK. We do not operate a public visitor office.",
   },
   {
-    question: "Does your Lean approach involve layoffs?",
-    answer:
-      "No. We focus on removing waste, building capability, and redeploying talent as systems improve.",
+    question: "What's the best place to start?",
+    answer: bestPlaceToStartAnswer,
   },
 ];
 
@@ -436,50 +452,73 @@ export const contactFaqs: FaqItem[] = [
   {
     question: "How quickly will you respond?",
     answer:
-      "We aim to respond as soon as possible. If your request is urgent, mention it in your message.",
+      "We aim to respond within 2 working days to all inquiries.",
   },
   {
-    question: "Do you work across the UK?",
-    answer:
-      "Yes. We are UK-based and support engagements across the UK, including multi-site programmes.",
+    question: "What's the best place to start?",
+    answer: bestPlaceToStartAnswer,
   },
   {
-    question: "Do you only work with aerospace clients?",
-    answer:
-      "No. Aerospace is a strong area for us, and we also support healthcare, life sciences, energy, public sector, and IT services.",
+    question: "What industries do you support?",
+    answer: supportedIndustriesAnswer,
   },
   {
-    question: "Do you offer training only?",
-    answer:
-      "Yes. Training can be standalone, but combining it with on-site delivery often makes the gains stick faster.",
+    question: "What levels of support do you offer?",
+    answer: supportLevelsAnswer,
   },
   {
-    question: "Will Lean mean layoffs?",
-    answer:
-      "That is not our approach. We focus on cutting waste, improving flow, and building capability so talent can move into higher-value work.",
+    question: "What makes our approach different to others?",
+    answer: peopleFirstAnswer,
   },
 ];
 
 export const supportFaqs: FaqItem[] = [
   {
-    question: "What does Gemba mean?",
-    answer:
-      "It means where the work happens. We spend time there to see what slows flow down, then improve it with your team on-site.",
+    question: "What does Genba or Gemba mean?",
+    answer: genbaMeaningAnswer,
   },
   {
-    question: "Do you deliver Lean transformation without layoffs?",
-    answer:
-      "Yes. Our approach is people-first. We focus on removing waste, building capability, and redeploying talent as capacity opens up.",
+    question: "What makes our approach different to others?",
+    answer: peopleFirstAnswer,
   },
   {
-    question: "What Lean tools do you use?",
-    answer:
-      "Common tools include value stream mapping, 5S, standard work, visual management, and structured problem solving. We apply what fits your reality.",
+    question: "Which Lean tools do you actually use?",
+    answer: leanToolsAnswer,
   },
   {
     question: "How fast will we see results?",
-    answer:
-      "You often see early movement during the first on-site work, especially around delays, rework, and unclear handoffs. Longer-term results come from the sustain routines.",
+    answer: resultsAnswer,
+  },
+  {
+    question: "What levels of support do you offer?",
+    answer: supportLevelsAnswer,
+  },
+];
+
+export const homeFaqs: FaqItem[] = [
+  {
+    question: "What does Genba or Gemba mean?",
+    answer: genbaMeaningAnswer,
+  },
+  {
+    question: "What makes our approach different to others?",
+    answer: peopleFirstAnswer,
+  },
+  {
+    question: "Which Lean tools do you actually use?",
+    answer: leanToolsAnswer,
+  },
+  {
+    question: "How fast will we see results?",
+    answer: resultsAnswer,
+  },
+  {
+    question: "What's the best place to start?",
+    answer: bestPlaceToStartAnswer,
+  },
+  {
+    question: "What levels of support do you offer?",
+    answer: supportLevelsAnswer,
   },
 ];
 
@@ -510,7 +549,7 @@ export const blogPosts: BlogPost[] = [
       "/media/photo-1522202176988-66273c2fd55f-259dd5c3.jpg",
     content: [
       "People-first Lean starts with a different question: how do we remove waste while increasing capability? Instead of using improvement as a threat, we use it to create better flow, clearer work, and stronger roles for the team.",
-      "When trust is low, people protect themselves. They stop surfacing issues and improvements stall. When leaders make it clear that the goal is to cut waste and not people, teams engage more honestly and progress speeds up.",
+      "When trust is low, people protect themselves. They stop surfacing issues and improvements stall. When leaders make it clear that the goal is to reduce waste while retaining expertise, teams engage more honestly and progress speeds up.",
       "The strongest Lean environments grow internal capability, redeploy time into better work, and give leaders a rhythm for sustaining gains. That is how improvement holds.",
     ],
   },

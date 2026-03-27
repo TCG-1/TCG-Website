@@ -60,7 +60,7 @@ export default function SupportPage() {
             <p className="eyebrow">Still need help?</p>
             <h2 className="section-title">Reach out directly</h2>
             <p className="mt-4 text-lg leading-8 text-slate-600">
-              If you could not find the answer you were looking for, contact us directly. We typically respond within 1–2 business days.
+              If you could not find the answer you were looking for, contact us directly. We aim to respond within 2 working days to all inquiries.
             </p>
             <a className="button-primary mt-8 inline-flex" href="mailto:hello@tacklersconsulting.com">
               Contact us

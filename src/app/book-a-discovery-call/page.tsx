@@ -14,7 +14,7 @@ export default function DiscoveryCallPage() {
       <PageHero
         eyebrow="Book now"
         title="Book a discovery call"
-        body="Select a time window that works best for you to discuss current bottlenecks, where work gets stuck, and what the best first step should be."
+        body="Select a time window that works best for you to discuss current bottlenecks, where work gets stuck, and whether a discovery call or on-site assessment is the right first step."
       />
       <section className="section-gap">
         <Container>
@@ -35,7 +35,7 @@ export default function DiscoveryCallPage() {
                 <p className="eyebrow">What to expect</p>
                 <ul className="mt-4 space-y-3 text-slate-600">
                   <li>30-minute deep dive into your current bottlenecks</li>
-                  <li>Preliminary improvement roadmap and sensible first step</li>
+                  <li>Preliminary roadmap for lean transformation</li>
                   <li>Transparent view of how support could be structured</li>
                 </ul>
               </div>
@@ -47,13 +47,13 @@ export default function DiscoveryCallPage() {
                 <a href="tel:+447932105847" className="mt-2 block text-lg font-medium text-slate-700">
                   +44 7932 105847
                 </a>
-                <p className="mt-4 text-slate-600">Over 500 successful strategy sessions conducted across client engagements.</p>
+                <p className="mt-4 text-slate-600">We support teams from front-line operations through to C-Suite leadership.</p>
               </div>
               <div className="card">
                 <p className="eyebrow">On-site delivery</p>
                 <h2 className="mt-3 text-2xl font-semibold text-slate-950">We come to your site</h2>
                 <p className="mt-4 leading-8 text-slate-600">
-                  Tacklers Consulting Group works on-site at client locations across the UK. We do not operate a public visitor office.
+                  Tacklers Consulting Group travels to client locations across the UK. We do not operate a public visitor office.
                 </p>
                 <p className="mt-4 text-slate-600">If an on-site visit makes sense, we can scope it during your discovery call.</p>
               </div>

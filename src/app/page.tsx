@@ -9,37 +9,9 @@ import {
   SectionHeader,
   StepsGrid,
 } from "@/components/sections";
-import { blogPosts, globalCta, homeData } from "@/lib/site-data";
+import { blogPosts, brandTagline, globalCta, homeData, homeFaqs } from "@/lib/site-data";
 
 export default function Home() {
-  const faqItems = [
-    {
-      question: "What does “Gemba” mean?",
-      answer:
-        "It means where the work happens. We spend time there to see what slows flow down, then improve it with your team on-site.",
-    },
-    {
-      question: "Do you deliver Lean transformation without layoffs?",
-      answer:
-        "Yes. Our approach is people-first. We focus on removing waste, building capability, and redeploying talent as capacity opens up.",
-    },
-    {
-      question: "What Lean tools do you use?",
-      answer:
-        "We use practical tools such as value stream mapping, 5S, standard work, visual management, and structured problem solving based on your context.",
-    },
-    {
-      question: "How fast will we see results?",
-      answer:
-        "You usually see early improvements during the first on-site work, especially around delays, rework, and unclear handoffs. Sustain routines protect long-term gains.",
-    },
-    {
-      question: "What is the best first step?",
-      answer:
-        "Book a discovery call or request an on-site assessment. We'll identify improvement opportunities, define a plan that suits your organisation, and agree the first milestones for success.",
-    },
-  ];
-
   const serviceItems = [
     {
       title: "Cost Management",
@@ -99,7 +71,7 @@ export default function Home() {
         <div className="hero-soft-gradient absolute inset-0" />
         <Container>
           <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-14 text-center sm:pt-16 lg:pt-20">
-            <p className="eyebrow">Operational Excellence Consulting</p>
+            <p className="brand-tagline max-w-3xl">{brandTagline}</p>
             <h1 className="display-title mt-3 max-w-4xl">
               Operational Excellence
               <br />
@@ -107,8 +79,8 @@ export default function Home() {
             </h1>
             <p className="body-copy mt-6 max-w-3xl">
               Tacklers Consulting Group is a UK-based Lean transformation and operational excellence
-              partner. We work on-site at Gemba with your teams to remove waste, clear bottlenecks and
-              improve flow. And yes, we do it without using redundancies as the “plan.”
+              partner. We work on-site at Gemba with your teams to reduce waste, clear bottlenecks,
+              improve flow, and retain the expertise your organisation depends on.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/book-a-discovery-call" className="button-primary">
@@ -224,12 +196,12 @@ export default function Home() {
               <h2 className="section-title text-white">People-first Lean, the way it should be</h2>
               <p className="mt-5 text-lg leading-8 text-white/80">
                 Lean has a reputation problem. I think we all know why. Too many organisations use it to
-                justify headcount cuts, then wonder why trust disappears.
+                justify reducing headcount, then wonder why trust disappears.
               </p>
               <p className="mt-4 text-lg leading-8 text-white/80">
-                Our approach is different. We focus on waste, not people. That means upskilling,
-                redeploying, and building stronger daily ways of working. It’s more work up front, but it
-                tends to hold.
+                Our approach is different. We focus on reducing waste, building capability, and
+                redeploying talent into higher-value work. It is more work up front, but it holds because
+                organisations keep the expertise they have worked hard to build.
               </p>
               <Link href="/about-tacklers-consulting-group" className="mt-6 inline-flex button-ghost">
                 Know more
@@ -288,7 +260,7 @@ export default function Home() {
       <section className="section-gap bg-slate-50">
         <Container>
           <SectionHeader
-            eyebrow="How we work, the Tacklers method"
+            eyebrow="Our approach"
             title="We use a four-stage method that keeps things clear."
             center
           />
@@ -351,7 +323,7 @@ export default function Home() {
               </p>
               <h3 className="mt-8 text-xl font-semibold text-slate-950">Credentials & Authority</h3>
               <ul className="mt-4 space-y-3 text-slate-700">
-                <li>Lean Six Sigma Green Belt Certification</li>
+                <li>Lean Six Sigma Certified</li>
                 <li>Private Pilot&apos;s License - PPL (A)</li>
                 <li>Bachelor&apos;s Degree, Aerospace Technology</li>
               </ul>
@@ -371,7 +343,7 @@ export default function Home() {
             center
           />
           <div className="mx-auto max-w-4xl">
-            <FaqList items={faqItems} />
+            <FaqList items={homeFaqs} />
           </div>
         </Container>
       </section>
@@ -380,9 +352,9 @@ export default function Home() {
         <Container>
           <SectionHeader eyebrow="Our Blogs" title="From the blog" center />
           <p className="mx-auto mb-12 max-w-4xl text-center text-lg leading-8 text-slate-600">
-            If you want operational excellence support that shows up in day-to-day work, let’s talk. Start
-            with a discovery call, or request an on-site assessment and we’ll map the first improvements
-            together.
+            If you want operational excellence support that shows up in day-to-day work, start with a
+            discovery call or request an on-site assessment. We will help you identify opportunities for
+            improvement and define the first milestones together.
           </p>
           <div className="grid gap-6 lg:grid-cols-3">
             {blogPosts.slice(0, 3).map((post) => (

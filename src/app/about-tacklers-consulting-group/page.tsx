@@ -34,7 +34,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="Who we are"
         title="About Tacklers Consulting Group"
-        body="We started Tacklers for a simple reason. Too many organisations invest in transformation, then get a report, a workshop, and a few weeks of noise. We work on-site at Gemba with your teams to improve flow, reduce waste, and build ways of working your people can sustain."
+        body="We started Tacklers for a simple reason. Too many organisations invest in transformation, then get a report, a workshop, and a few weeks of noise. We work on-site at Gemba with your teams to improve flow, reduce waste, and build ways of working your people can sustain without losing expertise."
         primary={globalCta.primary}
         secondary={globalCta.secondary}
         image="/media/audrey-and-arlandous-1-e1773762025172-1b5d8b67.jpeg"
@@ -94,7 +94,7 @@ export default function AboutPage() {
       <section className="section-gap bg-slate-50">
         <Container>
           <SectionHeader
-            eyebrow="The Tacklers method"
+            eyebrow="Our approach"
             title="How we work"
             body="A four-stage method that keeps things clear, practical, and results-focused."
           />

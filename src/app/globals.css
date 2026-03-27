@@ -87,6 +87,15 @@ img {
   color: var(--accent);
 }
 
+.brand-tagline {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(0.98rem, 1.4vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1.45;
+  color: var(--accent);
+}
+
 .display-title {
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   font-size: clamp(2.5rem, 6vw, 4.75rem);
