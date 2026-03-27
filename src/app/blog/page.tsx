@@ -1,0 +1,57 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+import { Container, PageHero } from "@/components/sections";
+import { blogPosts } from "@/lib/site-data";
+
+export const metadata: Metadata = {
+  title: "Lean Insights & Success Stories",
+  description:
+    "Practical perspectives on operational excellence, Lean strategy, and building sustainable internal capability.",
+};
+
+export default function BlogIndexPage() {
+  return (
+    <>
+      <PageHero
+        eyebrow="Our blogs"
+        title="Lean Insights & Success Stories"
+        body="Practical perspectives on operational excellence, industry-specific Lean strategy, and building sustainable internal capability."
+        primary={{ label: "Book a discovery call", href: "/book-a-discovery-call" }}
+        secondary={{ label: "Request an on-site assessment", href: "/request-an-on-site-assessment" }}
+      />
+
+      <section className="section-gap">
+        <Container>
+          <div className="grid gap-6 lg:grid-cols-2">
+            {blogPosts.map((post) => (
+              <article key={post.slug} className="overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={post.cover} alt={post.title} className="h-72 w-full object-cover" />
+                <div className="p-8">
+                  <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#8a0917]">
+                    <span>{post.category}</span>
+                    <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
+                    <span>{post.date}</span>
+                  </div>
+                  <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">
+                    <Link href={`/blog/${post.slug}`} className="transition hover:text-[#8a0917]">
+                      {post.title}
+                    </Link>
+                  </h2>
+                  <p className="mt-4 text-lg leading-8 text-slate-600">{post.excerpt}</p>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="mt-6 inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917]"
+                  >
+                    Learn more
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </section>
+    </>
+  );
+}
