@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { requestJson, useLiveApi } from "@/components/portal/use-live-api";
 
@@ -56,6 +57,7 @@ function formatTimestamp(value: string) {
 }
 
 export default function ClientHubSettingsPage() {
+  const searchParams = useSearchParams();
   const { data, error, refresh } = useLiveApi<ClientSettingsPayload>("/api/client/settings", EMPTY_PAYLOAD);
   const [notice, setNotice] = useState<Notice>(null);
   const [preferencesForm, setPreferencesForm] = useState({
@@ -71,6 +73,13 @@ export default function ClientHubSettingsPage() {
     currentPassword: "",
     newPassword: "",
   });
+  const [newEmail, setNewEmail] = useState("");
+  const [showPasswords, setShowPasswords] = useState({
+    confirmPassword: false,
+    currentPassword: false,
+    newPassword: false,
+  });
+  const [isEmailChangePending, setIsEmailChangePending] = useState(false);
 
   useEffect(() => {
     setPreferencesForm({
@@ -82,6 +91,12 @@ export default function ClientHubSettingsPage() {
     });
     setNotificationPreferences(data.notificationPreferences);
   }, [data.notificationPreferences, data.preferences.dateFormat, data.preferences.defaultView, data.preferences.locale, data.preferences.theme, data.preferences.timezone]);
+
+  useEffect(() => {
+    if (searchParams.get("notice") === "email-updated") {
+      setNotice({ message: "Email updated successfully.", tone: "success" });
+    }
+  }, [searchParams]);
 
   async function saveSettings() {
     try {
@@ -125,6 +140,25 @@ export default function ClientHubSettingsPage() {
         message: requestError instanceof Error ? requestError.message : "Unable to record password request.",
         tone: "error",
       });
+    }
+  }
+
+  async function requestEmailChange() {
+    try {
+      setIsEmailChangePending(true);
+      const response = await requestJson<{ message: string }>("/api/auth/change-email", {
+        body: JSON.stringify({ newEmail }),
+        method: "PATCH",
+      });
+      setNotice({ message: response.message, tone: "success" });
+      setNewEmail("");
+    } catch (requestError) {
+      setNotice({
+        message: requestError instanceof Error ? requestError.message : "Unable to start email change.",
+        tone: "error",
+      });
+    } finally {
+      setIsEmailChangePending(false);
     }
   }
 
@@ -295,6 +329,39 @@ export default function ClientHubSettingsPage() {
               </div>
             </div>
           </article>
+
+          <article className="rounded-[2rem] bg-white p-8 shadow-[0_20px_60px_rgba(31,29,29,0.05)]">
+            <div className="border-b border-[#f0e7e3] pb-6">
+              <h2 className="text-2xl font-bold text-[#2b2929] [font-family:var(--font-client-headline)]">
+                Change email
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Send a confirmation link to your new email address and complete the change securely from your inbox.
+              </p>
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+              <label className="grid gap-2">
+                <span className="text-sm font-semibold text-slate-700">New email address</span>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(event) => setNewEmail(event.target.value)}
+                  placeholder="you@company.com"
+                  className="rounded-2xl border border-[#ddd1cc] bg-[#faf7f5] px-4 py-3 text-sm outline-none"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  void requestEmailChange();
+                }}
+                disabled={isEmailChangePending}
+                className="inline-flex items-center justify-center rounded-2xl bg-[#8a0917] px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#6f0712] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isEmailChangePending ? "Sending..." : "Change email"}
+              </button>
+            </div>
+          </article>
         </section>
 
         <aside className="space-y-6">
@@ -305,36 +372,70 @@ export default function ClientHubSettingsPage() {
             <div className="mt-6 space-y-4">
               <label className="grid gap-2">
                 <span className="text-sm font-semibold text-slate-700">Current password</span>
-                <input
-                  type="password"
-                  value={passwordForm.currentPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#c87e75]"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.currentPassword ? "text" : "password"}
+                    value={passwordForm.currentPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#c87e75]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPasswords((current) => ({ ...current, currentPassword: !current.currentPassword }))
+                    }
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.currentPassword ? "Hide current password" : "Show current password"}
+                  >
+                    {showPasswords.currentPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <label className="grid gap-2">
                 <span className="text-sm font-semibold text-slate-700">New password</span>
-                <input
-                  type="password"
-                  value={passwordForm.newPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, newPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#c87e75]"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.newPassword ? "text" : "password"}
+                    value={passwordForm.newPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, newPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#c87e75]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords((current) => ({ ...current, newPassword: !current.newPassword }))}
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.newPassword ? "Hide new password" : "Show new password"}
+                  >
+                    {showPasswords.newPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <label className="grid gap-2">
                 <span className="text-sm font-semibold text-slate-700">Confirm password</span>
-                <input
-                  type="password"
-                  value={passwordForm.confirmPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#c87e75]"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.confirmPassword ? "text" : "password"}
+                    value={passwordForm.confirmPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-[#ddd1cc] bg-white px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#c87e75]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPasswords((current) => ({ ...current, confirmPassword: !current.confirmPassword }))
+                    }
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.confirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  >
+                    {showPasswords.confirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <button
                 type="button"
@@ -345,6 +446,9 @@ export default function ClientHubSettingsPage() {
               >
                 Record password request
               </button>
+              <p className="text-xs leading-6 text-slate-500">
+                Need the actual recovery email now? Use <span className="font-semibold text-slate-700">Forgot password</span> on the sign-in screen.
+              </p>
             </div>
           </section>
 

@@ -10,6 +10,7 @@ type AdminSignInFormProps = {
 export function AdminSignInForm({ initialMessage = "" }: AdminSignInFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isHydrated, setIsHydrated] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -65,13 +66,23 @@ export function AdminSignInForm({ initialMessage = "" }: AdminSignInFormProps) {
       </label>
       <label className="grid gap-2 text-sm font-medium text-slate-700">
         Password
-        <input
-          className="input"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <input
+            className="input pr-12"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((current) => !current)}
+            className="absolute inset-y-0 right-0 inline-flex items-center px-3 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
       </label>
       {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
       {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}

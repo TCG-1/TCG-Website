@@ -383,41 +383,55 @@ export async function ensureClientPortalContext() {
       ? user.user_metadata.avatar_url.trim()
       : null;
 
-  const { data: existingAccountData, error: existingAccountError } = await supabase
+  let existingAccount: ClientAccountRecord | null = null;
+
+  const { data: existingByAuthUser, error: existingByAuthUserError } = await supabase
     .from("client_accounts")
     .select("*")
-    .eq("email", user.email)
+    .eq("auth_user_id", user.id)
     .limit(1)
     .maybeSingle();
 
-  if (existingAccountError) {
-    throw new Error(existingAccountError.message);
+  if (existingByAuthUserError) {
+    throw new Error(existingByAuthUserError.message);
   }
 
-  const existingAccount = (existingAccountData ?? null) as ClientAccountRecord | null;
+  if (existingByAuthUser) {
+    existingAccount = existingByAuthUser as ClientAccountRecord;
+  } else {
+    const { data: existingAccountData, error: existingAccountError } = await supabase
+      .from("client_accounts")
+      .select("*")
+      .eq("email", user.email)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingAccountError) {
+      throw new Error(existingAccountError.message);
+    }
+
+    existingAccount = (existingAccountData ?? null) as ClientAccountRecord | null;
+  }
 
   if (existingAccount && ["archived", "inactive", "revoked"].includes(existingAccount.status)) {
     throw new Error("This client portal account is not currently active. Contact Tacklers support for access.");
   }
 
-  const { data: upsertedAccount, error: accountError } = await supabase
-    .from("client_accounts")
-    .upsert(
-      {
-        avatar_url: avatarUrl,
-        auth_user_id: user.id,
-        email: user.email,
-        full_name: fullName,
-        last_signed_in_at: new Date().toISOString(),
-        role_title: roleTitle,
-        status: existingAccount?.status ?? "active",
-      },
-      {
-        onConflict: "email",
-      },
-    )
-    .select("*")
-    .single();
+  const accountPayload = {
+    avatar_url: avatarUrl,
+    auth_user_id: user.id,
+    email: user.email,
+    full_name: fullName,
+    last_signed_in_at: new Date().toISOString(),
+    role_title: roleTitle,
+    status: existingAccount?.status ?? "active",
+  };
+
+  const accountQuery = existingAccount
+    ? supabase.from("client_accounts").update(accountPayload).eq("id", existingAccount.id)
+    : supabase.from("client_accounts").insert(accountPayload);
+
+  const { data: upsertedAccount, error: accountError } = await accountQuery.select("*").single();
 
   if (accountError || !upsertedAccount) {
     throw new Error(accountError?.message ?? "Unable to load client account.");

@@ -67,9 +67,13 @@ export function PortalSignInForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGooglePending, setIsGooglePending] = useState(false);
+  const [isResetPending, setIsResetPending] = useState(false);
+  const [successTitle, setSuccessTitle] = useState("Account created");
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
@@ -147,6 +151,7 @@ export function PortalSignInForm({
         setMode("sign_in");
         setPassword("");
         setConfirmPassword("");
+        setSuccessTitle("Account created");
         setSuccessMessage(
           "Your account has been created. Check your email to confirm it, then sign in to reach your dashboard.",
         );
@@ -198,10 +203,50 @@ export function PortalSignInForm({
     }
   }
 
+  async function handleForgotPassword() {
+    setError("");
+    setSuccessMessage("");
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !normalizedEmail.includes("@")) {
+      setError("Enter your email first so we can send the reset link.");
+      return;
+    }
+
+    if (normalizedEmail === ADMIN_PORTAL_EMAIL) {
+      setError("Admin credentials are environment-backed. Contact support for admin password resets.");
+      return;
+    }
+
+    setIsResetPending(true);
+
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        body: JSON.stringify({ email: normalizedEmail }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const payload = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
+
+      if (!response.ok) {
+        setError(payload.error ?? "Unable to send reset email right now.");
+        return;
+      }
+
+      setSuccessTitle("Reset email sent");
+      setSuccessMessage(payload.message ?? "Check your inbox for the reset link.");
+    } finally {
+      setIsResetPending(false);
+    }
+  }
+
   return (
     <>
       <form
-        className="grid gap-5 rounded-[2rem] border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
+        className="grid gap-5 rounded-4xl border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
         onSubmit={handleSubmit}
       >
         <div>
@@ -275,6 +320,21 @@ export function PortalSignInForm({
           </label>
         ) : null}
 
+        {mode === "sign_in" ? (
+          <div className="-mt-1 text-right">
+            <button
+              type="button"
+              onClick={() => {
+                void handleForgotPassword();
+              }}
+              disabled={isSubmitting || isGooglePending || isResetPending}
+              className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a0917] disabled:opacity-60"
+            >
+              {isResetPending ? "Sending reset link..." : "Forgot password?"}
+            </button>
+          </div>
+        ) : null}
+
         <label className="grid gap-2 text-sm font-medium text-slate-700">
           Email
           <input
@@ -290,29 +350,49 @@ export function PortalSignInForm({
 
         <label className="grid gap-2 text-sm font-medium text-slate-700">
           Password
-          <input
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-            type="password"
-            placeholder={mode === "sign_in" ? "Enter your password" : "Create a password"}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete={mode === "sign_in" ? "current-password" : "new-password"}
-            required
-          />
+          <div className="relative">
+            <input
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+              type={showPassword ? "text" : "password"}
+              placeholder={mode === "sign_in" ? "Enter your password" : "Create a password"}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete={mode === "sign_in" ? "current-password" : "new-password"}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
         </label>
 
         {mode === "sign_up" ? (
           <label className="grid gap-2 text-sm font-medium text-slate-700">
             Confirm password
-            <input
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-              type="password"
-              placeholder="Re-enter your password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              autoComplete="new-password"
-              required
-            />
+            <div className="relative">
+              <input
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((current) => !current)}
+                className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </label>
         ) : null}
 
@@ -322,7 +402,7 @@ export function PortalSignInForm({
         <button
           type="submit"
           className="inline-flex w-full items-center justify-center rounded-full bg-[#8a0917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isSubmitting || isGooglePending}
+          disabled={isSubmitting || isGooglePending || isResetPending}
         >
           {isSubmitting
             ? mode === "sign_in"
@@ -351,7 +431,7 @@ export function PortalSignInForm({
 
       <SubmissionSuccessModal
         open={Boolean(successMessage)}
-        title="Account created"
+        title={successTitle}
         message={successMessage}
         onClose={() => setSuccessMessage("")}
       />

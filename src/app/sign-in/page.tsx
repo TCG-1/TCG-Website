@@ -58,6 +58,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   const portalInitialMessage =
     errorParam === "oauth"
       ? "Google sign-in could not be completed. Please try again."
+      : errorParam === "auth-link"
+        ? "That email action link is invalid or expired. Please request a new one."
       : "";
   const showAdminView = viewParam === "admin";
   const initialPortalMode = modeParam === "sign-up" ? "sign_up" : "sign_in";

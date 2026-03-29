@@ -86,6 +86,11 @@ export default function AdminSettingsPage() {
     currentPassword: "",
     newPassword: "",
   });
+  const [showPasswords, setShowPasswords] = useState({
+    confirmPassword: false,
+    currentPassword: false,
+    newPassword: false,
+  });
 
   useEffect(() => {
     setPreferencesForm({
@@ -350,36 +355,70 @@ export default function AdminSettingsPage() {
             <div className="mt-6 space-y-4">
               <label className="grid gap-2">
                 <span className="text-sm font-medium text-slate-600">Current password</span>
-                <input
-                  type="password"
-                  value={passwordForm.currentPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.currentPassword ? "text" : "password"}
+                    value={passwordForm.currentPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 pr-16 text-sm outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPasswords((current) => ({ ...current, currentPassword: !current.currentPassword }))
+                    }
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.currentPassword ? "Hide current password" : "Show current password"}
+                  >
+                    {showPasswords.currentPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <label className="grid gap-2">
                 <span className="text-sm font-medium text-slate-600">New password</span>
-                <input
-                  type="password"
-                  value={passwordForm.newPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, newPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.newPassword ? "text" : "password"}
+                    value={passwordForm.newPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, newPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 pr-16 text-sm outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords((current) => ({ ...current, newPassword: !current.newPassword }))}
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.newPassword ? "Hide new password" : "Show new password"}
+                  >
+                    {showPasswords.newPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <label className="grid gap-2">
                 <span className="text-sm font-medium text-slate-600">Confirm password</span>
-                <input
-                  type="password"
-                  value={passwordForm.confirmPassword}
-                  onChange={(event) => {
-                    setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }));
-                  }}
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswords.confirmPassword ? "text" : "password"}
+                    value={passwordForm.confirmPassword}
+                    onChange={(event) => {
+                      setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }));
+                    }}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-3 pr-16 text-sm outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPasswords((current) => ({ ...current, confirmPassword: !current.confirmPassword }))
+                    }
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
+                    aria-label={showPasswords.confirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  >
+                    {showPasswords.confirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </label>
               <button
                 type="button"
