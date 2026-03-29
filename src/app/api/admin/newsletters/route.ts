@@ -10,6 +10,8 @@ const NEWSLETTER_SUBJECT = "Latest update from Tacklers Consulting Group";
 const REQUIRED_CONFIRMATION_RECIPIENTS = ["hello@tacklersconsulting.com", "audrey@tacklersconsulting.com"];
 const PRIMARY_CTA_URL = "/discovery-call";
 const SECONDARY_CTA_URL = "/operational-excellence-consulting-uk";
+const SUPPRESSED_LOCAL_PART_PATTERNS = [/^e2e-/i, /^probe-/i, /^qa-/i, /^test-/i, /^test\d*/i];
+const SUPPRESSED_DOMAIN_PATTERNS = [/\.example$/i, /^example\./i];
 
 type NewsletterRecipient = {
   email: string;
@@ -24,6 +26,25 @@ function normalizeText(value: unknown) {
 
 function normalizeEmail(value: string) {
   return value.trim().toLowerCase();
+}
+
+function isSuppressedRecipientEmail(email: string) {
+  const normalized = normalizeEmail(email);
+  const [localPart, domain = ""] = normalized.split("@");
+
+  if (!localPart || !domain) {
+    return true;
+  }
+
+  if (SUPPRESSED_LOCAL_PART_PATTERNS.some((pattern) => pattern.test(localPart))) {
+    return true;
+  }
+
+  if (SUPPRESSED_DOMAIN_PATTERNS.some((pattern) => pattern.test(domain))) {
+    return true;
+  }
+
+  return false;
 }
 
 function normalizeLeadName(value: string) {
@@ -112,9 +133,17 @@ export async function POST(request: Request) {
         source: "client_accounts",
       }));
 
-    const mergedRecipients = dedupeRecipients([...leadRecipients, ...signupRecipients]).filter((recipient) => recipient.email.includes("@"));
+    const mergedRecipients = dedupeRecipients([...leadRecipients, ...signupRecipients]).filter(
+      (recipient) => recipient.email.includes("@"),
+    );
     const unsubscribedEmails = await listUnsubscribedEmails(mergedRecipients.map((recipient) => recipient.email));
-    const recipients = mergedRecipients.filter((recipient) => !unsubscribedEmails.has(recipient.email));
+    const skippedUnsubscribed = mergedRecipients.filter((recipient) => unsubscribedEmails.has(recipient.email)).length;
+    const recipients = mergedRecipients.filter(
+      (recipient) => !unsubscribedEmails.has(recipient.email) && !isSuppressedRecipientEmail(recipient.email),
+    );
+    const skippedSuppressed = mergedRecipients.filter(
+      (recipient) => !unsubscribedEmails.has(recipient.email) && isSuppressedRecipientEmail(recipient.email),
+    ).length;
     const failedRecipients: string[] = [];
 
     for (const recipient of recipients) {
@@ -126,12 +155,14 @@ export async function POST(request: Request) {
         const primaryCtaUrl = absoluteUrl(PRIMARY_CTA_URL);
         const secondaryCtaUrl = absoluteUrl(SECONDARY_CTA_URL);
         const sections = `
-          <div style="margin-top:18px;">
-            <a href="${primaryCtaUrl}" style="display:inline-block;padding:11px 18px;border-radius:999px;background:#8a0917;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Book Discovery Call</a>
-            <a href="${secondaryCtaUrl}" style="display:inline-block;margin-left:10px;padding:11px 18px;border-radius:999px;background:#f8fafc;color:#334155;border:1px solid #d1d5db;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Explore Services</a>
-          </div>
-          <div style="margin-top:22px;padding-top:18px;border-top:1px solid #e2e8f0;">
-            <a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#f1f5f9;color:#334155;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Unsubscribe</a>
+          <div style="margin:24px auto 6px;max-width:520px;padding:20px;border:1px solid #e2e8f0;border-radius:18px;background:#f8fafc;text-align:center;">
+            <div style="margin:0 auto;">
+              <a href="${primaryCtaUrl}" style="display:inline-block;padding:11px 18px;border-radius:999px;background:#8a0917;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Book Discovery Call</a>
+              <a href="${secondaryCtaUrl}" style="display:inline-block;margin-left:10px;padding:11px 18px;border-radius:999px;background:#ffffff;color:#334155;border:1px solid #d1d5db;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Explore Services</a>
+            </div>
+            <div style="margin-top:14px;">
+              <a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#f1f5f9;color:#334155;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Unsubscribe</a>
+            </div>
             <p style="margin:10px 0 0;font-size:12px;line-height:1.7;color:#64748b;">If you no longer want these newsletter updates, use the unsubscribe button.</p>
           </div>
         `;
@@ -212,7 +243,8 @@ export async function POST(request: Request) {
       confirmationSent: true,
       failed: failedRecipients.length,
       failedRecipients,
-      skippedUnsubscribed: unsubscribedEmails.size,
+      skippedUnsubscribed,
+      skippedSuppressed,
       sent,
       totalCandidates: mergedRecipients.length,
       totalLeads: recipients.length,
