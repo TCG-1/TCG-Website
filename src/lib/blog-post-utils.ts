@@ -1,5 +1,4 @@
 import { parseBlogImagePayload, serializeRichTextToSections, type BlogRenderBlock } from "@/lib/blog-rich-text";
-import { slugifyText } from "@/lib/portal-data";
 
 export const BLOG_FALLBACK_COVER = "/media/photo-1517976487492-5750f3195933-200958be.jpg";
 
@@ -30,6 +29,16 @@ function clampAtWordBoundary(value: string, maxLength: number) {
   const sliced = value.slice(0, maxLength + 1);
   const boundary = sliced.lastIndexOf(" ");
   return `${sliced.slice(0, boundary > 60 ? boundary : maxLength).trim()}…`;
+}
+
+function slugifyText(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
 }
 
 export function findFirstBodyImage(body: string) {
