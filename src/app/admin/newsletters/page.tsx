@@ -9,7 +9,9 @@ type NewsletterResponse = {
   confirmationSent: boolean;
   failed: number;
   failedRecipients: string[];
+  skippedUnsubscribed: number;
   sent: number;
+  totalCandidates: number;
   totalLeads: number;
 };
 
@@ -49,11 +51,14 @@ export default function AdminNewslettersPage() {
       });
 
       setResult(payload);
+      const skippedLabel = payload.skippedUnsubscribed
+        ? ` ${payload.skippedUnsubscribed} unsubscribed recipient${payload.skippedUnsubscribed === 1 ? " was" : "s were"} skipped.`
+        : "";
       setNotice({
         message:
           payload.failed > 0
-            ? `Newsletter completed: ${payload.sent}/${payload.totalLeads} delivered, ${payload.failed} failed. Confirmation sent.`
-            : `Newsletter delivered to ${payload.sent} lead${payload.sent === 1 ? "" : "s"}. Confirmation sent.`,
+            ? `Newsletter completed: ${payload.sent}/${payload.totalLeads} delivered, ${payload.failed} failed. Confirmation sent.${skippedLabel}`
+            : `Newsletter delivered to ${payload.sent} recipient${payload.sent === 1 ? "" : "s"}. Confirmation sent.${skippedLabel}`,
         tone: "success",
       });
       setSubject("");

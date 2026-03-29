@@ -1,11 +1,15 @@
 import { renderEmailShell } from "@/lib/branded-email";
+import { createNewsletterSubscriptionToken, listUnsubscribedEmails } from "@/lib/newsletter-subscription";
 import { createAdminAuditEntry, ensureAdminPortalContext } from "@/lib/portal-data";
+import { absoluteUrl } from "@/lib/site-seo";
 import { getAdminInboxRecipients, isSmtpConfigured, sendEmail } from "@/lib/smtp";
 
 export const runtime = "nodejs";
 
 const NEWSLETTER_SUBJECT = "Latest update from Tacklers Consulting Group";
 const REQUIRED_CONFIRMATION_RECIPIENTS = ["hello@tacklersconsulting.com", "audrey@tacklersconsulting.com"];
+const PRIMARY_CTA_URL = "/discovery-call";
+const SECONDARY_CTA_URL = "/operational-excellence-consulting-uk";
 
 type NewsletterRecipient = {
   email: string;
@@ -108,15 +112,34 @@ export async function POST(request: Request) {
         source: "client_accounts",
       }));
 
-    const recipients = dedupeRecipients([...leadRecipients, ...signupRecipients]).filter((recipient) => recipient.email.includes("@"));
+    const mergedRecipients = dedupeRecipients([...leadRecipients, ...signupRecipients]).filter((recipient) => recipient.email.includes("@"));
+    const unsubscribedEmails = await listUnsubscribedEmails(mergedRecipients.map((recipient) => recipient.email));
+    const recipients = mergedRecipients.filter((recipient) => !unsubscribedEmails.has(recipient.email));
     const failedRecipients: string[] = [];
 
     for (const recipient of recipients) {
       try {
+        const token = createNewsletterSubscriptionToken(recipient.email);
+        const unsubscribeUrl = absoluteUrl(
+          `/newsletter/subscription?token=${encodeURIComponent(token)}&action=unsubscribe`,
+        );
+        const primaryCtaUrl = absoluteUrl(PRIMARY_CTA_URL);
+        const secondaryCtaUrl = absoluteUrl(SECONDARY_CTA_URL);
+        const sections = `
+          <div style="margin-top:18px;">
+            <a href="${primaryCtaUrl}" style="display:inline-block;padding:11px 18px;border-radius:999px;background:#8a0917;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Book Discovery Call</a>
+            <a href="${secondaryCtaUrl}" style="display:inline-block;margin-left:10px;padding:11px 18px;border-radius:999px;background:#f8fafc;color:#334155;border:1px solid #d1d5db;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Explore Services</a>
+          </div>
+          <div style="margin-top:22px;padding-top:18px;border-top:1px solid #e2e8f0;">
+            <a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:999px;background:#f1f5f9;color:#334155;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Unsubscribe</a>
+            <p style="margin:10px 0 0;font-size:12px;line-height:1.7;color:#64748b;">If you no longer want these newsletter updates, use the unsubscribe button.</p>
+          </div>
+        `;
+
         const html = await renderEmailShell({
           greetingPrefix: "Dear",
           intro: newsletterBody,
-          sections: "",
+          sections,
           subject: newsletterSubject,
           userName: recipient.full_name,
         });
@@ -189,7 +212,9 @@ export async function POST(request: Request) {
       confirmationSent: true,
       failed: failedRecipients.length,
       failedRecipients,
+      skippedUnsubscribed: unsubscribedEmails.size,
       sent,
+      totalCandidates: mergedRecipients.length,
       totalLeads: recipients.length,
     });
   } catch (error) {

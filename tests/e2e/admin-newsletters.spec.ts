@@ -61,7 +61,9 @@ test.describe.serial("admin newsletter QA", () => {
           confirmationSent: true,
           failed: 1,
           failedRecipients: ["failed@example.com"],
+          skippedUnsubscribed: 0,
           sent: 2,
+          totalCandidates: 3,
           totalLeads: 3,
         }),
         contentType: "application/json",
@@ -112,7 +114,9 @@ test.describe.serial("admin newsletter QA", () => {
       confirmationSent: boolean;
       failed: number;
       failedRecipients: string[];
+      skippedUnsubscribed: number;
       sent: number;
+      totalCandidates: number;
       totalLeads: number;
     };
 
@@ -120,6 +124,7 @@ test.describe.serial("admin newsletter QA", () => {
     expect(typeof payload.sent).toBe("number");
     expect(typeof payload.failed).toBe("number");
     expect(Array.isArray(payload.failedRecipients)).toBeTruthy();
+    expect(typeof payload.skippedUnsubscribed).toBe("number");
     expect(payload.confirmationSent).toBeTruthy();
     expect(Array.isArray(payload.confirmationRecipients)).toBeTruthy();
 

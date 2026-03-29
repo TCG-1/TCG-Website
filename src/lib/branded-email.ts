@@ -3,7 +3,7 @@ export type EmailDetailRow = {
   value: string;
 };
 
-const BRAND_LOGO_URL = "https://tacklersconsulting.com/media/TCG%20Logo.png";
+const BRAND_LOGO_URL = "https://tacklersconsulting.vercel.app/media/TCG%20Logo.png";
 const LINKEDIN_URL = "https://www.linkedin.com/company/tacklers-consulting-group/";
 
 function escapeHtml(value: string) {
