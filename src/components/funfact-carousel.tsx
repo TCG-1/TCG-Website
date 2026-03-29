@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Container } from "@/components/sections";
 
@@ -10,117 +10,128 @@ type FunFactItem = {
   value: string;
 };
 
-export function FunFactCarousel({ items }: { items: FunFactItem[] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+function parseAnimatedValue(value: string) {
+  const match = value.trim().match(/^(\d+(?:\.\d+)?)(.*)$/);
 
-  const safeItems = useMemo(() => items.filter((item) => item.value && item.label), [items]);
+  if (!match) {
+    return null;
+  }
+
+  const [, numberPart, suffix] = match;
+  const numericValue = Number(numberPart);
+
+  if (Number.isNaN(numericValue)) {
+    return null;
+  }
+
+  return {
+    decimals: numberPart.includes(".") ? numberPart.split(".")[1]?.length ?? 0 : 0,
+    suffix,
+    value: numericValue,
+  };
+}
+
+function AnimatedMetric({ value }: { value: string }) {
+  const parsedValue = useMemo(() => parseAnimatedValue(value), [value]);
+  const [displayValue, setDisplayValue] = useState(() => {
+    if (!parsedValue) {
+      return value;
+    }
+
+    return `${parsedValue.value.toFixed(parsedValue.decimals === 0 ? 0 : parsedValue.decimals).replace(/\.0+$/, "")}${parsedValue.suffix}`;
+  });
+  const [hasStarted, setHasStarted] = useState(false);
+  const metricRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (safeItems.length <= 1 || isPaused) {
+    const node = metricRef.current;
+
+    if (!node || hasStarted || !parsedValue) {
       return;
     }
 
-    const timer = window.setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % safeItems.length);
-    }, 3800);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
 
-    return () => {
-      window.clearInterval(timer);
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [hasStarted, parsedValue]);
+
+  useEffect(() => {
+    if (!hasStarted || !parsedValue) {
+      return;
+    }
+
+    const duration = 1400;
+    const startTime = performance.now();
+
+    let frameId = 0;
+
+    const updateFrame = (timestamp: number) => {
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const nextValue = parsedValue.value * easedProgress;
+      const formattedValue = `${nextValue
+        .toFixed(parsedValue.decimals)
+        .replace(/\.0+$/, "")}${parsedValue.suffix}`;
+
+      setDisplayValue(formattedValue);
+
+      if (progress < 1) {
+        frameId = window.requestAnimationFrame(updateFrame);
+      }
     };
-  }, [isPaused, safeItems.length]);
 
-  useEffect(() => {
-    if (!safeItems.length) {
-      setActiveIndex(0);
-      return;
-    }
+    frameId = window.requestAnimationFrame(updateFrame);
 
-    setActiveIndex((current) => (current >= safeItems.length ? 0 : current));
-  }, [safeItems.length]);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [hasStarted, parsedValue]);
+
+  return (
+    <div ref={metricRef} className="text-4xl font-extrabold leading-none sm:text-5xl">
+      {parsedValue ? displayValue : value}
+    </div>
+  );
+}
+
+export function FunFactCarousel({ items }: { items: FunFactItem[] }) {
+  const safeItems = useMemo(() => items.filter((item) => item.value && item.label), [items]);
 
   if (!safeItems.length) {
     return null;
   }
 
-  function goToNext() {
-    setActiveIndex((prev) => (prev + 1) % safeItems.length);
-  }
-
-  function goToPrevious() {
-    setActiveIndex((prev) => (prev - 1 + safeItems.length) % safeItems.length);
-  }
-
-  const activeItem = safeItems[activeIndex];
-
   return (
     <section className="bg-[#8a0917] py-8 text-white">
       <Container>
-        <div
-          className="mx-auto max-w-4xl text-center"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={() => setIsPaused(false)}
-        >
+        <div className="mx-auto max-w-5xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/75">Fun facts</p>
-          <div className="mt-4 rounded-3xl border border-white/20 bg-white/10 px-6 py-8 backdrop-blur-sm sm:px-8">
-            <div className="grid gap-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-              <button
-                type="button"
-                onClick={goToPrevious}
-                className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/8 text-lg font-semibold text-white transition hover:bg-white/16 lg:mx-0"
-                aria-label="Previous fun fact"
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {safeItems.map((item) => (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-white/20 bg-white/10 px-5 py-6 backdrop-blur-sm"
               >
-                ←
-              </button>
-
-              <div className="min-h-[11rem]">
-                <div className="text-5xl font-extrabold leading-none sm:text-6xl">{activeItem.value}</div>
-                <div className="mt-3 text-sm font-semibold uppercase tracking-[0.16em] text-white/85 sm:text-base">
-                  {activeItem.label}
+                <AnimatedMetric value={item.value} />
+                <div className="mt-3 text-sm font-semibold uppercase tracking-[0.14em] text-white/80">
+                  {item.label}
                 </div>
-                {activeItem.detail ? (
-                  <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-white/80 sm:text-base">
-                    {activeItem.detail}
+                {item.detail ? (
+                  <p className="mt-2 text-sm leading-6 text-white/78">
+                    {item.detail}
                   </p>
                 ) : null}
               </div>
-
-              <button
-                type="button"
-                onClick={goToNext}
-                className="mx-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/8 text-lg font-semibold text-white transition hover:bg-white/16 lg:mx-0"
-                aria-label="Next fun fact"
-              >
-                →
-              </button>
-            </div>
-          </div>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-            {safeItems.map((item, index) => (
-              <button
-                type="button"
-                key={item.label}
-                onClick={() => setActiveIndex(index)}
-                className="group flex items-center gap-2"
-                aria-label={`Show fun fact ${index + 1}`}
-                aria-pressed={index === activeIndex}
-              >
-                <span
-                className={`h-2.5 rounded-full transition-all ${
-                  index === activeIndex ? "w-8 bg-white" : "w-2.5 bg-white/35"
-                }`}
-                />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/65 transition group-hover:text-white/90">
-                  {item.value}
-                </span>
-              </button>
             ))}
           </div>
-          <p className="mt-4 text-xs uppercase tracking-[0.14em] text-white/55">
-            {isPaused ? "Autoplay paused" : "Autoplay active"}
-          </p>
         </div>
       </Container>
     </section>

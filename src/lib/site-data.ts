@@ -66,7 +66,7 @@ const genbaMeaningAnswer =
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/operational-excellence-consulting-uk" },
-  { label: "Lean Training", href: "/lean-training-uk" },
+  { label: "Mentoring", href: "/lean-training-uk" },
   { label: "Blog", href: "/blog" },
   { label: "Contact Us", href: "/contact" },
   { label: "About Us", href: "/about" },

@@ -17,7 +17,7 @@ const leanTrainingSeo = {
   description:
     "Practical Lean training and mentoring for UK teams that want to reduce waste, improve productivity, and build capability that lasts.",
   image: "/media/Lean-Training-060b97e6.jpeg",
-  title: "Lean Training UK | Tacklers Consulting Group",
+  title: "Mentoring UK | Tacklers Consulting Group",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
@@ -62,7 +62,7 @@ export default function LeanServicesPage() {
           }),
           buildBreadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Lean Training", path: "/lean-training-uk" },
+            { name: "Mentoring", path: "/lean-training-uk" },
           ]),
           buildServiceJsonLd({
             description: leanTrainingSeo.description,

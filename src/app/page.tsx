@@ -54,7 +54,7 @@ export default async function Home() {
       image: "/media/Executive-Leadership-Coaching-1588bf3d.jpeg",
     },
     {
-      title: "Lean Training",
+      title: "Mentoring",
       body: "Training has to connect to real work or it fades fast. We keep it practical.",
       href: "/lean-training-uk",
       cta: "View Programme",
@@ -229,8 +229,8 @@ export default async function Home() {
                 organisations keep the expertise they have worked hard to build.
               </p>
               <div className="mt-7 flex justify-center">
-                <Link href="/about" className="button-light">
-                  Learn more
+                <Link href="/lean-training-uk" className="button-light">
+                  Explore mentoring
                 </Link>
               </div>
               <p className="mt-5 text-sm uppercase tracking-[0.18em] text-white/55">
