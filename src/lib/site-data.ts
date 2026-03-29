@@ -3,6 +3,12 @@ export type NavItem = {
   href: string;
 };
 
+export type SocialLink = {
+  href: string;
+  label: string;
+  platform: "linkedin";
+};
+
 export type CardItem = {
   title: string;
   body: string;
@@ -83,7 +89,13 @@ export const footerData = {
     { label: "Support", href: "/support" },
     { label: "Terms & Conditions", href: "/terms-and-conditions" },
   ],
-  socialLinks: ["Facebook", "X-twitter", "Youtube", "Instagram", "Whatsapp"],
+  socialLinks: [
+    {
+      href: "https://www.linkedin.com/company/tacklers-consulting-group/",
+      label: "LinkedIn",
+      platform: "linkedin",
+    },
+  ] satisfies SocialLink[],
   coverageNote:
     "We work on-site at client locations across the UK. No public walk-in office.",
   email: "hello@tacklersconsulting.com",

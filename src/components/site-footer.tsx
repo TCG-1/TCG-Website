@@ -3,6 +3,22 @@ import Image from "next/image";
 
 import { footerData } from "@/lib/site-data";
 
+function LinkedInIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+      <path d="M6.94 8.5H3.56V20h3.38V8.5ZM5.25 3A1.97 1.97 0 0 0 3.25 5c0 1.1.89 2 1.97 2h.03a2 2 0 1 0 0-4ZM20.75 12.87c0-3.47-1.85-5.08-4.32-5.08-1.99 0-2.88 1.09-3.38 1.86V8.5H9.68c.04.76 0 11.5 0 11.5h3.37v-6.42c0-.34.02-.68.13-.92.27-.67.9-1.36 1.95-1.36 1.37 0 1.92 1.03 1.92 2.55V20h3.37v-7.13Z" />
+    </svg>
+  );
+}
+
+function SocialIcon({ platform }: { platform: (typeof footerData.socialLinks)[number]["platform"] }) {
+  if (platform === "linkedin") {
+    return <LinkedInIcon />;
+  }
+
+  return null;
+}
+
 export function SiteFooter() {
   return (
     <footer className="border-t border-black/5 bg-[#111111] text-white">
@@ -83,14 +99,19 @@ export function SiteFooter() {
             ))}
           </ul>
 
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-8 flex flex-wrap gap-3">
             {footerData.socialLinks.map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-white/65"
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={item.label}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-2 text-sm text-white/70 transition hover:border-white/20 hover:text-white"
               >
-                {item}
-              </span>
+                <SocialIcon platform={item.platform} />
+                <span>{item.label}</span>
+              </a>
             ))}
           </div>
         </div>
