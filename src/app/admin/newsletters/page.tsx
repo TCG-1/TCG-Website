@@ -21,6 +21,7 @@ type Notice =
   | null;
 
 export default function AdminNewslettersPage() {
+  const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
@@ -40,7 +41,10 @@ export default function AdminNewslettersPage() {
 
     try {
       const payload = await requestJson<NewsletterResponse>("/api/admin/newsletters", {
-        body: JSON.stringify({ body: trimmedBody }),
+        body: JSON.stringify({
+          body: trimmedBody,
+          subject: subject.trim(),
+        }),
         method: "POST",
       });
 
@@ -52,6 +56,7 @@ export default function AdminNewslettersPage() {
             : `Newsletter delivered to ${payload.sent} lead${payload.sent === 1 ? "" : "s"}. Confirmation sent.`,
         tone: "success",
       });
+      setSubject("");
       setBody("");
     } catch (sendError) {
       setNotice({
@@ -69,8 +74,8 @@ export default function AdminNewslettersPage() {
         <p className="eyebrow">Newsletter dispatch</p>
         <h1 className="section-title">Send newsletter to all leads</h1>
         <p className="body-copy max-w-3xl">
-          Write only the newsletter body. Each email automatically uses the existing branded email header and footer,
-          plus a personalized greeting formatted as Dear [username].
+          Add an optional subject and write the newsletter body. Each email automatically uses the existing branded
+          email header and footer, plus a personalized greeting formatted as Dear [username].
         </p>
       </section>
 
@@ -85,6 +90,20 @@ export default function AdminNewslettersPage() {
       ) : null}
 
       <section className="rounded-[1.5rem] border border-black/5 bg-white p-8 shadow-[0_14px_40px_rgba(15,23,42,0.04)]">
+        <label htmlFor="newsletter-subject" className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+          Email subject
+        </label>
+        <input
+          id="newsletter-subject"
+          type="text"
+          value={subject}
+          onChange={(event) => {
+            setSubject(event.target.value);
+          }}
+          placeholder="Enter newsletter subject (optional)"
+          className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none"
+        />
+
         <label htmlFor="newsletter-body" className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
           Newsletter body
         </label>

@@ -31,7 +31,7 @@ async function signInAsAdmin(page: Page) {
 }
 
 test.describe.serial("admin newsletter QA", () => {
-  test("shows Newsletters tab and posts body-only payload with clear result summary", async ({ page }) => {
+  test("shows Newsletters tab and posts subject/body payload with clear result summary", async ({ page }) => {
     await signInAsAdmin(page);
 
     const newslettersLink = page.getByRole("link", { name: /Newsletters/i }).first();
@@ -42,12 +42,14 @@ test.describe.serial("admin newsletter QA", () => {
     await expect(page.getByRole("heading", { name: "Send newsletter to all leads" })).toBeVisible();
 
     const newsletterBody = "Line one of QA newsletter.\nLine two for formatting check.";
+    const newsletterSubject = "QA Subject - Admin Newsletter";
     const bodyTextarea = page.locator("#newsletter-body");
+    const subjectInput = page.locator("#newsletter-subject");
+    await expect(subjectInput).toBeVisible();
+    await expect(subjectInput).toHaveAttribute("placeholder", "Enter newsletter subject (optional)");
+    await subjectInput.fill(newsletterSubject);
     await expect(bodyTextarea).toBeVisible();
     await bodyTextarea.fill(newsletterBody);
-
-    const subjectField = page.locator('input[name="subject"], #newsletter-subject, [data-testid="newsletter-subject"]');
-    await expect(subjectField).toHaveCount(0);
 
     let postedPayload: Record<string, unknown> | null = null;
     await page.route("**/api/admin/newsletters", async (route) => {
@@ -69,7 +71,7 @@ test.describe.serial("admin newsletter QA", () => {
 
     await page.getByRole("button", { name: /Send to all leads/i }).click();
 
-    expect(postedPayload).toEqual({ body: newsletterBody });
+    expect(postedPayload).toEqual({ body: newsletterBody, subject: newsletterSubject });
 
     await expect(page.getByText("Newsletter completed: 2/3 delivered, 1 failed. Confirmation sent.")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Failed recipients" })).toBeVisible();
@@ -85,6 +87,8 @@ test.describe.serial("admin newsletter QA", () => {
     await expect(page).toHaveURL(/\/admin\/newsletters$/);
 
     const newsletterBody = `QA live dispatch check at ${new Date().toISOString()}`;
+    const newsletterSubject = "Live QA newsletter subject";
+    await page.locator("#newsletter-subject").fill(newsletterSubject);
     await page.locator("#newsletter-body").fill(newsletterBody);
 
     const [response] = await Promise.all([
