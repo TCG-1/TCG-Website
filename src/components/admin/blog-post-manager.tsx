@@ -466,7 +466,7 @@ function BlogEditorModal({
   onClose: () => void;
   onDelete?: () => void;
   onFormChange: (patch: Partial<BlogFormState>) => void;
-  onSave: () => void;
+  onSave: (status?: string) => void;
   open: boolean;
 }) {
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
@@ -692,15 +692,12 @@ function BlogEditorModal({
             <button type="button" onClick={onClose} className="button-light">
               Close
             </button>
-            <button type="button" onClick={onSave} className="button-light" disabled={isSaving}>
+            <button type="button" onClick={() => onSave()} className="button-light" disabled={isSaving}>
               {isSaving ? "Saving..." : "Save as draft"}
             </button>
             <button
               type="button"
-              onClick={() => {
-                onFormChange({ status: "published" });
-                setTimeout(onSave, 0);
-              }}
+              onClick={() => onSave("published")}
               className="button-primary"
               disabled={isSaving || !form.title.trim() || !previewBody.trim()}
               title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
@@ -988,15 +985,12 @@ function BlogEditorModal({
             <button type="button" onClick={onClose} className="button-secondary">
               Close
             </button>
-            <button type="button" onClick={onSave} className="button-secondary" disabled={isSaving}>
+            <button type="button" onClick={() => onSave()} className="button-secondary" disabled={isSaving}>
               {isSaving ? "Saving..." : "Save as draft"}
             </button>
             <button
               type="button"
-              onClick={() => {
-                onFormChange({ status: "published" });
-                setTimeout(onSave, 0);
-              }}
+              onClick={() => onSave("published")}
               className="button-primary"
               disabled={isSaving || !form.title.trim() || !previewBody.trim()}
               title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
@@ -1045,7 +1039,7 @@ export function BlogPostManager() {
     setIsDeleting(false);
   }
 
-  async function savePost() {
+  async function savePost(publishStatus?: string) {
     if (!modal) {
       return;
     }
@@ -1056,6 +1050,7 @@ export function BlogPostManager() {
       const payload = {
         ...form,
         body: currentBody,
+        status: publishStatus ?? form.status,
       };
 
       if (modal.mode === "create") {
@@ -1077,7 +1072,7 @@ export function BlogPostManager() {
       }
 
       setNotice({
-        message: form.status === "published" ? "Blog post published successfully." : "Blog post saved as draft.",
+        message: (publishStatus ?? form.status) === "published" ? "Blog post published successfully." : "Blog post saved as draft.",
         tone: "success",
       });
       closeModal();
@@ -1213,8 +1208,8 @@ export function BlogPostManager() {
         onFormChange={(patch) => {
           setForm((current) => ({ ...current, ...patch }));
         }}
-        onSave={() => {
-          void savePost();
+        onSave={(status?: string) => {
+          void savePost(status);
         }}
         open={Boolean(modal)}
       />
