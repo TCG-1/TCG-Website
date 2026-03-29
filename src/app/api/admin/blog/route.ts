@@ -5,6 +5,7 @@ import {
   serializeBlogSections,
   slugifyText,
 } from "@/lib/portal-data";
+import { buildDerivedBlogFields } from "@/lib/blog-post-utils";
 import { ensureBlogSeedData } from "@/lib/portal-seed";
 
 export const runtime = "nodejs";
@@ -48,6 +49,40 @@ async function resolveUniqueSlug(
     }
 
     candidate = `${baseSlug}-${iteration}`;
+    iteration += 1;
+  }
+}
+
+async function resolveUniqueTextField(
+  supabase: Awaited<ReturnType<typeof ensureAdminPortalContext>>["supabase"],
+  field: "seo_description" | "seo_title",
+  requestedValue: string,
+) {
+  const baseValue = normalizeText(requestedValue);
+
+  if (!baseValue) {
+    return "";
+  }
+
+  let candidate = baseValue;
+  let iteration = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("id")
+      .eq(field, candidate)
+      .limit(1);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data?.length) {
+      return candidate;
+    }
+
+    candidate = field === "seo_description" ? `${baseValue} (${iteration})` : `${baseValue} | ${iteration}`;
     iteration += 1;
   }
 }
@@ -102,41 +137,53 @@ export async function POST(request: Request) {
     const body = (await request.json()) as Record<string, unknown>;
     const rawTitle = normalizeText(body.title);
     const postBody = normalizeText(body.body);
-    const category = normalizeOptionalText(body.category);
-    const canonicalUrl = normalizeOptionalText(body.canonicalUrl);
-    const coverUrl = normalizeOptionalText(body.coverUrl);
     const noIndex = normalizeBoolean(body.noIndex);
-    const ogImageUrl = normalizeOptionalText(body.ogImageUrl);
     const status = normalizeText(body.status).toLowerCase() || "draft";
     const title = rawTitle || (status === "draft" ? "Untitled draft" : "");
-    const requestedSlug = normalizeText(body.slug) || title;
-    const excerpt = normalizeText(body.excerpt) || (status === "draft" ? "Draft excerpt in progress." : "");
-    const seoDescription = normalizeOptionalText(body.seoDescription) ?? excerpt;
-    const seoTitle = normalizeOptionalText(body.seoTitle);
 
     if (!BLOG_STATUSES.has(status)) {
       return Response.json({ error: "Invalid blog status." }, { status: 400 });
     }
 
-    if (!title || !excerpt || (!postBody && status !== "draft")) {
-      return Response.json({ error: "Title, excerpt, and body are required." }, { status: 400 });
+    if (!title || (!postBody && status !== "draft")) {
+      return Response.json({ error: "Title and body are required to publish a blog post." }, { status: 400 });
     }
 
-    const slug = await resolveUniqueSlug(supabase, requestedSlug);
+    const derivedFields = buildDerivedBlogFields({
+      body: postBody,
+      canonicalUrl: normalizeOptionalText(body.canonicalUrl),
+      category: normalizeOptionalText(body.category),
+      coverUrl: normalizeOptionalText(body.coverUrl),
+      excerpt: normalizeOptionalText(body.excerpt),
+      ogImageUrl: normalizeOptionalText(body.ogImageUrl),
+      seoDescription: normalizeOptionalText(body.seoDescription),
+      seoTitle: normalizeOptionalText(body.seoTitle),
+      slug: normalizeText(body.slug),
+      title,
+    });
+
+    const slug = await resolveUniqueSlug(supabase, derivedFields.slugBase);
+    const seoTitle = await resolveUniqueTextField(supabase, "seo_title", derivedFields.seoTitle || title);
+    const seoDescription = await resolveUniqueTextField(
+      supabase,
+      "seo_description",
+      derivedFields.seoDescription,
+    );
+    const canonicalUrl = derivedFields.canonicalUrl === `/blog/${derivedFields.slugBase}` ? `/blog/${slug}` : derivedFields.canonicalUrl;
 
     const { data: post, error: postError } = await supabase
       .from("blog_posts")
       .insert([
         {
           canonical_url: canonicalUrl,
-          category,
-          cover_url: coverUrl,
-          excerpt,
+          category: derivedFields.category,
+          cover_url: derivedFields.coverUrl,
+          excerpt: derivedFields.excerpt,
           noindex: noIndex,
-          og_image_url: ogImageUrl,
+          og_image_url: derivedFields.ogImageUrl,
           published_at: status === "published" ? new Date().toISOString() : null,
           seo_description: seoDescription,
-          seo_title: seoTitle,
+          seo_title: seoTitle || title,
           slug,
           status,
           title,
@@ -170,6 +217,7 @@ export async function POST(request: Request) {
         canonicalUrl,
         noIndex,
         seoTitle,
+        seoDescription,
         slug,
         status,
         title,

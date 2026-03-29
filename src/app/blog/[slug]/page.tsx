@@ -7,6 +7,7 @@ import { BlogRichContent } from "@/components/blog/blog-rich-content";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/sections";
 import { getPublishedBlogEntries, getPublishedBlogEntryBySlug } from "@/lib/blog-content";
+import { dedupeCoverImageBlocks } from "@/lib/blog-post-utils";
 import { createPageMetadata } from "@/lib/site-seo";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
@@ -61,8 +62,9 @@ export default async function BlogPostPage({
   }
 
   const relatedPosts = allPosts.filter((entry) => entry.slug !== post.slug).slice(0, 4);
+  const articleBlocks = dedupeCoverImageBlocks(post.sections, post.cover);
 
-  const articleHeadings = post.sections.filter((block) => block.type === "heading");
+  const articleHeadings = articleBlocks.filter((block) => block.type === "heading");
 
   const headingLinks = articleHeadings.map((block, index) => ({
     id:
@@ -185,18 +187,14 @@ export default async function BlogPostPage({
             </aside>
 
             <div className="lg:col-span-9">
-              <div className="overflow-hidden rounded-4xl border border-white/60 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
-                <Image src={post.cover} alt={post.title} width={1600} height={900} className="h-105 w-full object-cover" />
-              </div>
-
-              <div className="mt-10 rounded-4xl border border-[#8a0917]/10 bg-white px-6 py-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)] sm:px-10 sm:py-10">
+              <div className="rounded-4xl border border-[#8a0917]/10 bg-white px-6 py-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)] sm:px-10 sm:py-10">
                 <div className="mb-10 border-l-4 border-[#FDD835] pl-6">
                   <p className="text-xl font-light italic leading-9 text-slate-600 sm:text-2xl">
                     {post.excerpt}
                   </p>
                 </div>
 
-                <BlogRichContent blocks={post.sections} />
+                <BlogRichContent blocks={articleBlocks} />
 
                 <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t border-[#8a0917]/10 pt-10">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">

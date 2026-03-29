@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { BlogRichContent } from "@/components/blog/blog-rich-content";
 import { requestJson, useLiveApi } from "@/components/portal/use-live-api";
+import { dedupeCoverImageBlocks } from "@/lib/blog-post-utils";
 import {
   type BlogSectionType,
   normalizeBlogRenderBlocks,
@@ -484,8 +485,12 @@ function BlogEditorModal({
 
   const previewBody = useMemo(() => serializeBlocksToBody(blocks), [blocks]);
   const previewBlocks = useMemo(
-    () => normalizeBlogRenderBlocks(serializeRichTextToSections(previewBody)),
-    [previewBody],
+    () =>
+      dedupeCoverImageBlocks(
+        normalizeBlogRenderBlocks(serializeRichTextToSections(previewBody)),
+        form.coverUrl,
+      ),
+    [form.coverUrl, previewBody],
   );
   const tableOfContents = previewBlocks.filter((block) => block.type === "heading");
   const activeBlock = blocks.find((block) => block.id === activeBlockId) ?? blocks[0] ?? null;

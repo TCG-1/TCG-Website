@@ -48,6 +48,21 @@ function buildPortalAccount(user: Pick<User, "email" | "user_metadata"> | null):
   };
 }
 
+function buildCompactAccountName(name: string): string {
+  const trimmed = name.trim();
+
+  if (!trimmed) {
+    return "Account";
+  }
+
+  const [firstWord] = trimmed.split(/\s+/);
+  if (firstWord.length <= 12) {
+    return firstWord;
+  }
+
+  return `${firstWord.slice(0, 11)}…`;
+}
+
 function AccountIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden="true">
@@ -153,6 +168,7 @@ export function SiteHeader() {
   const showAuthenticatedAccount = showPortalAccount || showAdminAccount;
   const primaryAccount = portalAccount ?? adminAccount;
   const primaryAccountName = primaryAccount?.name ?? "";
+  const primaryAccountCompactName = buildCompactAccountName(primaryAccountName);
   const primaryAccountEmail = primaryAccount?.email ?? "";
   const primaryAccountInitials = primaryAccount?.initials ?? "TC";
   const accountEyebrowLabel = showAdminAccount && !showPortalAccount ? "Admin account" : "Account";
@@ -549,12 +565,12 @@ export function SiteHeader() {
               >
                 {primaryAccountInitials}
               </span>
-              <span className="min-w-0 hidden xl:block">
+              <span className="min-w-0 hidden 2xl:block">
                 <span className={`block text-[10px] font-bold uppercase tracking-[0.18em] ${desktopAccountLabelClassName}`}>
                   {accountEyebrowLabel}
                 </span>
-                <span className="mt-0.5 block max-w-[10rem] truncate text-sm font-semibold">
-                  {primaryAccountName}
+                <span className="mt-0.5 block max-w-[7.5rem] truncate text-sm font-semibold">
+                  {primaryAccountCompactName}
                 </span>
               </span>
               <ChevronDown className={`h-4 w-4 transition ${isAccountMenuOpen ? "rotate-180" : ""}`} />
