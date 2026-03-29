@@ -1,5 +1,5 @@
 import { buildDetailList, buildTextSummary, type EmailDetailRow, renderEmailShell } from "@/lib/branded-email";
-import { getAdminInboxEmail, sendEmail } from "@/lib/smtp";
+import { getAdminInboxEmail, getAdminInboxRecipients, sendEmail } from "@/lib/smtp";
 
 function toTitle(value: string) {
   return value
@@ -68,7 +68,7 @@ export async function sendSupportTicketCreatedEmails({
       replyTo: requesterEmail,
       subject: adminSubject,
       text: `New support ticket received.\n\n${buildTextSummary(detailRows)}`,
-      to: getAdminInboxEmail(),
+      to: getAdminInboxRecipients(),
     }),
     sendEmail({
       html: requesterHtml,
@@ -120,7 +120,7 @@ export async function sendSupportClientReplyEmail({
     replyTo: requesterEmail,
     subject: adminSubject,
     text: `Client replied to support ticket ${ticketNumber}.\n\n${buildTextSummary(detailRows)}`,
-    to: getAdminInboxEmail(),
+    to: getAdminInboxRecipients(),
   });
 }
 

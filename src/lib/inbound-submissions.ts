@@ -1,5 +1,5 @@
 import { buildDetailList, buildTextSummary, renderEmailShell } from "@/lib/branded-email";
-import { getAdminInboxEmail, sendEmail } from "@/lib/smtp";
+import { getAdminInboxEmail, getAdminInboxRecipients, sendEmail } from "@/lib/smtp";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type InquiryKind =
@@ -434,7 +434,7 @@ export async function handleInquirySubmission(input: InquirySubmissionInput) {
 			replyTo: email,
 			subject: adminSubject,
 			text: `${adminIntro}\n\n${buildTextSummary(detailRows)}`,
-			to: getAdminInboxEmail(),
+			to: getAdminInboxRecipients(),
 		}),
 		sendEmail({
 			html: thanksHtml,
@@ -543,7 +543,7 @@ export async function handleCareerApplicationLead(input: CareerLeadInput) {
 			replyTo: email,
 			subject: adminSubject,
 			text: `New application received.\n\n${buildTextSummary(detailRows)}`,
-			to: getAdminInboxEmail(),
+			to: getAdminInboxRecipients(),
 		}),
 		sendEmail({
 			html: thanksHtml,

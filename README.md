@@ -29,6 +29,19 @@ npm run dev
 
 Open http://localhost:3000
 
+`npm run dev` uses Webpack mode by default for local stability.
+If you want to test Turbopack explicitly, use:
+
+```bash
+npm run dev:turbo
+```
+
+If you hit a Turbopack panic loop locally, stop any running `next dev` process and run:
+
+```bash
+npm run dev:reset
+```
+
 Local development uses a fallback admin login only when `NODE_ENV` is not `production`:
 
 - Email: `hello@tacklersconsulting.com`

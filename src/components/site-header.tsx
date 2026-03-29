@@ -575,7 +575,7 @@ export function SiteHeader() {
             <div aria-hidden="true" className="invisible h-11 w-[7.25rem]" />
           )}
 
-          <Link href="/discovery-call" className="button-light">
+          <Link href="/discovery-call" className="button-light shrink-0 whitespace-nowrap">
             Book now
           </Link>
         </div>
@@ -814,7 +814,7 @@ export function SiteHeader() {
             <Link
               href="/discovery-call"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="button-light justify-center"
+              className="button-light justify-center whitespace-nowrap"
             >
               Book now
             </Link>

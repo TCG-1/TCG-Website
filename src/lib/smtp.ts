@@ -18,6 +18,7 @@ type EmailPayload = {
 
 type SmtpConfig = {
   adminEmail: string;
+  adminRecipients: string[];
   fromEmail: string;
   fromName: string;
   host: string;
@@ -42,18 +43,39 @@ function parsePort(value: string | undefined) {
   return Number.isFinite(parsed) ? parsed : 465;
 }
 
+function normalizeEmailAddress(value: string | undefined | null) {
+  const trimmed = value?.trim().toLowerCase();
+  return trimmed ? trimmed : null;
+}
+
+function parseAdminRecipients(...values: Array<string | undefined | null>) {
+  const recipients = values
+    .flatMap((value) => (value ?? "").split(","))
+    .map((value) => normalizeEmailAddress(value))
+    .filter((value): value is string => Boolean(value));
+
+  return Array.from(new Set(recipients));
+}
+
 function getSmtpConfig(): SmtpConfig {
   const user =
-    process.env.SMTP_USER?.trim() ||
-    process.env.SMTP_FROM_EMAIL?.trim() ||
-    process.env.ADMIN_EMAIL?.trim().toLowerCase() ||
+    normalizeEmailAddress(process.env.SMTP_USER) ||
+    normalizeEmailAddress(process.env.SMTP_FROM_EMAIL) ||
+    normalizeEmailAddress(process.env.ADMIN_EMAIL) ||
     "hello@tacklersconsulting.com";
-  const fromEmail = process.env.SMTP_FROM_EMAIL?.trim() || user;
-  const adminEmail = process.env.SMTP_ADMIN_EMAIL?.trim() || process.env.ADMIN_EMAIL?.trim().toLowerCase() || user;
+  const fromEmail = normalizeEmailAddress(process.env.SMTP_FROM_EMAIL) || user;
+  const adminRecipients = parseAdminRecipients(
+    process.env.SMTP_ADMIN_EMAIL,
+    process.env.ADMIN_EMAIL,
+    user,
+    "audrey@tacklersconsulting.com",
+  );
+  const adminEmail = adminRecipients[0] ?? user;
   const port = parsePort(process.env.SMTP_PORT);
 
   return {
     adminEmail,
+    adminRecipients,
     fromEmail,
     fromName: process.env.SMTP_FROM_NAME?.trim() || "Tacklers Consulting Group",
     host: process.env.SMTP_HOST?.trim() || "smtp.gmail.com",
@@ -90,6 +112,10 @@ function getTransporter() {
 
 export function getAdminInboxEmail() {
   return getSmtpConfig().adminEmail;
+}
+
+export function getAdminInboxRecipients() {
+  return getSmtpConfig().adminRecipients;
 }
 
 export function getDefaultFromHeader() {

@@ -27,6 +27,11 @@ export function PageHero({
     eyebrow === "Transforming Challenges Into Opportunities" || eyebrow === brandTagline
       ? "brand-tagline"
       : "eyebrow";
+  const heroTitleWords = title.trim().split(/\s+/).filter(Boolean);
+  const splitIndex =
+    heroTitleWords.length >= 5 ? Math.ceil(heroTitleWords.length * 0.55) : heroTitleWords.length;
+  const primaryTitle = heroTitleWords.slice(0, splitIndex).join(" ");
+  const emphasisTitle = heroTitleWords.slice(splitIndex).join(" ");
 
   return (
     <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
@@ -45,7 +50,13 @@ export function PageHero({
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-14 text-center sm:pt-16 lg:pt-20">
           {eyebrow ? <p className={eyebrowClassName}>{eyebrow}</p> : null}
           <h1 className="display-title mt-3 max-w-4xl">
-            {title}
+            {primaryTitle}
+            {emphasisTitle ? (
+              <>
+                <br />
+                <span className="hero-title-emphasis">{emphasisTitle}</span>
+              </>
+            ) : null}
           </h1>
           <p className="body-copy mt-6 max-w-3xl">
             {body}
