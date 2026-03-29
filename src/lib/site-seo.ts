@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const DEFAULT_SITE_URL = "https://tacklersconsulting.vercel.app";
+const DEFAULT_SITE_URL = "https://tacklersconsulting.com";
 const DEFAULT_OG_IMAGE = "/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg";
 
 function normalizeSiteUrl(value: string | undefined) {
@@ -26,12 +26,7 @@ export const siteConfig = {
   name: "Tacklers Consulting Group",
   phone: "+44 7932 105847",
   title: "Tacklers Consulting Group",
-  url: normalizeSiteUrl(
-    process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : undefined),
-  ),
+  url: normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL),
 } as const;
 
 export type PageMetadataOptions = {

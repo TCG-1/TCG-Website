@@ -20,7 +20,7 @@ const homeSeo = {
   description:
     "Tacklers Consulting Group helps UK organisations reduce waste, improve productivity, and build operational excellence capability that lasts.",
   image: homeData.hero.image,
-  title: "Operational Excellence Consulting UK | Tacklers Consulting Group",
+  title: "People-First Lean Transformation UK | Tacklers Consulting Group",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
@@ -108,9 +108,9 @@ export default async function Home() {
           <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-14 text-center sm:pt-16 lg:pt-20">
             <p className="brand-tagline max-w-3xl">{brandTagline}</p>
             <h1 className="display-title mt-3 max-w-4xl">
-              Operational Excellence
+              People-First Lean Transformation
               <br />
-              <span className="hero-title-emphasis">Services in the UK</span>
+              <span className="hero-title-emphasis">for UK Teams</span>
             </h1>
             <p className="body-copy mt-6 max-w-3xl">
               Tacklers Consulting Group is a UK-based Lean transformation and operational excellence
