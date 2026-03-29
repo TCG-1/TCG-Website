@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
+import { FunFactCarousel } from "@/components/funfact-carousel";
 import {
   CardGrid,
   Container,
@@ -137,38 +138,30 @@ export default async function Home() {
         </Container>
       </section>
 
-      <section className="bg-[#8a0917] py-8 text-white">
-        <Container>
-          <div className="mx-auto max-w-5xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/75">Fun facts</p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                {
-                  value: "500+",
-                  label: "Individuals trained in Lean Principles",
-                  detail: "From front-line teams to C-Suite level",
-                },
-                { value: "4.8/5", label: "Average Rating" },
-                { value: "98%", label: "Client Satisfaction" },
-                { value: "10+", label: "Years Experience" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-2xl border border-white/20 bg-white/10 px-5 py-6 backdrop-blur-sm"
-                >
-                  <div className="text-4xl font-extrabold leading-none">{item.value}</div>
-                  <div className="mt-3 text-sm font-semibold uppercase tracking-[0.14em] text-white/80">
-                    {item.label}
-                  </div>
-                  {"detail" in item ? (
-                    <div className="mt-2 text-sm leading-6 text-white/78">{item.detail}</div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
+      <FunFactCarousel
+        items={[
+          {
+            value: "500+",
+            label: "Individuals trained in Lean Principles",
+            detail: "From front-line teams to C-Suite level across operationally complex environments.",
+          },
+          {
+            value: "4.8/5",
+            label: "Average rating",
+            detail: "Programmes are designed to be practical, useful, and easy for teams to apply immediately.",
+          },
+          {
+            value: "98%",
+            label: "Client satisfaction",
+            detail: "Clients stay engaged because the work focuses on real bottlenecks, not generic slide decks.",
+          },
+          {
+            value: "10+",
+            label: "Years experience",
+            detail: "Lean transformation support grounded in hands-on delivery, not just workshop theory.",
+          },
+        ]}
+      />
 
       <section className="section-gap bg-slate-50">
         <Container>

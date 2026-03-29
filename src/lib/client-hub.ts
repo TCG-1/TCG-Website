@@ -166,6 +166,7 @@ const DEFAULT_CLIENT_HUB_CONTENT: ClientHubContent = {
       { label: "Logout", icon: "logout", section: "top" },
     ],
     footerLinks: [
+      { label: "Cookie Policy", href: "/cookie-policy" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Client Terms", href: "/terms-and-conditions" },
       { label: "Contact Support", href: "/support" },

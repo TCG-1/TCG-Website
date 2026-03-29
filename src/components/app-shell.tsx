@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -18,6 +19,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <CookieConsentBanner />
     </>
   );
 }

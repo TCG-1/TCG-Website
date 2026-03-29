@@ -78,6 +78,7 @@ export const footerData = {
   ],
   additionalLinks: navItems,
   legalLinks: [
+    { label: "Cookie Policy", href: "/cookie-policy" },
     { label: "Privacy Policy", href: "/privacy-policy" },
     { label: "Support", href: "/support" },
     { label: "Terms & Conditions", href: "/terms-and-conditions" },

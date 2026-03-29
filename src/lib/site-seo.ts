@@ -175,6 +175,7 @@ export const publicSitePages = [
   { changeFrequency: "monthly" as const, path: "/discovery-call", priority: 0.7 },
   { changeFrequency: "monthly" as const, path: "/book-lean-training", priority: 0.7 },
   { changeFrequency: "monthly" as const, path: "/on-site-assessment", priority: 0.7 },
+  { changeFrequency: "yearly" as const, path: "/cookie-policy", priority: 0.3 },
   { changeFrequency: "yearly" as const, path: "/privacy-policy", priority: 0.3 },
   { changeFrequency: "yearly" as const, path: "/terms-and-conditions", priority: 0.3 },
 ] as const;

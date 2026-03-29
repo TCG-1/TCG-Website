@@ -38,7 +38,7 @@ export default function TermsPage() {
       <PageHero
         eyebrow="Legal & compliance"
         title="Terms & Conditions"
-        body="Please read these terms carefully before using our services. Last updated: October 2025."
+        body="Terms governing use of the Tacklers website, enquiries, portal access, and related digital services. Effective date: 29 March 2026."
         image={termsSeo.image}
       />
       <section className="section-gap">
@@ -46,8 +46,28 @@ export default function TermsPage() {
           <div className="grid gap-6">
             <LegalSection
               number="1"
-              title="Intellectual Property Rights"
-              body="Unless otherwise stated, Tacklers Consulting Group and its licensors own the intellectual property rights for all material on this website. All intellectual property rights are reserved."
+              title="About these terms"
+              body="These terms apply to your access to and use of the Tacklers Consulting Group website, public pages, and any related online service or portal we make available, unless separate written terms expressly replace them for a particular engagement or platform area."
+            />
+            <LegalSection
+              number="2"
+              title="Who we work with"
+              body="Our consulting, training, and delivery work is usually provided to business customers under a separate proposal, statement of work, or written agreement. Information on this website is general information only and is not a binding offer, guarantee of outcomes, or substitute for a formal contract."
+            />
+            <LegalSection
+              number="3"
+              title="Website use and acceptable conduct"
+              body="You agree to use the site lawfully and responsibly. You must not interfere with site security, attempt unauthorised access, upload malicious code, scrape content in a way that harms the service, misuse contact forms, or use the site in a way that is unlawful, defamatory, fraudulent, abusive, or harmful."
+            />
+            <LegalSection
+              number="4"
+              title="Account and portal access"
+              body="If we provide you with portal credentials or account access, you are responsible for keeping your login details confidential, using strong credentials, and notifying us promptly if you suspect compromise. We may suspend or revoke access where reasonably necessary for security, misuse prevention, contract management, or legal compliance."
+            />
+            <LegalSection
+              number="5"
+              title="Intellectual property rights"
+              body="Unless otherwise stated, Tacklers Consulting Group and its licensors own the intellectual property rights in this website, branding, text, images, downloads, and other materials. Limited personal or internal business viewing is permitted, but broader reuse requires permission."
               points={[
                 "Do not republish material from our website without proper attribution.",
                 "Do not sell, rent, or sub-license material from the website.",
@@ -55,33 +75,38 @@ export default function TermsPage() {
               ]}
             />
             <LegalSection
-              number="2"
-              title="Consulting Services & Agreements"
-              body="Information on this website is for general informational purposes only. Engaging Tacklers Consulting Group is subject to a separate Statement of Work or written contract. Nothing on the website constitutes a binding consulting agreement or guarantees specific results."
-            />
-            <LegalSection
-              number="3"
-              title="User Conduct"
-              body="You agree not to use the site in a way that damages the website, impairs accessibility, or is unlawful, illegal, fraudulent, or harmful."
-            />
-            <LegalSection
-              number="4"
-              title="Limitation of Liability"
-              body="Tacklers Consulting Group and its team will not be liable for anything arising out of or connected with your use of this website, whether under contract, tort, or otherwise, to the maximum extent permitted by law."
-            />
-            <LegalSection
-              number="5"
-              title="Governing Law & Jurisdiction"
-              body="These terms are governed by the laws of the United Kingdom, and disputes are subject to the non-exclusive jurisdiction of the appropriate courts in the UK."
-            />
-            <LegalSection
               number="6"
-              title="Changes to These Terms"
-              body="Tacklers Consulting Group may revise these terms at any time. By using the website, you are expected to review them regularly so you understand the terms governing your use."
+              title="Reliance on content"
+              body="While we aim to keep website content accurate and current, the site is provided for general information and may not always be complete, current, or suitable for your specific circumstances. You remain responsible for evaluating whether any material is appropriate for your own use."
+            />
+            <LegalSection
+              number="7"
+              title="Third-party services and links"
+              body="This site may reference or link to third-party websites, platforms, or tools. We do not control those external services and are not responsible for their content, availability, terms, or privacy practices. Your use of them is governed by their own terms."
+            />
+            <LegalSection
+              number="8"
+              title="Liability"
+              body="Nothing in these terms excludes or limits liability where the law does not allow that, including liability for fraud, fraudulent misrepresentation, death, or personal injury caused by negligence. Subject to that, and to the fullest extent permitted by law, we exclude implied warranties and limit liability for losses arising from your use of this website and free public content."
+            />
+            <LegalSection
+              number="9"
+              title="Privacy, cookies, and data protection"
+              body="Your use of the site is also governed by our Privacy Policy and Cookie Policy. Where we process personal data, we do so under applicable UK and EU data protection rules as described in those notices."
+            />
+            <LegalSection
+              number="10"
+              title="Consumer rights and mandatory local law"
+              body="If you are using this website as a consumer, any mandatory rights granted by the law of your usual country of residence remain unaffected. Where separate service agreements apply, those agreements may contain additional consumer or business-specific terms relevant to the engagement."
+            />
+            <LegalSection
+              number="11"
+              title="Changes to these terms"
+              body="We may update these terms from time to time. The latest version published on this page applies from its effective date. Continued use of the website after a change indicates acceptance to the extent permitted by law."
             />
             <LegalSection
               title="Questions about these terms?"
-              body="If you require clarification on any of our terms of service, contact our legal team at hello@tacklersconsulting.com."
+              body="If you need clarification on these terms or require a service-specific agreement, contact hello@tacklersconsulting.com."
             />
           </div>
         </Container>
