@@ -24,7 +24,7 @@ export default async function AdminDashboardPage() {
 
       <PortalMetricGrid items={workspace.metrics} />
 
-      <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
+      <div className="space-y-8">
         <PortalPanel
           title="Training delivery workflow"
           description="This workspace follows the full delivery lifecycle, from cohort setup to certification readiness."

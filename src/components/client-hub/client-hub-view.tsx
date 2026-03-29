@@ -25,7 +25,7 @@ export function ClientHubView({ workspace }: { workspace: ClientTrainingWorkspac
 
       <LearnerTrainingOnboarding onboarding={workspace.onboarding} />
 
-      <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="space-y-8">
         <PortalPanel
           title={workspace.nextSession?.title ?? "No upcoming session is scheduled yet."}
           description={
