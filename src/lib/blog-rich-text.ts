@@ -19,6 +19,18 @@ export type BlogRenderBlock = {
   type: BlogSectionType;
 };
 
+function getBlockSignature(block: BlogRenderBlock) {
+  if (block.type === "image") {
+    return `${block.type}|${block.image?.src ?? ""}|${block.image?.alt ?? ""}|${block.image?.caption ?? ""}`;
+  }
+
+  if (block.type === "bullet_list") {
+    return `${block.type}|${block.items.join("\n")}`;
+  }
+
+  return `${block.type}|${block.body}`;
+}
+
 function createImagePayload(src: string, alt = "", caption = ""): BlogImagePayload {
   return {
     alt: alt.trim(),
@@ -167,7 +179,7 @@ export function serializeSectionsToRichText(sections: BlogSectionShape[]) {
 }
 
 export function normalizeBlogRenderBlocks(sections: BlogSectionShape[]): BlogRenderBlock[] {
-  return sections
+  const normalized = sections
     .slice()
     .sort((left, right) => left.sort_order - right.sort_order)
     .map((section) => {
@@ -192,4 +204,23 @@ export function normalizeBlogRenderBlocks(sections: BlogSectionShape[]): BlogRen
       };
     })
     .filter((section) => section.type === "image" ? Boolean(section.image?.src) : section.body.length > 0);
+
+  const deduped: BlogRenderBlock[] = [];
+
+  for (const block of normalized) {
+    const previous = deduped[deduped.length - 1];
+
+    if (!previous) {
+      deduped.push(block);
+      continue;
+    }
+
+    if (getBlockSignature(previous) === getBlockSignature(block)) {
+      continue;
+    }
+
+    deduped.push(block);
+  }
+
+  return deduped;
 }

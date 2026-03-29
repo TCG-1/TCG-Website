@@ -11,7 +11,7 @@ import { dedupeCoverImageBlocks } from "@/lib/blog-post-utils";
 import { createPageMetadata } from "@/lib/site-seo";
 import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const blogPosts = await getPublishedBlogEntries();

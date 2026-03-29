@@ -125,6 +125,68 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
 }
 
 export async function getPublishedBlogEntryBySlug(slug: string) {
-  const posts = await getPublishedBlogEntries();
-  return posts.find((post) => post.slug === slug) ?? null;
+  const supabase = createSupabaseAdminClient();
+
+  if (!supabase) {
+    const fallbackPosts = createFallbackEntries();
+    return fallbackPosts.find((post) => post.slug === slug) ?? null;
+  }
+
+  try {
+    await ensureBlogSeedData(supabase);
+
+    const { data: post, error: postError } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("status", "published")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (postError) {
+      throw new Error(postError.message);
+    }
+
+    if (!post) {
+      return null;
+    }
+
+    const { data: sections, error: sectionsError } = await supabase
+      .from("blog_post_sections")
+      .select("*")
+      .eq("post_id", post.id)
+      .order("sort_order", { ascending: true });
+
+    if (sectionsError) {
+      throw new Error(sectionsError.message);
+    }
+
+    const body = readBlogBody(sections ?? []);
+    const paragraphs = body
+      .split(/\n{2,}/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return {
+      canonicalPath: post.canonical_url ?? null,
+      category: post.category ?? "Lean Insights",
+      content: paragraphs.length ? paragraphs : [post.excerpt],
+      cover: post.cover_url ?? FALLBACK_COVER,
+      date: post.published_at
+        ? new Date(post.published_at).toLocaleDateString("en-GB", { dateStyle: "medium" })
+        : "Draft",
+      excerpt: post.excerpt,
+      noIndex: post.noindex ?? false,
+      ogImageUrl: post.og_image_url ?? post.cover_url ?? null,
+      publishedAt: post.published_at ?? null,
+      sections: normalizeBlogRenderBlocks(sections ?? []),
+      seoDescription: post.seo_description ?? post.excerpt,
+      seoTitle: post.seo_title ?? null,
+      slug: post.slug,
+      title: post.title,
+      updatedAt: post.updated_at ?? null,
+    };
+  } catch {
+    const fallbackPosts = createFallbackEntries();
+    return fallbackPosts.find((post) => post.slug === slug) ?? null;
+  }
 }
