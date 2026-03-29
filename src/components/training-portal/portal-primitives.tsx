@@ -71,10 +71,10 @@ export function PortalPanel({
   title: string;
 }) {
   return (
-    <section className="rounded-[1.75rem] border border-black/5 bg-white p-7 shadow-[0_18px_50px_rgba(15,23,42,0.05)] sm:p-8">
+    <section className="rounded-[1.75rem] border border-[#e6dbd6] bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf9_100%)] p-7 shadow-[0_18px_50px_rgba(15,23,42,0.05)] sm:p-8">
       <div className="flex flex-col gap-2">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{title}</h2>
-        {description ? <p className="text-sm leading-6 text-slate-600">{description}</p> : null}
+        <h2 className="text-[1.45rem] font-semibold leading-tight tracking-[-0.02em] text-slate-950">{title}</h2>
+        {description ? <p className="max-w-3xl text-[0.97rem] leading-7 text-slate-600">{description}</p> : null}
       </div>
       <div className="mt-6">{children}</div>
     </section>

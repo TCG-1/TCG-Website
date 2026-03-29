@@ -27,7 +27,7 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
         <PortalPanel
           title="Training delivery workflow"
-          description="The admin side should run the full programme lifecycle from cohort setup to certification readiness."
+          description="This workspace follows the full delivery lifecycle, from cohort setup to certification readiness."
         >
           <PortalWorkflow items={trainingBlueprint.workflows.admin} />
         </PortalPanel>

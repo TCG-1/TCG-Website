@@ -69,7 +69,7 @@ export function ClientHubView({ workspace }: { workspace: ClientTrainingWorkspac
 
         <PortalPanel
           title="Learner journey"
-          description="The client side now follows the real training flow rather than generic portal widgets."
+          description="This view follows the real learner journey, so each step is clear, practical, and in the right order."
         >
           <PortalWorkflow items={trainingBlueprint.workflows.client} />
         </PortalPanel>
