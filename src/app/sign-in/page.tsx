@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AdminSignInForm } from "@/components/auth/admin-sign-in-form";
@@ -67,45 +66,12 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   return (
     <section className="section-gap">
       <Container>
-        <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-6">
-            {showAdminView ? (
-              <AdminSignInForm initialMessage={adminInitialMessage} />
-            ) : (
-              <PortalSignInForm initialMessage={portalInitialMessage} initialMode={initialPortalMode} />
-            )}
-          </div>
-
-          <div className="grid gap-6 self-start">
-            <div className="rounded-[2rem] border border-black/5 bg-[#f5f2ee] p-7 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#8a0917]">
-                {showAdminView ? "Admin workflow" : "Session behavior"}
-              </p>
-              <h2 className="mt-3 text-3xl font-light tracking-[-0.04em] text-slate-950">
-                {showAdminView ? "Keep admin access separate" : "Stay signed in until you log out"}
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
-                {showAdminView
-                  ? "Admin access still uses the secure deployment credentials and redirects straight into the management portal."
-                  : "User sessions are persisted with Supabase cookies, so signed-in users stay in the dashboard until they log out manually."}
-              </p>
-            </div>
-
-            <div className="rounded-[2rem] border border-black/5 bg-white p-7 shadow-[0_18px_50px_rgba(15,23,42,0.05)]">
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-slate-500">Portal routing</p>
-              <h2 className="mt-3 text-3xl font-light tracking-[-0.04em] text-slate-950">
-                {showAdminView ? "Need the user portal instead?" : "Need admin access instead?"}
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600">
-                {showAdminView
-                  ? "Use the standard user sign-in flow for client dashboard access, Google sign-in, and account creation."
-                  : "Admins can still sign in separately without mixing the client portal flow into the same screen."}
-              </p>
-              <Link href={showAdminView ? "/sign-in" : "/sign-in/admin"} className="button-secondary mt-6">
-                {showAdminView ? "Back to user access" : "Open admin sign in"}
-              </Link>
-            </div>
-          </div>
+        <div className="mx-auto max-w-2xl">
+          {showAdminView ? (
+            <AdminSignInForm initialMessage={adminInitialMessage} />
+          ) : (
+            <PortalSignInForm initialMessage={portalInitialMessage} initialMode={initialPortalMode} />
+          )}
         </div>
       </Container>
     </section>
