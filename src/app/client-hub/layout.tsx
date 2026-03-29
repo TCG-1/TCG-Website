@@ -4,7 +4,7 @@ import { Manrope, Plus_Jakarta_Sans } from "next/font/google";
 import { ClientHubShell } from "@/components/client-hub/client-hub-shell";
 import { TrainingRealtimeBridge } from "@/components/training-portal/training-realtime-bridge";
 import { getClientHubContent } from "@/lib/client-hub";
-import { getPortalUserDisplayName, requirePortalUser } from "@/lib/portal-auth";
+import { getPortalUserAvatarUrl, getPortalUserDisplayName, requirePortalUser } from "@/lib/portal-auth";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -33,6 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ClientHubLayout({ children }: { children: React.ReactNode }) {
   const [user, { content }] = await Promise.all([requirePortalUser(), getClientHubContent()]);
   const userDisplayName = getPortalUserDisplayName(user);
+  const userAvatarUrl = getPortalUserAvatarUrl(user);
 
   return (
     <div className={`${plusJakartaSans.variable} ${manrope.variable}`}>
@@ -41,6 +42,7 @@ export default async function ClientHubLayout({ children }: { children: React.Re
         content={content}
         userDisplayName={userDisplayName}
         userEmail={user.email ?? ""}
+        userAvatarUrl={userAvatarUrl}
       >
         {children}
       </ClientHubShell>

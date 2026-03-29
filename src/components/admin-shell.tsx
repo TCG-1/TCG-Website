@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
+
+import { createClient } from "@/lib/supabase/client";
 
 type AdminNavItem = {
   href: string;
@@ -290,16 +292,40 @@ function getInitials(name: string) {
 export function AdminShell({
   children,
   userName,
+  userAvatarUrl,
 }: {
   children: React.ReactNode;
   userName: string;
+  userAvatarUrl: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const supabase = createClient();
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    const hrefs = Array.from(new Set(allNavItems.map((item) => item.href)));
+
+    for (const href of hrefs) {
+      router.prefetch(href);
+    }
+  }, [router]);
 
   const currentItem = allNavItems.find((item) => isActivePath(pathname, item.href)) ?? allNavItems[0];
   const initials = getInitials(userName);
+
+  function handleLogout() {
+    startTransition(async () => {
+      await Promise.allSettled([
+        fetch("/api/admin/session", { method: "DELETE" }),
+        fetch("/api/auth/session", { method: "DELETE" }),
+        supabase.auth.signOut(),
+      ]);
+
+      router.replace("/sign-in");
+      router.refresh();
+    });
+  }
 
   return (
     <section className="min-h-screen bg-[#f5f2ee] text-slate-950">
@@ -382,9 +408,20 @@ export function AdminShell({
         <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
           <p className="text-[10px] uppercase tracking-[0.26em] text-slate-400">Signed in as</p>
           <div className="mt-4 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#8a0917] text-sm font-bold text-white">
-              {initials}
-            </div>
+            {userAvatarUrl ? (
+              <div className="h-11 w-11 overflow-hidden rounded-full border border-white/20">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={userAvatarUrl}
+                  alt={`${userName} profile image`}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#8a0917] text-sm font-bold text-white">
+                {initials}
+              </div>
+            )}
             <div>
               <p className="text-sm font-semibold text-white">{userName}</p>
               <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Secure session</p>
@@ -399,13 +436,7 @@ export function AdminShell({
             </Link>
             <button
               type="button"
-              onClick={() => {
-                startTransition(async () => {
-                  await fetch("/api/admin/session", { method: "DELETE" });
-                  router.replace("/sign-in");
-                  router.refresh();
-                });
-              }}
+              onClick={handleLogout}
               disabled={isPending}
               className="inline-flex items-center justify-center rounded-full bg-[#8a0917] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#690711]"
             >

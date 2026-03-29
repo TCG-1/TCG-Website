@@ -5,6 +5,7 @@ import { isAdminEmail } from "@/lib/admin-auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 export { getPortalUserDisplayName } from "@/lib/portal-user";
+export { getPortalUserAvatarUrl } from "@/lib/portal-user";
 
 export async function getPortalUser() {
   const supabase = await createClient();

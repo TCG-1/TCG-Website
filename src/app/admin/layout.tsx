@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <TrainingRealtimeBridge scope="admin" />
-      <AdminShell userName={user.name}>{children}</AdminShell>
+      <AdminShell userName={user.name} userAvatarUrl={user.avatarUrl}>{children}</AdminShell>
     </>
   );
 }

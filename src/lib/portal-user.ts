@@ -37,3 +37,16 @@ export function getPortalUserInitials(user: PortalUserLike) {
 
   return initials || "TC";
 }
+
+export function getPortalUserAvatarUrl(user: PortalUserLike) {
+  const metadata = user.user_metadata;
+
+  const avatarUrl =
+    typeof metadata?.avatar_url === "string" && metadata.avatar_url.trim()
+      ? metadata.avatar_url.trim()
+      : typeof metadata?.picture === "string" && metadata.picture.trim()
+        ? metadata.picture.trim()
+        : "";
+
+  return avatarUrl || null;
+}

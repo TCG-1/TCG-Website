@@ -5,6 +5,7 @@ import {
   validateAdminCredentials,
 } from "@/lib/admin-auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -89,5 +90,9 @@ export async function DELETE() {
   }
 
   await clearAdminSession();
+
+  const portalSupabase = await createClient();
+  await portalSupabase.auth.signOut();
+
   return Response.json({ ok: true });
 }

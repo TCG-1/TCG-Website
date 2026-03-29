@@ -31,3 +31,21 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE() {
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return Response.json({ error: error.message }, { status: 400 });
+    }
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Unable to clear the portal session." },
+      { status: 500 },
+    );
+  }
+}

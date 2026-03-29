@@ -17,6 +17,7 @@ const DEV_ADMIN_SESSION_SECRET = "local-dev-admin-session-secret";
 export type AdminUser = {
   email: string;
   name: string;
+  avatarUrl: string | null;
 };
 
 type AdminConfig =
@@ -45,6 +46,7 @@ function getAdminConfig(): AdminConfig {
       user: {
         email,
         name,
+        avatarUrl: null,
       },
     };
   }
@@ -57,6 +59,7 @@ function getAdminConfig(): AdminConfig {
       user: {
         email: DEV_ADMIN_EMAIL,
         name: DEV_ADMIN_NAME,
+        avatarUrl: null,
       },
     };
   }
@@ -143,7 +146,9 @@ export function isAdminEmail(email?: string | null) {
   return safeEqual(email.trim().toLowerCase(), config.user.email);
 }
 
-export async function getAdminAccountForPortalUser(portalUser?: Pick<User, "email" | "id"> | null) {
+export async function getAdminAccountForPortalUser(
+  portalUser?: Pick<User, "email" | "id" | "user_metadata"> | null,
+) {
   if (!portalUser?.email) {
     return null;
   }
@@ -155,9 +160,17 @@ export async function getAdminAccountForPortalUser(portalUser?: Pick<User, "emai
       return {
         email: config.user.email,
         name: config.user.name,
+        avatarUrl: config.user.avatarUrl,
       } satisfies AdminUser;
     }
   }
+
+  const metadataAvatarUrl =
+    typeof portalUser.user_metadata?.avatar_url === "string" && portalUser.user_metadata.avatar_url.trim()
+      ? portalUser.user_metadata.avatar_url.trim()
+      : typeof portalUser.user_metadata?.picture === "string" && portalUser.user_metadata.picture.trim()
+        ? portalUser.user_metadata.picture.trim()
+        : null;
 
   const supabase = createSupabaseAdminClient();
 
@@ -178,6 +191,7 @@ export async function getAdminAccountForPortalUser(portalUser?: Pick<User, "emai
       return {
         email: byAuthUser.email,
         name: byAuthUser.full_name,
+        avatarUrl: metadataAvatarUrl,
       } satisfies AdminUser;
     }
   }
@@ -197,6 +211,7 @@ export async function getAdminAccountForPortalUser(portalUser?: Pick<User, "emai
   return {
     email: byEmail.email,
     name: byEmail.full_name,
+    avatarUrl: metadataAvatarUrl,
   } satisfies AdminUser;
 }
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 
 import { DashboardIcon } from "@/components/client-hub/dashboard-icon";
 import type { ClientHubContent, DashboardIconName } from "@/lib/client-hub";
@@ -99,24 +99,60 @@ function getDashboardHref(pathname: string, section: string) {
   return pathname === "/client-hub" ? `#${section}` : `/client-hub#${section}`;
 }
 
+function getInitials(name: string) {
+  const parts = name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+
+  return parts || "TC";
+}
+
 export function ClientHubShell({
   children,
   content,
   userDisplayName,
   userEmail,
+  userAvatarUrl,
 }: {
   children: React.ReactNode;
   content: ClientHubContent;
   userDisplayName: string;
   userEmail: string;
+  userAvatarUrl: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
   const [isLoggingOut, startTransition] = useTransition();
 
+  useEffect(() => {
+    const hrefs = Array.from(
+      new Set([...learningItems, ...workspaceItems].map((item) => item.href)),
+    );
+
+    for (const href of hrefs) {
+      router.prefetch(href);
+    }
+  }, [router]);
+
   const currentArea =
     [...learningItems, ...workspaceItems].find((item) => isActivePath(pathname, item.href)) ?? learningItems[0];
+  const userInitials = getInitials(userDisplayName);
+
+  function handleLogout() {
+    startTransition(async () => {
+      await Promise.allSettled([
+        supabase.auth.signOut(),
+        fetch("/api/auth/session", { method: "DELETE" }),
+      ]);
+
+      router.replace("/sign-in");
+      router.refresh();
+    });
+  }
 
   return (
     <div
@@ -210,13 +246,7 @@ export function ClientHubShell({
                 <button
                   key={item.label}
                   type="button"
-                  onClick={() => {
-                    startTransition(async () => {
-                      await supabase.auth.signOut();
-                      router.replace("/sign-in");
-                      router.refresh();
-                    });
-                  }}
+                  onClick={handleLogout}
                   className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold text-slate-500 transition hover:bg-white hover:text-[#7d0b16]"
                 >
                   <DashboardIcon name={item.icon} className="h-5 w-5" />
@@ -244,14 +274,20 @@ export function ClientHubShell({
 
           <div className="mt-6 rounded-[1.5rem] border border-[#e6dad5] bg-white/70 p-5">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 overflow-hidden rounded-full border border-[#eaded9]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={content.profile.avatarUrl}
-                  alt={content.profile.avatarAlt}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              {userAvatarUrl ? (
+                <div className="h-12 w-12 overflow-hidden rounded-full border border-[#eaded9]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={userAvatarUrl}
+                    alt={`${userDisplayName} profile image`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#eaded9] bg-[#8a0917] text-sm font-bold text-white">
+                  {userInitials}
+                </div>
+              )}
               <div>
               <p className="text-sm font-semibold text-[#2b2929]">{userDisplayName}</p>
               <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{userEmail}</p>
@@ -264,6 +300,23 @@ export function ClientHubShell({
               Manage profile
               <DashboardIcon name="arrow" className="h-4 w-4" />
             </Link>
+
+            <div className="mt-5 grid gap-2">
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center rounded-full border border-[#d6cac5] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-[#7d0b16] transition hover:bg-white"
+              >
+                Visit website
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="inline-flex items-center justify-center rounded-full bg-[#8a0917] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isLoggingOut ? "Logging out..." : "Log out"}
+              </button>
+            </div>
           </div>
         </div>
       </aside>
@@ -323,12 +376,18 @@ export function ClientHubShell({
                       : "border-[#eaded9]"
                   }`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={content.profile.avatarUrl}
-                    alt={content.profile.avatarAlt}
-                    className="h-full w-full object-cover"
-                  />
+                  {userAvatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={userAvatarUrl}
+                      alt={`${userDisplayName} profile image`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="flex h-full w-full items-center justify-center bg-[#8a0917] text-xs font-bold text-white">
+                      {userInitials}
+                    </span>
+                  )}
                 </Link>
               </div>
             </div>
