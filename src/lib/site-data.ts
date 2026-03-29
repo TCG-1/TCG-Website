@@ -29,6 +29,7 @@ export type BlogPost = {
   content: string[];
   date: string;
   excerpt: string;
+  keywords?: string;
   noIndex?: boolean;
   ogImageUrl?: string;
   publishedAt?: string;

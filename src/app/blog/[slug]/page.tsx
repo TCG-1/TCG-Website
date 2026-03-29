@@ -36,9 +36,17 @@ export async function generateMetadata({
     });
   }
 
+  const keywords = post.keywords
+    ? post.keywords
+        .split(",")
+        .map((item: string) => item.trim())
+        .filter(Boolean)
+    : undefined;
+
   return createPageMetadata({
     description: post.seoDescription ?? post.excerpt,
     image: post.ogImageUrl ?? post.cover,
+    keywords,
     noIndex: post.noIndex,
     path: post.canonicalPath || `/blog/${post.slug}`,
     publishedTime: post.publishedAt,

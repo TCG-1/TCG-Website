@@ -155,6 +155,7 @@ export async function POST(request: Request) {
       category: normalizeOptionalText(body.category),
       coverUrl: normalizeOptionalText(body.coverUrl),
       excerpt: normalizeOptionalText(body.excerpt),
+      keywords: normalizeOptionalText(body.keywords),
       ogImageUrl: normalizeOptionalText(body.ogImageUrl),
       seoDescription: normalizeOptionalText(body.seoDescription),
       seoTitle: normalizeOptionalText(body.seoTitle),
@@ -179,6 +180,7 @@ export async function POST(request: Request) {
           category: derivedFields.category,
           cover_url: derivedFields.coverUrl,
           excerpt: derivedFields.excerpt,
+          keywords: derivedFields.keywords,
           noindex: noIndex,
           og_image_url: derivedFields.ogImageUrl,
           published_at: status === "published" ? new Date().toISOString() : null,
@@ -215,6 +217,7 @@ export async function POST(request: Request) {
       entityTable: "blog_posts",
       payload: {
         canonicalUrl,
+        keywords: derivedFields.keywords,
         noIndex,
         seoTitle,
         seoDescription,

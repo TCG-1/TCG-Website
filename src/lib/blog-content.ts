@@ -11,6 +11,7 @@ export type PublishedBlogEntry = {
   cover: string;
   date: string;
   excerpt: string;
+  keywords: string | null;
   noIndex: boolean;
   ogImageUrl: string | null;
   publishedAt: string | null;
@@ -32,6 +33,7 @@ function createFallbackEntries(): PublishedBlogEntry[] {
     cover: post.cover,
     date: post.date,
     excerpt: post.excerpt,
+    keywords: post.keywords ?? null,
     noIndex: post.noIndex ?? false,
     ogImageUrl: post.ogImageUrl ?? null,
     publishedAt: post.publishedAt ?? null,
@@ -108,6 +110,7 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
           ? new Date(post.published_at).toLocaleDateString("en-GB", { dateStyle: "medium" })
           : "Draft",
         excerpt: post.excerpt,
+        keywords: post.keywords ?? null,
         noIndex: post.noindex ?? false,
         ogImageUrl: post.og_image_url ?? post.cover_url ?? null,
         publishedAt: post.published_at ?? null,
@@ -175,6 +178,7 @@ export async function getPublishedBlogEntryBySlug(slug: string) {
         ? new Date(post.published_at).toLocaleDateString("en-GB", { dateStyle: "medium" })
         : "Draft",
       excerpt: post.excerpt,
+      keywords: post.keywords ?? null,
       noIndex: post.noindex ?? false,
       ogImageUrl: post.og_image_url ?? post.cover_url ?? null,
       publishedAt: post.published_at ?? null,

@@ -76,6 +76,7 @@ export function buildDerivedBlogFields({
   category,
   coverUrl,
   excerpt,
+  keywords,
   ogImageUrl,
   seoDescription,
   seoTitle,
@@ -87,6 +88,7 @@ export function buildDerivedBlogFields({
   category?: string | null;
   coverUrl?: string | null;
   excerpt?: string | null;
+  keywords?: string | null;
   ogImageUrl?: string | null;
   seoDescription?: string | null;
   seoTitle?: string | null;
@@ -102,6 +104,7 @@ export function buildDerivedBlogFields({
   const derivedOgImageUrl = normalizeText(ogImageUrl) || derivedCoverUrl;
   const derivedSeoTitle = normalizeText(seoTitle) || normalizedTitle;
   const derivedSeoDescription = normalizeText(seoDescription) || derivedExcerpt;
+  const derivedKeywords = normalizeText(keywords) || normalizedTitle;
   const derivedCanonicalUrl = buildCanonicalPath(slugBase, canonicalUrl);
 
   return {
@@ -109,6 +112,7 @@ export function buildDerivedBlogFields({
     category: derivedCategory,
     coverUrl: derivedCoverUrl,
     excerpt: derivedExcerpt,
+    keywords: derivedKeywords,
     ogImageUrl: derivedOgImageUrl,
     seoDescription: derivedSeoDescription,
     seoTitle: derivedSeoTitle,

@@ -20,6 +20,7 @@ type BlogPost = {
   cover_url: string | null;
   excerpt: string;
   id: string;
+  keywords: string | null;
   noindex: boolean;
   og_image_url: string | null;
   published_at: string | null;
@@ -36,6 +37,7 @@ type BlogFormState = {
   category: string;
   coverUrl: string;
   excerpt: string;
+  keywords: string;
   noIndex: boolean;
   ogImageUrl: string;
   seoDescription: string;
@@ -93,6 +95,7 @@ const EMPTY_FORM: BlogFormState = {
   category: "",
   coverUrl: "",
   excerpt: "",
+  keywords: "",
   noIndex: false,
   ogImageUrl: "",
   seoDescription: "",
@@ -144,6 +147,7 @@ function toFormState(post: BlogPost): BlogFormState {
     category: post.category ?? "",
     coverUrl: post.cover_url ?? "",
     excerpt: post.excerpt,
+    keywords: post.keywords ?? "",
     noIndex: post.noindex ?? false,
     ogImageUrl: post.og_image_url ?? "",
     seoDescription: post.seo_description ?? "",
@@ -422,10 +426,49 @@ function EditorToolbar({
   );
 }
 
-function SeoPreviewCard({ form }: { form: BlogFormState }) {
+function SeoPreviewCard({ form, hasBody }: { form: BlogFormState; hasBody: boolean }) {
   const seoPreview = buildSeoPreview(form);
   const titleLength = seoPreview.previewTitle.length;
   const descriptionLength = seoPreview.previewDescription.length;
+  const keywordCount = form.keywords
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean).length;
+
+  const checks = [
+    {
+      label: "SEO title length",
+      ok: titleLength >= 30 && titleLength <= 60,
+      hint: "Target 30–60 characters",
+    },
+    {
+      label: "Meta description length",
+      ok: descriptionLength >= 120 && descriptionLength <= 160,
+      hint: "Target 120–160 characters",
+    },
+    {
+      label: "Canonical path",
+      ok: seoPreview.canonicalPath.startsWith("/") || /^https?:\/\//i.test(seoPreview.canonicalPath),
+      hint: "Use /blog/slug or absolute URL",
+    },
+    {
+      label: "Keywords",
+      ok: keywordCount > 0,
+      hint: "Add comma-separated keywords",
+    },
+    {
+      label: "OG image",
+      ok: form.ogImageUrl.trim().length > 0 || form.coverUrl.trim().length > 0,
+      hint: "Set OG image or cover image",
+    },
+    {
+      label: "Content blocks",
+      ok: hasBody,
+      hint: "Add article content before publish",
+    },
+  ];
+
+  const passingChecks = checks.filter((item) => item.ok).length;
 
   return (
     <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,0.04)]">
@@ -443,6 +486,21 @@ function SeoPreviewCard({ form }: { form: BlogFormState }) {
         <p className="text-lg font-medium leading-7 text-[#1a0dab]">{seoPreview.previewTitle}</p>
         <p className="mt-1 break-all text-sm text-emerald-700">{absoluteUrl(seoPreview.canonicalPath)}</p>
         <p className="mt-2 text-sm leading-6 text-slate-600">{seoPreview.previewDescription}</p>
+      </div>
+      <div className="mt-5 rounded-[1.25rem] border border-slate-200 bg-white px-5 py-4">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+          Validation checks ({passingChecks}/{checks.length})
+        </p>
+        <ul className="mt-3 grid gap-2 text-sm">
+          {checks.map((check) => (
+            <li key={check.label} className="flex items-start justify-between gap-3">
+              <span className={check.ok ? "text-emerald-700" : "text-amber-700"}>
+                {check.ok ? "✓" : "!"} {check.label}
+              </span>
+              {!check.ok ? <span className="text-xs text-slate-500">{check.hint}</span> : null}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -941,7 +999,7 @@ function BlogEditorModal({
                 </p>
               </div>
 
-              <SeoPreviewCard form={form} />
+              <SeoPreviewCard form={form} hasBody={previewBody.trim().length > 0} />
 
               <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,0.04)]">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Generated table of contents</p>
@@ -966,6 +1024,7 @@ function BlogEditorModal({
                 <div className="mt-5 grid gap-4">
                   <input className="input" value={form.seoTitle} onChange={(event) => onFormChange({ seoTitle: event.target.value })} placeholder="SEO title" />
                   <textarea rows={3} className="input min-h-24 resize-y" value={form.seoDescription} onChange={(event) => onFormChange({ seoDescription: event.target.value })} placeholder="Meta description" />
+                  <input className="input" value={form.keywords} onChange={(event) => onFormChange({ keywords: event.target.value })} placeholder="Keywords (comma-separated)" />
                   <input className="input" value={form.canonicalUrl} onChange={(event) => onFormChange({ canonicalUrl: event.target.value })} placeholder="/blog/example-post" />
                   <input className="input" value={form.ogImageUrl} onChange={(event) => onFormChange({ ogImageUrl: event.target.value })} placeholder="/media/social-share.jpg" />
                   <label className="flex items-center gap-3 text-sm text-slate-700">

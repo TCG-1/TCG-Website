@@ -138,6 +138,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       seoDescription: normalizeOptionalText(body.seoDescription),
       seoTitle: normalizeOptionalText(body.seoTitle),
       slug: normalizeText(body.slug),
+      keywords: normalizeOptionalText(body.keywords),
       title,
     });
 
@@ -158,6 +159,7 @@ export async function PATCH(request: Request, context: RouteContext) {
         category: derivedFields.category,
         cover_url: derivedFields.coverUrl,
         excerpt: derivedFields.excerpt,
+        keywords: derivedFields.keywords,
         noindex: noIndex,
         og_image_url: derivedFields.ogImageUrl,
         published_at:
@@ -199,6 +201,7 @@ export async function PATCH(request: Request, context: RouteContext) {
       entityTable: "blog_posts",
       payload: {
         canonicalUrl,
+        keywords: derivedFields.keywords,
         noIndex,
         seoTitle,
         seoDescription,
