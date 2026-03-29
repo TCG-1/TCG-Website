@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
+
 import { NewsletterSubscriptionClient } from "@/components/newsletter-subscription-client";
+import { createPageMetadata } from "@/lib/site-seo";
+
+export const metadata: Metadata = createPageMetadata({
+  description: "Manage your Tacklers Consulting Group newsletter subscription preferences.",
+  noIndex: true,
+  path: "/newsletter/subscription",
+  title: "Newsletter Subscription Preferences | Tacklers Consulting Group",
+});
 
 type SubscriptionPageProps = {
   searchParams: Promise<{

@@ -53,6 +53,28 @@ export function buildOrganizationJsonLd() {
   };
 }
 
+export function buildLocalBusinessJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@id": `${siteConfig.url}/#localbusiness`,
+    "@type": "ProfessionalService",
+    areaServed: [
+      {
+        "@type": "Country",
+        name: "United Kingdom",
+      },
+    ],
+    description: siteConfig.defaultDescription,
+    email: siteConfig.email,
+    image: [absoluteUrl(siteConfig.defaultOgImage)],
+    name: siteConfig.name,
+    priceRange: "££",
+    sameAs: ["https://www.linkedin.com/company/tacklers-consulting-group/"],
+    telephone: siteConfig.phone,
+    url: siteConfig.url,
+  };
+}
+
 export function buildWebSiteJsonLd() {
   return {
     "@context": "https://schema.org",

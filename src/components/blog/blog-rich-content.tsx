@@ -87,7 +87,7 @@ export function BlogRichContent({ blocks }: { blocks: BlogRenderBlock[] }) {
             <figure key={`${block.type}-${index}-${block.image.src}`} className="space-y-4 overflow-hidden rounded-3xl bg-slate-50 p-4">
               <img
                 src={block.image.src}
-                alt={block.image.alt || "Blog article image"}
+                alt={block.image.alt || block.image.caption || "Tacklers Consulting blog illustration"}
                 className="w-full rounded-3xl object-cover shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
               />
               {block.image.caption ? (

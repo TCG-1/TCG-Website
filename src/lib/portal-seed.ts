@@ -1,48 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { adminLeadRows } from "@/lib/admin-data";
 import { blogPosts } from "@/lib/site-data";
-
-function mapLeadStatus(status: string) {
-  switch (status.trim().toLowerCase()) {
-    case "qualified":
-      return "qualified";
-    case "follow-up":
-      return "follow_up";
-    case "closed":
-      return "closed";
-    default:
-      return "new";
-  }
-}
-
-export async function ensureLeadSeedData(supabase: SupabaseClient) {
-  const { count, error } = await supabase
-    .from("lead_submissions")
-    .select("*", { count: "exact", head: true });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if ((count ?? 0) > 0) {
-    return;
-  }
-
-  const { error: insertError } = await supabase.from("lead_submissions").insert(
-    adminLeadRows.map((lead) => ({
-      company_name: lead.company,
-      email: lead.email,
-      full_name: lead.name,
-      source: lead.source.toLowerCase().replace(/\s+/g, "-"),
-      status: mapLeadStatus(lead.status),
-    })),
-  );
-
-  if (insertError) {
-    throw new Error(insertError.message);
-  }
-}
 
 export async function ensureBlogSeedData(supabase: SupabaseClient) {
   const { count, error } = await supabase

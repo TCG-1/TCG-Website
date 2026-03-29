@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 
-import { JsonLd } from "@/components/seo/json-ld";
 import {
   CardGrid,
   Container,
@@ -14,7 +13,6 @@ import {
 import { getPublishedBlogEntries } from "@/lib/blog-content";
 import { createPageMetadata } from "@/lib/site-seo";
 import { brandTagline, globalCta, homeData, homeFaqs } from "@/lib/site-data";
-import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/structured-data";
 
 const homeSeo = {
   description:
@@ -93,7 +91,6 @@ export default async function Home() {
 
   return (
     <div className="text-center">
-      <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
       <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
         <Image
           src="/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg"

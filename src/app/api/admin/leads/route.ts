@@ -1,5 +1,4 @@
 import { createAdminAuditEntry, ensureAdminPortalContext } from "@/lib/portal-data";
-import { ensureLeadSeedData } from "@/lib/portal-seed";
 
 export const runtime = "nodejs";
 
@@ -23,7 +22,6 @@ function toResponseError(error: unknown, fallback: string) {
 export async function GET() {
   try {
     const { supabase } = await ensureAdminPortalContext();
-    await ensureLeadSeedData(supabase);
 
     const [{ data: leads, error }, { data: clients }] = await Promise.all([
       supabase.from("lead_submissions").select("*").order("updated_at", { ascending: false }),
