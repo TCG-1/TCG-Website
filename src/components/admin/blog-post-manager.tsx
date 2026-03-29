@@ -74,13 +74,6 @@ type ModalState = {
   postId: string | null;
 } | null;
 
-type DraftSnapshot = {
-  blocks: BlogEditorBlock[];
-  form: BlogFormState;
-  serverPostId: string | null;
-  updatedAt: string;
-};
-
 const EMPTY_PAYLOAD: AdminBlogPayload = {
   posts: [],
   stats: {
@@ -104,8 +97,6 @@ const EMPTY_FORM: BlogFormState = {
   status: "draft",
   title: "",
 };
-
-const STORAGE_PREFIX = "tcg-admin-blog-editor";
 
 function createBlockId() {
   return Math.random().toString(36).slice(2, 10);
@@ -241,23 +232,7 @@ function serializeBlocksToBody(blocks: BlogEditorBlock[]) {
     .join("\n\n");
 }
 
-function hasMeaningfulDraft(form: BlogFormState, blocks: BlogEditorBlock[]) {
-  if (form.title.trim() || form.excerpt.trim() || form.category.trim() || form.coverUrl.trim()) {
-    return true;
-  }
 
-  return blocks.some((block) => {
-    if (block.type === "image") {
-      return Boolean(block.imageUrl.trim() || block.imageAlt.trim() || block.imageCaption.trim());
-    }
-
-    if (block.type === "bullet_list") {
-      return block.items.some((item) => item.trim().length > 0);
-    }
-
-    return block.text.trim().length > 0;
-  });
-}
 
 function buildSeoPreview(form: BlogFormState) {
   const resolvedSlug = slugifyDraft(form.slug || form.title) || "new-post";
@@ -283,43 +258,6 @@ function countTone(value: number, idealMin: number, idealMax: number) {
   }
 
   return "text-amber-600";
-}
-
-function snapshotKey(modal: ModalState) {
-  if (!modal) {
-    return null;
-  }
-
-  return modal.mode === "create"
-    ? `${STORAGE_PREFIX}:create`
-    : `${STORAGE_PREFIX}:edit:${modal.postId}`;
-}
-
-function readSnapshot(modal: ModalState) {
-  const key = snapshotKey(modal);
-
-  if (!key || typeof window === "undefined") {
-    return null;
-  }
-
-  const raw = window.localStorage.getItem(key);
-  if (!raw) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(raw) as DraftSnapshot;
-  } catch {
-    return null;
-  }
-}
-
-function clearSnapshot(modal: ModalState) {
-  const key = snapshotKey(modal);
-
-  if (key && typeof window !== "undefined") {
-    window.localStorage.removeItem(key);
-  }
 }
 
 function recalcStats(posts: BlogPost[]) {
@@ -507,11 +445,8 @@ function SeoPreviewCard({ form, hasBody }: { form: BlogFormState; hasBody: boole
 }
 
 function BlogEditorModal({
-  autosaveLabel,
   blocks,
-  canServerAutosave,
   form,
-  isAutosaving,
   isDeleting,
   isSaving,
   mode,
@@ -522,11 +457,8 @@ function BlogEditorModal({
   onSave,
   open,
 }: {
-  autosaveLabel: string;
   blocks: BlogEditorBlock[];
-  canServerAutosave: boolean;
   form: BlogFormState;
-  isAutosaving: boolean;
   isDeleting: boolean;
   isSaving: boolean;
   mode: "create" | "edit";
@@ -757,9 +689,6 @@ function BlogEditorModal({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/85">
-              {isAutosaving ? "Autosaving…" : autosaveLabel}
-            </div>
             <button type="button" onClick={onClose} className="button-light">
               Close
             </button>
@@ -989,16 +918,6 @@ function BlogEditorModal({
 
           <div className="min-h-0 overflow-y-auto bg-slate-50 px-6 py-6 sm:px-8">
             <div className="grid gap-6">
-              <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,0.04)]">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Autosave status</p>
-                <p className="mt-3 text-base leading-7 text-slate-700">{autosaveLabel}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-500">
-                  {canServerAutosave
-                    ? "Draft work is being persisted automatically so refreshes do not wipe your progress."
-                    : "This post keeps a local recovery copy while you work. Use Save to publish or archive changes."}
-                </p>
-              </div>
-
               <SeoPreviewCard form={form} hasBody={previewBody.trim().length > 0} />
 
               <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,0.04)]">
@@ -1060,10 +979,7 @@ function BlogEditorModal({
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-black/5 bg-white px-6 py-4 sm:px-8">
-          <div className="text-sm text-slate-500">
-            {isAutosaving ? "Autosaving draft…" : autosaveLabel}
-          </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3" style={{ marginLeft: "auto" }}>
             {mode === "edit" && onDelete ? (
               <button type="button" onClick={onDelete} className="rounded-full border border-red-200 px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-red-700 transition hover:bg-red-50" disabled={isDeleting}>
                 {isDeleting ? "Deleting..." : "Delete post"}
@@ -1101,132 +1017,32 @@ export function BlogPostManager() {
   );
   const [notice, setNotice] = useState<Notice>(null);
   const [modal, setModal] = useState<ModalState>(null);
-  const [draftPostId, setDraftPostId] = useState<string | null>(null);
   const [form, setForm] = useState<BlogFormState>(EMPTY_FORM);
   const [blocks, setBlocks] = useState<BlogEditorBlock[]>([createEmptyBlock("paragraph")]);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isAutosaving, setIsAutosaving] = useState(false);
-  const [autosaveLabel, setAutosaveLabel] = useState("Draft autosave ready.");
 
-  const canServerAutosave = Boolean(
-    modal && (modal.mode === "create" || modal.baselineStatus === "draft" || form.status === "draft"),
-  );
-
-  const currentBody = useMemo(() => serializeBlocksToBody(blocks), [blocks]);
-
-  useEffect(() => {
-    if (!modal) {
-      return;
-    }
-
-    const key = snapshotKey(modal);
-    if (!key) {
-      return;
-    }
-
-    const snapshot: DraftSnapshot = {
-      blocks,
-      form,
-      serverPostId: draftPostId,
-      updatedAt: new Date().toISOString(),
-    };
-
-    window.localStorage.setItem(key, JSON.stringify(snapshot));
-  }, [blocks, draftPostId, form, modal]);
-
-  useEffect(() => {
-    if (!modal || !hasMeaningfulDraft(form, blocks)) {
-      return;
-    }
-
-    if (!canServerAutosave) {
-      setAutosaveLabel("Local recovery saved. Use Save to publish or archive changes.");
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      void (async () => {
-        setIsAutosaving(true);
-        try {
-          const payload = {
-            ...form,
-            body: currentBody,
-            status: "draft",
-          };
-
-          if (modal.mode === "create" && !draftPostId) {
-            const response = await requestJson<{ post: BlogPost }>("/api/admin/blog", {
-              body: JSON.stringify(payload),
-              method: "POST",
-            });
-
-            setDraftPostId(response.post.id);
-            setData((current) => upsertPost(current, response.post));
-            setAutosaveLabel(`Draft autosaved at ${new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}.`);
-            return;
-          }
-
-          const postId = draftPostId ?? modal.postId;
-          if (!postId) {
-            return;
-          }
-
-          const response = await requestJson<{ post: BlogPost }>(`/api/admin/blog/${postId}`, {
-            body: JSON.stringify(payload),
-            method: "PATCH",
-          });
-
-          setData((current) => upsertPost(current, response.post));
-          setAutosaveLabel(`Draft autosaved at ${new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}.`);
-        } catch (autosaveError) {
-          setAutosaveLabel(
-            autosaveError instanceof Error
-              ? autosaveError.message
-              : "Unable to autosave right now. Your local recovery copy is still available.",
-          );
-        } finally {
-          setIsAutosaving(false);
-        }
-      })();
-    }, 1400);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [blocks, canServerAutosave, currentBody, draftPostId, form, modal, setData]);
 
   function openCreateModal() {
     const nextModal: ModalState = { baselineStatus: "draft", mode: "create", postId: null };
-    const snapshot = readSnapshot(nextModal);
-
     setModal(nextModal);
-    setDraftPostId(snapshot?.serverPostId ?? null);
-    setForm(snapshot?.form ?? EMPTY_FORM);
-    setBlocks(snapshot?.blocks?.length ? snapshot.blocks : [createEmptyBlock("paragraph")]);
-    setAutosaveLabel(snapshot ? "Recovered draft from your last session." : "Draft autosave ready.");
+    setForm(EMPTY_FORM);
+    setBlocks([createEmptyBlock("paragraph")]);
   }
 
   function openEditModal(post: BlogPost) {
     const nextModal: ModalState = { baselineStatus: post.status, mode: "edit", postId: post.id };
-    const snapshot = readSnapshot(nextModal);
-
     setModal(nextModal);
-    setDraftPostId(post.id);
-    setForm(snapshot?.form ?? toFormState(post));
-    setBlocks(snapshot?.blocks?.length ? snapshot.blocks : parseBodyToBlocks(post.body));
-    setAutosaveLabel(snapshot ? "Recovered local edits from your last session." : "Editing live post.");
+    setForm(toFormState(post));
+    setBlocks(parseBodyToBlocks(post.body));
   }
 
   function closeModal() {
     setModal(null);
-    setDraftPostId(null);
     setForm(EMPTY_FORM);
     setBlocks([createEmptyBlock("paragraph")]);
-    setIsAutosaving(false);
     setIsSaving(false);
     setIsDeleting(false);
-    setAutosaveLabel("Draft autosave ready.");
   }
 
   async function savePost() {
@@ -1234,6 +1050,7 @@ export function BlogPostManager() {
       return;
     }
 
+    const currentBody = serializeBlocksToBody(blocks);
     setIsSaving(true);
     try {
       const payload = {
@@ -1241,14 +1058,14 @@ export function BlogPostManager() {
         body: currentBody,
       };
 
-      if (modal.mode === "create" && !draftPostId) {
+      if (modal.mode === "create") {
         const response = await requestJson<{ post: BlogPost }>("/api/admin/blog", {
           body: JSON.stringify(payload),
           method: "POST",
         });
         setData((current) => upsertPost(current, response.post));
       } else {
-        const postId = draftPostId ?? modal.postId;
+        const postId = modal.postId;
         if (!postId) {
           return;
         }
@@ -1259,8 +1076,10 @@ export function BlogPostManager() {
         setData((current) => upsertPost(current, response.post));
       }
 
-      clearSnapshot(modal);
-      setNotice({ message: "Blog post saved.", tone: "success" });
+      setNotice({
+        message: form.status === "published" ? "Blog post published successfully." : "Blog post saved as draft.",
+        tone: "success",
+      });
       closeModal();
     } catch (saveError) {
       setNotice({
@@ -1287,7 +1106,6 @@ export function BlogPostManager() {
         method: "DELETE",
       });
       setData((current) => removePost(current, modal.postId as string));
-      clearSnapshot(modal);
       setNotice({ message: "Blog post deleted.", tone: "success" });
       closeModal();
     } catch (deleteError) {
@@ -1306,7 +1124,7 @@ export function BlogPostManager() {
         <p className="eyebrow">Blog management</p>
         <h1 className="section-title">Manage blog posts</h1>
         <p className="body-copy mt-4 max-w-3xl">
-          Write inside the popup editor with structured blocks, top-menu formatting, auto-generated table of contents, image sections, hyperlink support, and draft autosave.
+          Write inside the popup editor with structured blocks, top-menu formatting, auto-generated table of contents, image sections, and hyperlink support. Save drafts or publish posts directly.
         </p>
       </section>
 
@@ -1384,11 +1202,8 @@ export function BlogPostManager() {
       </section>
 
       <BlogEditorModal
-        autosaveLabel={autosaveLabel}
         blocks={blocks}
-        canServerAutosave={canServerAutosave}
         form={form}
-        isAutosaving={isAutosaving}
         isDeleting={isDeleting}
         isSaving={isSaving}
         mode={modal?.mode ?? "create"}
