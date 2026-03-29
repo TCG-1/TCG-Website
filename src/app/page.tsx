@@ -268,13 +268,6 @@ export default async function Home() {
                     {item.title}
                   </h3>
                   <p className="mt-3 text-base leading-7 text-slate-600">{item.body}</p>
-                  <Link
-                    href={item.href}
-                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] transition duration-300 group-hover:gap-3"
-                  >
-                    {item.cta}
-                    <span aria-hidden="true">→</span>
-                  </Link>
                 </div>
               </article>
             ))}
