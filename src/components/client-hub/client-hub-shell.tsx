@@ -159,7 +159,7 @@ export function ClientHubShell({
       id="top"
       className="min-h-screen bg-[#f7f6f3] text-[#1f1d1d] [font-family:var(--font-client-body)]"
     >
-      <aside className="border-b border-[#e8ddd9] bg-[#f4f1ee] px-6 py-6 lg:fixed lg:inset-y-0 lg:left-0 lg:w-80 lg:border-b-0 lg:border-r lg:px-7 lg:py-8">
+      <aside className="border-b border-[#e8ddd9] bg-[#f4f1ee] px-6 py-6 lg:fixed lg:inset-y-0 lg:left-0 lg:h-screen lg:w-80 lg:overflow-y-auto lg:border-b-0 lg:border-r lg:px-7 lg:py-8">
         <div className="flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#62000b_0%,#8a0917_100%)] text-white">
             <DashboardIcon name="architecture" className="h-6 w-6" />

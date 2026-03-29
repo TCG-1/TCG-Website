@@ -91,6 +91,10 @@ function hasSmtpConfig() {
   return Boolean(config.host && config.user && config.password);
 }
 
+export function isSmtpConfigured() {
+  return hasSmtpConfig();
+}
+
 function getTransporter() {
   if (cachedTransporter) {
     return cachedTransporter;
@@ -125,8 +129,7 @@ export function getDefaultFromHeader() {
 
 export async function sendEmail({ attachments, html, replyTo, subject, text, to }: EmailPayload) {
   if (!hasSmtpConfig()) {
-    console.warn("Skipping email delivery because SMTP configuration is missing.");
-    return;
+    throw new Error("SMTP is not configured. Email delivery is disabled.");
   }
 
   const transporter = getTransporter();

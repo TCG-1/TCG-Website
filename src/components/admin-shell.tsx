@@ -85,6 +85,12 @@ const secondaryNavItems: AdminNavItem[] = [
     icon: "dashboard",
   },
   {
+    href: "/admin/newsletters",
+    label: "Newsletters",
+    subtitle: "Write and send branded email updates to all leads",
+    icon: "notifications",
+  },
+  {
     href: "/admin/client-hub",
     label: "Portal Content",
     subtitle: "Client-facing portal copy, hero content, and dashboard editor",

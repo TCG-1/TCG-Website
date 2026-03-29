@@ -1,12 +1,10 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 export type EmailDetailRow = {
   label: string;
   value: string;
 };
 
-let logoDataUriPromise: Promise<string | null> | null = null;
+const BRAND_LOGO_URL = "https://tacklersconsulting.com/media/TCG%20Logo.png";
+const LINKEDIN_URL = "https://www.linkedin.com/company/tacklers-consulting-group/";
 
 function escapeHtml(value: string) {
   return value
@@ -15,16 +13,6 @@ function escapeHtml(value: string) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-async function getLogoDataUri() {
-  if (!logoDataUriPromise) {
-    logoDataUriPromise = readFile(path.join(process.cwd(), "public", "media", "TCG Logo.png"))
-      .then((buffer) => `data:image/png;base64,${buffer.toString("base64")}`)
-      .catch(() => null);
-  }
-
-  return logoDataUriPromise;
 }
 
 export function buildTextSummary(details: EmailDetailRow[]) {
@@ -44,27 +32,37 @@ export function buildDetailList(details: EmailDetailRow[]) {
 }
 
 export async function renderEmailShell({
+  greetingPrefix,
   intro,
   sections,
   subject,
   userName,
 }: {
+  greetingPrefix?: string;
   intro: string;
   sections: string;
   subject: string;
   userName?: string;
 }) {
-  const logoDataUri = await getLogoDataUri();
-  const logoMarkup = logoDataUri
-    ? `<img src="${logoDataUri}" alt="Tacklers Consulting Group" width="150" style="display:block;height:auto;max-width:150px;margin:0 auto;" />`
-    : `<div style="font-size:22px;font-weight:800;letter-spacing:0.02em;color:#ffffff;text-align:center;">Tacklers Consulting Group</div>`;
+  const logoMarkup = `
+    <div style="text-align:center;">
+      <img src="${BRAND_LOGO_URL}" alt="Tacklers Consulting Group" width="150" height="72" style="display:block;height:auto;max-width:150px;margin:0 auto;border:0;outline:none;text-decoration:none;" />
+      <div style="margin-top:10px;font-size:18px;font-weight:700;letter-spacing:0.01em;color:#ffffff;text-align:center;">Tacklers Consulting Group</div>
+    </div>
+  `;
 
-  const greeting = userName ? `<p style="margin:24px 0 0;font-size:16px;font-weight:600;line-height:1.5;color:#1e293b;">Hello ${escapeHtml(userName.split(" ")[0])},</p>` : "";
+  const greetingWord = escapeHtml((greetingPrefix ?? "Hello").trim() || "Hello");
+  const greetingName = userName?.trim() ? escapeHtml(userName.trim()) : "";
+  const greeting = greetingName
+    ? `<p style="margin:24px 0 0;font-size:16px;font-weight:600;line-height:1.5;color:#1e293b;">${greetingWord} ${greetingName},</p>`
+    : "";
+  const introMarkup = escapeHtml(intro).replace(/\n/g, "<br />");
   
   const socialLinks = `
     <div style="margin-top:16px;text-align:center;">
-      <a href="https://www.linkedin.com/company/tacklers-consulting-group/" style="display:inline-block;margin:0 8px;text-decoration:none;" title="LinkedIn">
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230a66c2' width='24' height='24'%3E%3Cpath d='M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.077-.145.231-.29.46-.404 1.023-.612 2.104-.62 2.485-.604 2.658 0 3.148 1.745 3.148 4.018v6.881zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'/%3E%3C/svg%3E" alt="LinkedIn" style="width:24px;height:24px;" />
+      <a href="${LINKEDIN_URL}" style="display:inline-block;margin:0 8px;text-decoration:none;" title="LinkedIn" target="_blank" rel="noreferrer noopener">
+        <span style="display:inline-block;min-width:30px;padding:6px 10px;border-radius:999px;background:#0a66c2;color:#ffffff;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;line-height:1;">in</span>
+        <span style="display:block;margin-top:6px;font-size:11px;font-weight:700;color:#475569;letter-spacing:0.08em;text-transform:uppercase;">LinkedIn</span>
       </a>
     </div>
   `;
@@ -85,7 +83,7 @@ export async function renderEmailShell({
               <tr>
                 <td style="padding:32px 32px 20px;">
                   ${greeting}
-                  <p style="margin:${greeting ? '12px 0 18px' : '0 0 18px'};font-size:15px;line-height:1.8;color:#475569;">${escapeHtml(intro)}</p>
+                  <p style="margin:${greeting ? '12px 0 18px' : '0 0 18px'};font-size:15px;line-height:1.8;color:#475569;">${introMarkup}</p>
                   ${sections}
                 </td>
               </tr>
