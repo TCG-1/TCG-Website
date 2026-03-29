@@ -1,4 +1,4 @@
-export type BlogSectionType = "bullet_list" | "heading" | "image" | "paragraph" | "quote";
+export type BlogSectionType = "bullet_list" | "heading" | "heading_3" | "heading_4" | "heading_5" | "image" | "paragraph" | "quote";
 
 export type BlogImagePayload = {
   alt: string;
@@ -108,9 +108,11 @@ export function serializeRichTextToSections(body: string) {
       }
 
       if (/^#{2,}\s+/.test(firstLine)) {
+        const hashCount = firstLine.match(/^#+/)?.[0].length ?? 2;
+        const section_type = hashCount === 3 ? "heading_3" : hashCount === 4 ? "heading_4" : hashCount === 5 ? "heading_5" : "heading";
         return {
           body: firstLine.replace(/^#{2,}\s+/, "").trim(),
-          section_type: "heading" as const,
+          section_type: section_type as BlogSectionType,
           sort_order: index,
         };
       }
@@ -149,6 +151,12 @@ export function serializeSectionsToRichText(sections: BlogSectionShape[]) {
       switch (section.section_type) {
         case "heading":
           return `## ${content}`;
+        case "heading_3":
+          return `### ${content}`;
+        case "heading_4":
+          return `#### ${content}`;
+        case "heading_5":
+          return `##### ${content}`;
         case "image": {
           const image = parseBlogImagePayload(content);
 
@@ -183,7 +191,7 @@ export function normalizeBlogRenderBlocks(sections: BlogSectionShape[]): BlogRen
     .slice()
     .sort((left, right) => left.sort_order - right.sort_order)
     .map((section) => {
-      const type = (["heading", "paragraph", "quote", "bullet_list", "image"].includes(section.section_type)
+      const type = (["heading", "heading_3", "heading_4", "heading_5", "paragraph", "quote", "bullet_list", "image"].includes(section.section_type)
         ? section.section_type
         : "paragraph") as BlogSectionType;
       const body = section.body.trim();

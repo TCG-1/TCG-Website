@@ -705,8 +705,20 @@ function BlogEditorModal({
             <button type="button" onClick={onClose} className="button-light">
               Close
             </button>
-            <button type="button" onClick={onSave} className="button-primary" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save post"}
+            <button type="button" onClick={onSave} className="button-light" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save as draft"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onFormChange({ status: "published" });
+                setTimeout(onSave, 0);
+              }}
+              className="button-primary"
+              disabled={isSaving || !form.title.trim() || !previewBody.trim()}
+              title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
+            >
+              {isSaving ? "Publishing..." : "Publish post"}
             </button>
           </div>
         </div>
@@ -1001,8 +1013,20 @@ function BlogEditorModal({
             <button type="button" onClick={onClose} className="button-secondary">
               Close
             </button>
-            <button type="button" onClick={onSave} className="button-primary" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save post"}
+            <button type="button" onClick={onSave} className="button-secondary" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save as draft"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onFormChange({ status: "published" });
+                setTimeout(onSave, 0);
+              }}
+              className="button-primary"
+              disabled={isSaving || !form.title.trim() || !previewBody.trim()}
+              title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
+            >
+              {isSaving ? "Publishing..." : "Publish post"}
             </button>
           </div>
         </div>

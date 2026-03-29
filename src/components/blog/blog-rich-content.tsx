@@ -53,21 +53,30 @@ export function BlogRichContent({ blocks }: { blocks: BlogRenderBlock[] }) {
   return (
     <div className="space-y-9">
       {blocks.map((block, index) => {
-        if (block.type === "heading") {
+        if (block.type === "heading" || block.type === "heading_3" || block.type === "heading_4" || block.type === "heading_5") {
           const headingId =
             block.body
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, "-")
               .replace(/(^-|-$)/g, "") || `section-${index + 1}`;
 
+          const headingClasses = {
+            heading: "scroll-mt-28 font-sans text-[clamp(1.9rem,3.2vw,2.5rem)] font-medium tracking-[-0.03em] text-[#8a0917]",
+            heading_3: "scroll-mt-28 font-sans text-[clamp(1.5rem,2.5vw,1.875rem)] font-medium tracking-[-0.02em] text-[#8a0917]",
+            heading_4: "scroll-mt-28 font-sans text-[clamp(1.25rem,2vw,1.5rem)] font-semibold tracking-[-0.01em] text-[#8a0917]",
+            heading_5: "scroll-mt-28 font-sans text-[clamp(1.125rem,1.75vw,1.25rem)] font-semibold text-[#8a0917]",
+          };
+
+          const HeadingTag = block.type === "heading" ? "h2" : block.type === "heading_3" ? "h3" : block.type === "heading_4" ? "h4" : "h5";
+
           return (
-            <h2
+            <HeadingTag
               id={headingId}
               key={`${block.type}-${index}-${block.body}`}
-              className="scroll-mt-28 font-sans text-[clamp(1.9rem,3.2vw,2.5rem)] font-medium tracking-[-0.03em] text-[#8a0917]"
+              className={headingClasses[block.type]}
             >
               {block.body}
-            </h2>
+            </HeadingTag>
           );
         }
 
