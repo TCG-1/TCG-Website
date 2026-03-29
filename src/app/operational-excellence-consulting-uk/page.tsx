@@ -77,7 +77,11 @@ export default function ServicesPage() {
           />
           <div className="mx-auto max-w-6xl">
             <CardGrid
-              items={serviceCards.map((card) => ({ ...card, cta: undefined, href: undefined }))}
+              items={serviceCards.map((card) =>
+                card.title === "Lean Training"
+                  ? { ...card, cta: "View Programme", href: "/lean-training-uk" }
+                  : { ...card, cta: undefined, href: undefined }
+              )}
             />
           </div>
         </Container>

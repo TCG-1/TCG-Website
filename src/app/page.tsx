@@ -43,14 +43,12 @@ export default async function Home() {
       title: "Cost Management",
       body: "Cost reduction works when it is tied to how work actually runs. When it is not, it turns into pressure and short-term fixes.",
       href: "/operational-excellence-consulting-uk",
-      cta: "View Programme",
       image: "/media/Cost-Management-f9a07bf6.jpeg",
     },
     {
       title: "Executive Leadership Coaching",
       body: "This is where many improvements win or lose. Good projects can stall when leaders do not have a clear operating rhythm.",
       href: "/operational-excellence-consulting-uk",
-      cta: "View Programme",
       image: "/media/Executive-Leadership-Coaching-1588bf3d.jpeg",
     },
     {
@@ -64,21 +62,18 @@ export default async function Home() {
       title: "Lean Transformation",
       body: "Lean transformation is not a workshop series. It is a change in how work is managed, improved, and sustained.",
       href: "/operational-excellence-consulting-uk",
-      cta: "View Programme",
       image: "/media/Lean-Transformation-ee5c9aae.jpeg",
     },
     {
       title: "People Strategy",
       body: "If the people side is ignored, the process side will not last. That is not a philosophy, it is just reality.",
       href: "/operational-excellence-consulting-uk",
-      cta: "View Program",
       image: "/media/photo-1521737604893-d14cc237f11d-b93a2a8e.jpg",
     },
     {
       title: "Manufacturing Support",
       body: "Manufacturing environments feel small until you trace one delay and realise how many parts it touches.",
       href: "/operational-excellence-consulting-uk",
-      cta: "View Program",
       image: "/media/Manufacturing-Support-f5a8f8f1.jpeg",
     },
   ];
@@ -268,6 +263,15 @@ export default async function Home() {
                     {item.title}
                   </h3>
                   <p className="mt-3 text-base leading-7 text-slate-600">{item.body}</p>
+                  {item.cta ? (
+                    <Link
+                      href={item.href}
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#8a0917] transition duration-300 group-hover:gap-3"
+                    >
+                      {item.cta}
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  ) : null}
                 </div>
               </article>
             ))}
