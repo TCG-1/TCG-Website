@@ -81,11 +81,11 @@ export function NewsletterSignupSection({ sourcePage }: { sourcePage: string }) 
       <section className="border-t border-black/5 bg-[linear-gradient(180deg,#fffaf6_0%,#fff3f4_100%)] py-18">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-[2rem] border border-[#8a0917]/10 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10">
-              <div className="text-left">
+            <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:px-10">
+              <div className="max-w-3xl text-left">
                 <p className="eyebrow">Newsletter</p>
                 <h2 className="section-title mt-3">Subscribe to Tacklers insight</h2>
-                <p className="mt-4 max-w-xl text-base leading-8 text-slate-600">
+                <p className="mt-4 text-base leading-8 text-slate-600">
                   Receive concise updates on operational excellence, Lean transformation, and practical leadership habits that improve flow and sustain results.
                 </p>
                 <ul className="mt-5 space-y-3 text-sm text-slate-600">
@@ -102,7 +102,7 @@ export function NewsletterSignupSection({ sourcePage }: { sourcePage: string }) 
                 </ul>
               </div>
 
-              <form className="grid gap-4" onSubmit={handleSubmit}>
+              <form className="grid gap-4 border-t border-[#8a0917]/10 pt-8" onSubmit={handleSubmit}>
                 <input
                   type="text"
                   value={form.website}

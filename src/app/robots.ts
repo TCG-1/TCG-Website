@@ -8,7 +8,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         allow: "/",
-        disallow: ["/admin", "/client-hub", "/api", "/sign-in", "/sign-up"],
+        disallow: [
+          "/admin",
+          "/api",
+          "/auth",
+          "/client-hub",
+          "/newsletter/subscription",
+          "/reset-password",
+          "/sign-in",
+          "/sign-up",
+        ],
         userAgent: "*",
       },
     ],
