@@ -236,6 +236,7 @@ create table if not exists public.blog_posts (
   slug text not null unique,
   title text not null,
   excerpt text not null,
+  author_name text,
   category text,
   cover_url text,
   seo_title text,

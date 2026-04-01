@@ -8,6 +8,7 @@ type BreadcrumbItem = {
 };
 
 type ArticleStructuredData = {
+  authorName?: string | null;
   canonicalPath?: string | null;
   coverImage?: string | null;
   datePublished?: string | null;
@@ -34,7 +35,10 @@ export function buildOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@id": `${siteConfig.url}/#organization`,
     "@type": "Organization",
-    areaServed: "GB",
+    areaServed: {
+      "@type": "Country",
+      name: "United Kingdom",
+    },
     contactPoint: [
       {
         "@type": "ContactPoint",
@@ -46,8 +50,19 @@ export function buildOrganizationJsonLd() {
     ],
     description: siteConfig.defaultDescription,
     email: siteConfig.email,
+    foundingDate: "2020",
+    knowsAbout: [
+      "Lean Transformation",
+      "Operational Excellence",
+      "Continuous Improvement",
+      "Value Stream Mapping",
+      "Executive Leadership Coaching",
+      "Gemba Consulting",
+    ],
     logo: absoluteUrl("/icon.png"),
     name: siteConfig.name,
+    sameAs: ["https://www.linkedin.com/company/tacklers-consulting-group/"],
+    slogan: "People-First Lean Transformation",
     telephone: siteConfig.phone,
     url: siteConfig.url,
   };
@@ -58,6 +73,7 @@ export function buildLocalBusinessJsonLd() {
     "@context": "https://schema.org",
     "@id": `${siteConfig.url}/#localbusiness`,
     "@type": "ProfessionalService",
+    "@additionalType": "https://schema.org/ConsultingService",
     areaServed: [
       {
         "@type": "Country",
@@ -68,8 +84,25 @@ export function buildLocalBusinessJsonLd() {
     email: siteConfig.email,
     image: [absoluteUrl(siteConfig.defaultOgImage)],
     name: siteConfig.name,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "17:00",
+      },
+    ],
+    parentOrganization: {
+      "@id": `${siteConfig.url}/#organization`,
+    },
     priceRange: "££",
     sameAs: ["https://www.linkedin.com/company/tacklers-consulting-group/"],
+    serviceType: [
+      "Lean Transformation Consulting",
+      "Operational Excellence Consulting",
+      "Executive Leadership Coaching",
+      "Lean Training and Mentoring",
+    ],
     telephone: siteConfig.phone,
     url: siteConfig.url,
   };
@@ -83,6 +116,12 @@ export function buildWebSiteJsonLd() {
     description: siteConfig.defaultDescription,
     inLanguage: "en-GB",
     name: siteConfig.name,
+    potentialAction: {
+      "@type": "SearchAction",
+      query: "required",
+      "query-input": "required name=search_term_string",
+      target: `${siteConfig.url}/blog?q={search_term_string}`,
+    },
     publisher: {
       "@id": `${siteConfig.url}/#organization`,
     },
@@ -124,12 +163,17 @@ export function buildServiceJsonLd({ description, name, path }: ServiceStructure
   return {
     "@context": "https://schema.org",
     "@type": "Service",
-    areaServed: "GB",
+    areaServed: {
+      "@type": "Country",
+      name: "United Kingdom",
+    },
     description,
     name,
     provider: {
       "@id": `${siteConfig.url}/#organization`,
     },
+    providerMobility: "dynamic",
+    serviceOutput: "Operational improvement and capability building",
     serviceType: name,
     url: absoluteUrl(path),
   };
@@ -151,6 +195,7 @@ export function buildFaqJsonLd(items: FaqItem[]) {
 }
 
 export function buildArticleJsonLd({
+  authorName,
   canonicalPath,
   coverImage,
   dateModified,
@@ -165,14 +210,23 @@ export function buildArticleJsonLd({
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    author: {
-      "@id": `${siteConfig.url}/#organization`,
-    },
+    author: authorName
+      ? {
+          "@type": "Person",
+          name: authorName,
+        }
+      : {
+          "@id": `${siteConfig.url}/#organization`,
+        },
     dateModified: dateModified ?? datePublished ?? undefined,
     datePublished: datePublished ?? undefined,
     description,
     headline: title,
     image: coverImage ? [absoluteUrl(coverImage)] : [absoluteUrl(siteConfig.defaultOgImage)],
+    inLanguage: "en-GB",
+    isPartOf: {
+      "@id": `${siteConfig.url}/blog#webpage`,
+    },
     mainEntityOfPage: articleUrl,
     publisher: {
       "@id": `${siteConfig.url}/#organization`,

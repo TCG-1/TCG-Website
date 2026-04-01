@@ -144,6 +144,22 @@ function LogoutGlyph() {
   );
 }
 
+function isNavItemActive(pathname: string, href: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  if (pathname === href || pathname.startsWith(`${href}/`)) {
+    return true;
+  }
+
+  if (href === "/lean-training-uk") {
+    return pathname === "/book-lean-training";
+  }
+
+  return false;
+}
+
 export function SiteHeader() {
   const [supabase] = useState(() => createClient());
   const [isScrolled, setIsScrolled] = useState(false);
@@ -497,7 +513,7 @@ export function SiteHeader() {
     <header
       className={`sticky top-0 z-50 border-b transition-all duration-300 ${
         isSolidHeader
-          ? "border-white/20 bg-[rgba(138,9,23,0.82)] backdrop-blur-md"
+          ? "border-white/20 bg-[rgba(138,9,23,0.92)] shadow-sm backdrop-blur-xl"
           : "border-white/0 bg-transparent backdrop-blur-0"
       }`}
     >
@@ -525,19 +541,28 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden min-w-0 items-center justify-center gap-6 lg:flex lg:justify-self-center">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`text-sm font-bold transition ${
-                isSolidHeader
-                  ? "text-white/85 hover:text-white"
-                  : "text-slate-950 hover:text-slate-700"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive = isNavItemActive(pathname, item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`text-sm font-bold transition ${
+                  isActive
+                    ? isSolidHeader
+                      ? "rounded-full bg-white px-3 py-2 text-[#8a0917]"
+                      : "text-[#8a0917]"
+                    : isSolidHeader
+                      ? "text-white/85 hover:text-white"
+                      : "text-slate-950 hover:text-slate-700"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex lg:justify-self-end">
@@ -805,16 +830,25 @@ export function SiteHeader() {
           ) : null}
 
           <nav className={`grid gap-2 ${showAuthenticatedAccount ? "mt-4" : ""}`}>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-xl px-3 py-2 text-sm font-bold text-white transition hover:bg-white/10"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive = isNavItemActive(pathname, item.href);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`rounded-xl px-3 py-2 text-sm font-bold transition ${
+                    isActive
+                      ? "bg-white text-[#8a0917]"
+                      : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="mt-4 grid gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type CookiePreference = {
   analytics: boolean;
@@ -16,14 +16,35 @@ function persistPreferences(preferences: CookiePreference) {
   localStorage.setItem(COOKIE_PREFERENCE_KEY, JSON.stringify(preferences));
 }
 
-export function CookieConsentBanner() {
-  const [isVisible, setIsVisible] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
+function subscribeToCookiePreferenceChange(onStoreChange: () => void) {
+  const handleStorage = (event: StorageEvent) => {
+    if (!event.key || event.key === COOKIE_PREFERENCE_KEY) {
+      onStoreChange();
     }
+  };
 
-    return !window.localStorage.getItem(COOKIE_PREFERENCE_KEY);
-  });
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    window.removeEventListener("storage", handleStorage);
+  };
+}
+
+function getCookiePreferenceSnapshot() {
+  if (typeof window === "undefined") {
+    return "hidden";
+  }
+
+  return window.localStorage.getItem(COOKIE_PREFERENCE_KEY) ? "hidden" : "visible";
+}
+
+export function CookieConsentBanner() {
+  const visibility = useSyncExternalStore(
+    subscribeToCookiePreferenceChange,
+    getCookiePreferenceSnapshot,
+    () => "hidden",
+  );
+  const isVisible = visibility === "visible";
 
   if (!isVisible) {
     return null;
@@ -52,7 +73,7 @@ export function CookieConsentBanner() {
                 marketing: false,
                 updatedAt: new Date().toISOString(),
               });
-              setIsVisible(false);
+              window.dispatchEvent(new StorageEvent("storage", { key: COOKIE_PREFERENCE_KEY }));
             }}
             className="inline-flex items-center justify-center rounded-full border border-slate-200 px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
           >
@@ -67,7 +88,7 @@ export function CookieConsentBanner() {
                 marketing: false,
                 updatedAt: new Date().toISOString(),
               });
-              setIsVisible(false);
+              window.dispatchEvent(new StorageEvent("storage", { key: COOKIE_PREFERENCE_KEY }));
             }}
             className="inline-flex items-center justify-center rounded-full bg-[#8a0917] px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#6f0712]"
           >

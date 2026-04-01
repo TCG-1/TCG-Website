@@ -23,18 +23,26 @@ import {
   teamMembers,
 } from "@/lib/site-data";
 import { createPageMetadata } from "@/lib/site-seo";
-import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
 const aboutSeo = {
   description:
-    "Learn how Tacklers Consulting Group delivers people-first Lean consulting, operational excellence support, and on-site transformation work across the UK.",
+    "Meet the team behind Tacklers Consulting Group. We deliver people-first Lean consulting, on-site transformation, and operational excellence support across the UK.",
   image: "/media/audrey-and-arlandous-1-e1773762025172-1b5d8b67.jpeg",
-  title: "About Tacklers Consulting Group | People-First Lean Consultants",
+  title: "About Tacklers Consulting Group | People-First Lean Consultants UK",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
   description: aboutSeo.description,
   image: aboutSeo.image,
+  keywords: [
+    "lean consultants uk",
+    "people-first lean consulting",
+    "operational excellence team",
+    "uk lean transformation consultants",
+    "gemba consulting experts",
+    "about tacklers consulting",
+  ],
   path: "/about",
   title: aboutSeo.title,
 });
@@ -51,14 +59,15 @@ export default function AboutPage() {
           }),
           buildBreadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "About Us", path: "/about" },
+            { name: "About", path: "/about" },
           ]),
+          buildFaqJsonLd(aboutFaqs),
         ]}
       />
       <PageHero
         eyebrow="Who we are"
         title="About Tacklers Consulting Group"
-        body="We started Tacklers for a simple reason. Too many organisations invest in transformation, then get a report, a workshop, and a few weeks of noise. We work on-site at Gemba with your teams to improve flow, reduce waste, and build ways of working your people can sustain without losing expertise."
+        body="We founded Tacklers for a simple reason: too many organisations invest in transformation, then get a report, a workshop, and a few weeks of noise. We work alongside your teams at the Gemba to improve flow, reduce waste, and build ways of working your people can sustain—without losing expertise."
         primary={globalCta.primary}
         secondary={globalCta.secondary}
         image="/media/Lean-transformation-consulting-UK-consultant-working-with-team-at-Gemba-1-6dc05d89.jpeg"
@@ -67,9 +76,8 @@ export default function AboutPage() {
       <section className="section-gap bg-slate-50">
         <Container>
           <SectionHeader
-            eyebrow="Our expertise"
-            title="What we believe"
-            body="A practical philosophy shaped by real work, real constraints, and real teams."
+            title="People-First Lean"
+            body="Results without the risk. We improve flow, protect expertise, and build capability that holds."
             center
           />
           <div className="mx-auto max-w-5xl">
@@ -81,21 +89,22 @@ export default function AboutPage() {
       <section className="section-gap">
         <Container>
           <div className="mx-auto grid max-w-6xl grid-cols-[0.9fr_1.1fr] items-center gap-8">
-            <div className="overflow-hidden rounded-3xl border border-black/5 bg-slate-100 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+            <div className="card-hover overflow-hidden rounded-3xl border border-black/5 bg-slate-100 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
               <Image
                 src="/media/audrey-and-arlandous-1-e1773762025172-1b5d8b67.jpeg"
-                alt="Audrey Nyamande-Trigg and Arlandous Makoni"
+                alt="Audrey Nyamande-Trigg and Arnoldis Nyamande"
                 width={900}
                 height={1080}
                 className="h-full w-full object-cover"
               />
             </div>
-            <div className="rounded-3xl border border-[#8a0917]/10 bg-white p-8 text-left shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-10">
-              <p className="eyebrow">Holistic approach</p>
-              <h2 className="section-title mt-2">What we do</h2>
+            <div className="card-hover rounded-3xl border border-[#8a0917]/10 bg-white p-8 text-left shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:p-10">
+              <p className="eyebrow">Capabilities</p>
+              <h2 className="section-title mt-2">How we support clients</h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
                 We help organisations improve operational performance in complex, regulated
-                environments.
+                environments through practical delivery support, leadership coaching, and capability
+                building.
               </p>
               <div className="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
                 {aboutServices.map((item) => (
@@ -130,13 +139,13 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto max-w-6xl">
             <div className="mx-auto mb-16 max-w-4xl text-center">
-              <h2 className="font-sans text-[clamp(2.2rem,6.2vw,3.8rem)] font-light leading-none tracking-[-0.04em] text-[#8a0917]">
+              <h2 className="font-sans text-[clamp(1.9rem,4.5vw,2.8rem)] font-light leading-none tracking-[-0.04em] text-[#8a0917]">
                 OUR TEAM
               </h2>
               <div className="mx-auto mt-6 max-w-3xl">
                 <p className="text-lg font-light leading-8 tracking-tight text-slate-600 md:text-xl">
-                  We are a small team on purpose. You get people who show up, ask the right
-                  questions, and stay close to the work.
+                  We are a small team on purpose. You get senior people who stay close to the work,
+                  ask the right questions, and help your teams deliver lasting change.
                 </p>
               </div>
             </div>
@@ -159,7 +168,7 @@ export default function AboutPage() {
                   <div className="border border-slate-200 bg-white p-8 shadow-[0_16px_46px_rgba(15,23,42,0.08)] transition duration-500 group-hover:shadow-[0_0_40px_-10px_rgba(98,0,11,0.15)] sm:p-12">
                     <header>
                       <h3 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
-                        Audrey Nyamande
+                        Audrey Nyamande-Trigg
                       </h3>
                       <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-[#8a0917]">
                         Founder &amp; Managing Director
@@ -173,7 +182,7 @@ export default function AboutPage() {
                       <a href="mailto:hello@tacklersconsulting.com" className="button-primary">
                         Connect
                       </a>
-                      <a href="/contact-us" className="button-secondary">
+                      <a href="/contact" className="button-secondary">
                         Contact
                       </a>
                     </div>
@@ -186,7 +195,7 @@ export default function AboutPage() {
                   <div className="border border-slate-200 bg-white p-8 shadow-[0_16px_46px_rgba(15,23,42,0.08)] transition duration-500 group-hover:shadow-[0_0_40px_-10px_rgba(98,0,11,0.15)] sm:p-12">
                     <header>
                       <h3 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
-                        Arlandous Makoni
+                        Arnoldis Nyamande
                       </h3>
                       <p className="mt-3 text-xs font-bold uppercase tracking-[0.22em] text-[#8a0917]">
                         Policy and Public Affairs Consultant
@@ -200,7 +209,7 @@ export default function AboutPage() {
                       <a href="mailto:hello@tacklersconsulting.com" className="button-primary">
                         Email
                       </a>
-                      <a href="/contact-us" className="button-secondary">
+                      <a href="/contact" className="button-secondary">
                         Contact
                       </a>
                     </div>
@@ -210,7 +219,7 @@ export default function AboutPage() {
                   <div className="relative aspect-5/4 overflow-hidden bg-slate-200 transition duration-700 group-hover:scale-[1.01]">
                     <Image
                       src="/media/Arnoldis-N.jpeg"
-                      alt="Arlandous Makoni"
+                      alt="Arnoldis Nyamande"
                       width={1200}
                       height={760}
                       className="h-full w-full object-cover grayscale transition duration-1000 group-hover:grayscale-0"
@@ -254,7 +263,7 @@ export default function AboutPage() {
           <div className="mx-auto grid max-w-7xl items-start gap-12 lg:grid-cols-12 lg:gap-16">
             <div className="space-y-8 lg:col-span-5">
               <p className="eyebrow text-[#795900]">Strategic methodology</p>
-              <h2 className="font-sans text-[clamp(2.2rem,5vw,3.8rem)] font-light leading-[1.05] tracking-[-0.04em] text-[#8a0917]">
+              <h2 className="font-sans text-[clamp(1.9rem,4vw,2.8rem)] font-light leading-[1.08] tracking-[-0.04em] text-[#8a0917]">
                 OUR FOCUS
               </h2>
               <span className="block h-px w-24 bg-linear-to-r from-[#8a0917] to-transparent" />
@@ -264,8 +273,8 @@ export default function AboutPage() {
                   What a good engagement <span className="text-[#8a0917] italic">feels</span> like
                 </p>
                 <p className="max-w-md text-base leading-8 text-slate-600">
-                  Our consulting approach moves beyond theoretical frameworks. We prioritise
-                  practical clarity in programme optimisation so teams can execute with confidence.
+                  A strong engagement should create clarity, pace, and capability your leaders can
+                  run without us.
                 </p>
               </div>
 
@@ -282,7 +291,7 @@ export default function AboutPage() {
             </div>
 
             <div className="grid gap-8 lg:col-span-7">
-              <div className="rounded-2xl border-l-4 border-[#FDD835] bg-white p-7 shadow-[0_16px_44px_rgba(15,23,42,0.08)] sm:p-10">
+              <div className="card-hover rounded-2xl border-l-4 border-[#FDD835] bg-white p-7 shadow-[0_16px_44px_rgba(15,23,42,0.08)] sm:p-10">
                 <h3 className="text-xl font-semibold uppercase tracking-[0.2em] text-slate-900">
                   You should feel
                 </h3>
@@ -296,7 +305,7 @@ export default function AboutPage() {
                 </ul>
               </div>
 
-              <div className="rounded-2xl border-l-4 border-[#8a0917]/30 bg-slate-100 p-7 sm:p-10">
+              <div className="card-hover rounded-2xl border-l-4 border-[#8a0917]/30 bg-slate-100 p-7 sm:p-10">
                 <h3 className="text-xl font-semibold uppercase tracking-[0.2em] text-slate-700">
                   You should not feel
                 </h3>

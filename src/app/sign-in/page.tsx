@@ -64,16 +64,27 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   const initialPortalMode = modeParam === "sign-up" ? "sign_up" : "sign_in";
 
   return (
-    <section className="section-gap">
-      <Container>
-        <div className="mx-auto max-w-2xl">
-          {showAdminView ? (
+    showAdminView ? (
+      <section className="section-gap">
+        <Container>
+          <div className="mx-auto max-w-2xl">
             <AdminSignInForm initialMessage={adminInitialMessage} />
-          ) : (
-            <PortalSignInForm initialMessage={portalInitialMessage} initialMode={initialPortalMode} />
-          )}
+          </div>
+        </Container>
+      </section>
+    ) : (
+      <section className="relative isolate overflow-hidden bg-[#141b2d] py-16 sm:py-20 lg:min-h-[calc(100vh-5rem)] lg:py-24">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-[-8rem] top-[-6rem] h-72 w-72 rounded-full bg-[#8a0917]/28 blur-3xl" />
+          <div className="absolute bottom-[-8rem] right-[-5rem] h-80 w-80 rounded-full bg-[#fdd835]/10 blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.05),transparent_38%)]" />
         </div>
-      </Container>
-    </section>
+        <Container>
+          <div className="relative mx-auto max-w-5xl">
+            <PortalSignInForm initialMessage={portalInitialMessage} initialMode={initialPortalMode} />
+          </div>
+        </Container>
+      </section>
+    )
   );
 }

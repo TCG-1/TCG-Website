@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 
 import { CookieConsentBanner } from "@/components/cookie-consent-banner";
+import { ScrollRevealController } from "@/components/scroll-reveal-controller";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -16,8 +17,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <ScrollRevealController enabled={!useImmersiveLayout} pathname={pathname} />
       <SiteHeader />
-      <main className="flex-1">{children}</main>
+      <main data-scroll-reveal-root="true" className="flex-1">
+        {children}
+      </main>
       <SiteFooter />
       <CookieConsentBanner />
     </>

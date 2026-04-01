@@ -168,6 +168,7 @@ export type LeadSubmissionRecord = {
 
 export type BlogPostRecord = {
   id: string;
+  author_name: string | null;
   slug: string;
   title: string;
   excerpt: string;

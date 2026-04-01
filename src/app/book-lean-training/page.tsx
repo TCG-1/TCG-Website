@@ -16,6 +16,11 @@ const bookLeanTrainingSeo = {
 export const metadata: Metadata = createPageMetadata({
   description: bookLeanTrainingSeo.description,
   image: bookLeanTrainingSeo.image,
+  keywords: [
+    "book lean training uk",
+    "lean training enquiry",
+    "lean capability building",
+  ],
   path: "/book-lean-training",
   title: bookLeanTrainingSeo.title,
 });
@@ -56,7 +61,7 @@ export default function TrainingBookingPage() {
                 </div>
                 <div>
                   <p className="eyebrow">Lean certified</p>
-                  <p className="mt-3 text-slate-600">500+ individuals, from front-line teams to C-Suite level, trained in Lean Principles.</p>
+                  <p className="mt-3 text-slate-600">500+ individuals trained in Lean Principles.</p>
                 </div>
                 <div>
                   <p className="eyebrow">Flexible scheduling</p>

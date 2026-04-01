@@ -24,9 +24,7 @@ export function PageHero({
   image?: string;
 }) {
   const eyebrowClassName =
-    eyebrow === "Transforming Challenges Into Opportunities" || eyebrow === brandTagline
-      ? "brand-tagline"
-      : "eyebrow";
+    eyebrow === brandTagline ? "brand-tagline" : "eyebrow";
   const heroTitleWords = title.trim().split(/\s+/).filter(Boolean);
   const splitIndex =
     heroTitleWords.length >= 5 ? Math.ceil(heroTitleWords.length * 0.55) : heroTitleWords.length;
@@ -163,9 +161,9 @@ export function CardGrid({
       {items.map((item) => (
         <article
           key={item.title}
-          className="group relative overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-2 hover:border-[#8a0917]/15 hover:shadow-[0_28px_90px_rgba(15,23,42,0.12)]"
+          className="service-card group relative overflow-hidden rounded-[1.5rem] border border-black/5 bg-white shadow-[0_15px_50px_rgba(15,23,42,0.06)]"
         >
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
           {item.image ? (
             <div className="relative h-56 overflow-hidden">
               <Image
@@ -173,8 +171,9 @@ export function CardGrid({
                 alt={item.title}
                 fill
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             </div>
           ) : null}
           <div className={`p-6 ${centerText ? "text-center" : ""}`}>

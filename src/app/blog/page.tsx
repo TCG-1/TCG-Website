@@ -10,14 +10,21 @@ import { buildBlogIndexJsonLd, buildBreadcrumbJsonLd, buildWebPageJsonLd } from 
 
 const blogIndexSeo = {
   description:
-    "Read Tacklers Consulting Group articles on Lean transformation, operational excellence, leadership routines, and practical improvement work.",
+    "Read practical articles on Lean transformation, operational excellence, leadership routines, and continuous improvement from Tacklers Consulting Group.",
   image: "/media/photo-1515169067868-5387ec356754-6a0fcd5a.jpg",
-  title: "Lean Transformation Blog | Tacklers Consulting Group",
+  title: "Lean Transformation & Operational Excellence Blog | Tacklers Consulting Group",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
   description: blogIndexSeo.description,
   image: blogIndexSeo.image,
+  keywords: [
+    "lean transformation blog",
+    "operational excellence articles",
+    "continuous improvement insights",
+    "gemba consulting blog",
+    "lean manufacturing uk blog",
+  ],
   path: "/blog",
   title: blogIndexSeo.title,
 });
@@ -58,23 +65,31 @@ export default async function BlogIndexPage() {
             {blogPosts.map((post) => (
               <article
                 key={post.slug}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-2 hover:border-[#8a0917]/15 hover:shadow-[0_30px_100px_rgba(15,23,42,0.12)]"
+                className="service-card group relative overflow-hidden rounded-[1.75rem] border border-black/5 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
               >
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] opacity-0 transition duration-300 group-hover:opacity-100" />
-                <div className="overflow-hidden">
+                <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#8a0917] via-[#b41626] to-[#FDD835] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100" />
+                <div className="relative overflow-hidden">
                   <Image
                     src={post.cover}
                     alt={post.title}
                     width={1200}
                     height={720}
-                    className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="h-72 w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
                   />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  <div className="absolute left-6 top-6 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.18em] text-[#8a0917] shadow-sm backdrop-blur-sm">
+                    {post.category}
+                  </div>
                 </div>
                 <div className="p-8">
-                  <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#8a0917]">
-                    <span>{post.category}</span>
-                    <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
+                  <div className="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                     <span>{post.date}</span>
+                    {post.authorName ? (
+                      <>
+                        <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
+                        <span>{post.authorName}</span>
+                      </>
+                    ) : null}
                   </div>
                   <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 transition duration-300 group-hover:text-[#8a0917]">
                     <Link href={`/blog/${post.slug}`} className="transition">
@@ -84,10 +99,10 @@ export default async function BlogIndexPage() {
                   <p className="mt-4 text-lg leading-8 text-slate-600">{post.excerpt}</p>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917] transition duration-300 group-hover:gap-3"
+                    className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#8a0917] transition-all duration-300 group-hover:gap-3"
                   >
-                    Learn more
-                    <span aria-hidden="true">→</span>
+                    Read article
+                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </Link>
                 </div>
               </article>

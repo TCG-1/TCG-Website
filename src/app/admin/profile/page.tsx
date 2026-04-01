@@ -106,7 +106,7 @@ export default function AdminProfilePage() {
     <div className="space-y-10">
       <section className="max-w-4xl">
         <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">Account details</p>
-        <h1 className="mt-4 text-[clamp(2.6rem,5vw,4rem)] font-light leading-[1.02] tracking-[-0.05em] text-slate-950">
+        <h1 className="mt-4 text-[clamp(2.2rem,4vw,3rem)] font-light leading-[1.05] tracking-[-0.05em] text-slate-950">
           Admin profile
         </h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">

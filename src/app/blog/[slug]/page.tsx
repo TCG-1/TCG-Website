@@ -98,6 +98,7 @@ export default async function BlogPostPage({
             { name: post.title, path: post.canonicalPath || `/blog/${post.slug}` },
           ]),
           buildArticleJsonLd({
+            authorName: post.authorName,
             canonicalPath: post.canonicalPath,
             coverImage: post.ogImageUrl ?? post.cover,
             dateModified: post.updatedAt,
@@ -127,6 +128,12 @@ export default async function BlogPostPage({
               <span>{post.category}</span>
               <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
               <span>{post.date}</span>
+              {post.authorName ? (
+                <>
+                  <span className="h-1 w-1 rounded-full bg-[#8a0917]" />
+                  <span>{post.authorName}</span>
+                </>
+              ) : null}
             </div>
             <h1 className="display-title mt-5 text-slate-950">
               {post.title}
@@ -183,7 +190,7 @@ export default async function BlogPostPage({
                       @
                     </a>
                     <Link
-                      href="/contact-us"
+                      href="/contact"
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-[#8a0917]/15 bg-white text-[#8a0917] transition hover:bg-[#fff4c2]"
                       aria-label="Discuss this article"
                     >
@@ -226,7 +233,7 @@ export default async function BlogPostPage({
                         @
                       </a>
                       <Link
-                        href="/contact-us"
+                        href="/contact"
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-[#8a0917]"
                         aria-label="Discuss this article"
                       >

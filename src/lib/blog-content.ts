@@ -5,6 +5,7 @@ import { blogPosts as staticBlogPosts } from "@/lib/site-data";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type PublishedBlogEntry = {
+  authorName: string | null;
   canonicalPath?: string | null;
   category: string;
   content: string[];
@@ -27,6 +28,7 @@ const FALLBACK_COVER = "/media/photo-1517976487492-5750f3195933-200958be.jpg";
 
 function createFallbackEntries(): PublishedBlogEntry[] {
   return staticBlogPosts.map((post) => ({
+    authorName: post.author ?? null,
     canonicalPath: post.canonicalPath ?? null,
     category: post.category,
     content: post.content,
@@ -102,6 +104,7 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
         .filter(Boolean);
 
       return {
+        authorName: post.author_name ?? null,
         canonicalPath: post.canonical_url ?? null,
         category: post.category ?? "Lean Insights",
         content: paragraphs.length ? paragraphs : [post.excerpt],
@@ -170,6 +173,7 @@ export async function getPublishedBlogEntryBySlug(slug: string) {
       .filter(Boolean);
 
     return {
+      authorName: post.author_name ?? null,
       canonicalPath: post.canonical_url ?? null,
       category: post.category ?? "Lean Insights",
       content: paragraphs.length ? paragraphs : [post.excerpt],

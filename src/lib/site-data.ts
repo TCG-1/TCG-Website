@@ -23,6 +23,7 @@ export type FaqItem = {
 };
 
 export type BlogPost = {
+  author?: string;
   category: string;
   canonicalPath?: string;
   cover: string;
@@ -41,7 +42,7 @@ export type BlogPost = {
 };
 
 export const brandTagline =
-  "Lean transformation that reduces waste and optimizes your team's capabilities";
+  "Reduce waste while protecting and redeploying your talent";
 
 const bestPlaceToStartAnswer =
   "Start with a discovery call. If more direction is needed, an on-site assessment will identify where to focus and what will deliver the greatest impact.";
@@ -53,7 +54,7 @@ const supportedIndustriesAnswer =
   "We support Aerospace, Aviation, Energy, Healthcare, Life Sciences, IT Services, the Public Sector, and Space & Defence, along with other operationally complex environments.";
 
 const peopleFirstAnswer =
-  "Our approach is people-first. We work on-site with your teams to build capability, improve flow, and redeploy talent into higher-value work as capacity opens up. We strive to deliver Lean improvements without reducing headcount so organisations retain expertise.";
+  "Our approach is people-first. We work on-site with your teams to build capability, improve flow, and redeploy talent into higher-value work as capacity opens up. We reduce waste while protecting and redeploying your talent so organisations retain expertise.";
 
 const leanToolsAnswer =
   "Common tools include Value Stream Mapping, 5S, Standard Work, Visual Management, and Structured Problem Solving. We choose tools to fit your environment and operating reality rather than forcing a one-size-fits-all approach.";
@@ -68,28 +69,25 @@ export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/operational-excellence-consulting-uk" },
   { label: "Mentoring", href: "/lean-training-uk" },
+  { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact" },
-  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const footerData = {
   description:
-    "Empowering organizations to achieve sustainable operational excellence.",
+    "People-first Lean transformation that reduces waste, protects expertise, and builds capability that lasts.",
   usefulLinks: [
-    { label: "About Us", href: "/about" },
+    { label: "Home", href: "/" },
     { label: "Services", href: "/operational-excellence-consulting-uk" },
-    { label: "Blog & Resources", href: "/blog" },
-    { label: "Contact Us", href: "/contact" },
-    { label: "Career", href: "/careers" },
+    { label: "Mentoring", href: "/lean-training-uk" },
+    { label: "About", href: "/about" },
+    { label: "Blog", href: "/blog" },
+    { label: "Contact", href: "/contact" },
+    { label: "Terms", href: "/terms-and-conditions" },
+    { label: "Privacy", href: "/privacy-policy" },
   ],
-  additionalLinks: navItems,
-  legalLinks: [
-    { label: "Cookie Policy", href: "/cookie-policy" },
-    { label: "Privacy Policy", href: "/privacy-policy" },
-    { label: "Support", href: "/support" },
-    { label: "Terms & Conditions", href: "/terms-and-conditions" },
-  ],
+  legalLinks: [] as NavItem[],
   socialLinks: [
     {
       href: "https://www.linkedin.com/company/tacklers-consulting-group/",
@@ -98,7 +96,7 @@ export const footerData = {
     },
   ] satisfies SocialLink[],
   coverageNote:
-    "We work on-site at client locations across the UK. No public walk-in office.",
+    "We go where the work happens—no offices, no distractions.",
   email: "hello@tacklersconsulting.com",
   phone: "+44 7932 105847",
 };
@@ -106,9 +104,9 @@ export const footerData = {
 export const globalCta = {
   eyebrow: "Start the right conversation",
   title:
-    "Ready to reduce waste, improve productivity, and optimize your team's capabilities?",
+    "Ready to reduce waste, improve productivity, and build capability that lasts?",
   body:
-    "Book a discovery call or request an on-site assessment. We'll work with you to identify opportunities for improvement, define an implementation plan that suits your organisation's needs, and establish key milestones for success.",
+    "Book a discovery call or request an on-site assessment. We will identify where value is trapped, agree the right starting point, and define a practical route to lasting results.",
   primary: { label: "Book a discovery call", href: "/discovery-call" },
   secondary: {
     label: "Request an on-site assessment",
@@ -120,9 +118,9 @@ export const homeData = {
   hero: {
     eyebrow: brandTagline,
     title: "Operational Excellence Consulting",
-    subtitle: "Lean transformation that reduces waste and retains expertise.",
+    subtitle: "Reduce waste. Protect expertise. Redeploy talent.",
     body:
-      "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We work on-site at Gemba with your teams to reduce waste, clear bottlenecks, and improve flow.",
+      "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We work on-site at Gemba with your teams to reduce waste, improve flow, and redeploy talent into higher-value work.",
     primary: { label: "Book a discovery call", href: "/discovery-call" },
     secondary: {
       label: "Request an on-site assessment",
@@ -136,49 +134,48 @@ export const homeData = {
     { value: "10+", label: "Years Lean Experience" },
     {
       value: "500+",
-      label: "Individuals, from front-line teams to C-Suite level, trained in Lean Principles",
+      label: "Individuals trained in Lean Principles",
     },
     { value: "£M+", label: "Savings Delivered" },
     { value: "4.8/5", label: "Average Rating" },
     { value: "98%", label: "Client Satisfaction" },
   ],
   valueProp: {
-    title: "What you get, quickly",
-    body:
-      "This is what clients usually want. It is also what they struggle to get from report-heavy consulting.",
+    title: "Results, Not Reports.",
+    body: "Results That Stick.",
     points: [
-      "Less waiting, fewer hand-over issues, fewer repeat problems",
-      "Shorter cycle times and steadier delivery",
-      "Higher first-time quality through clear standard work",
-      "More capacity from the people and systems you already have",
-      "Leaders and teams who can sustain improvement after we leave",
+      "Measurable impact on cost, flow, quality, and delivery",
+      "Unlocked capacity from the people and systems you already have",
+      "High-performance habits embedded into daily management",
+      "Operational speed through clearer handovers and faster decisions",
+      "Lasting independence so teams can sustain gains without us",
     ],
   },
   peopleFirst: {
-    title: "People-first Lean, the way it should be",
+    title: "People-First Lean: Results Without the Risk",
     body:
-      "Lean has a reputation problem. Too many organisations use it to justify headcount cuts. Our approach focuses on waste, not people: upskilling, redeploying, and creating stronger daily ways of working.",
+      "Lean has a reputation problem because too many programmes chase cost at the expense of trust. We reduce waste while protecting and redeploying talent so organisations keep expertise, improve flow, and build stronger daily ways of working.",
     image:
       "/media/aida-public-AB6AXuDHky4TW1pFeH2_awPPMuIqsfxjuG-7yGMeQeE2qY4s-173f18c3.jpg",
   },
   services: [
     {
       title: "Cost Management",
-      body: "Cost reduction works when it is tied to how work actually runs.",
+      body: "Cost reduction works when it is tied to how work actually runs. We identify waste at the source, quantify the impact, and implement changes that hold so savings show up in delivery, not just on paper.",
       image:
         "/media/photo-1554224155-6726b3ff858f-9273a89e.jpg",
       href: "/operational-excellence-consulting-uk",
     },
     {
       title: "Executive Leadership Coaching",
-      body: "Good projects stall because leaders did not have a clear operating rhythm.",
+      body: "We coach leaders to set a clear operating rhythm, stay visible in the work, and make better decisions faster so teams can sustain results without constant outside pressure.",
       image:
         "/media/photo-1552664730-d307ca884978-3b59fe94.jpg",
       href: "/operational-excellence-consulting-uk",
     },
     {
-      title: "Lean Training",
-      body: "Training has to connect to real work or it fades fast.",
+      title: "Mentoring",
+      body: "Our mentoring builds internal capability through structured, on-the-job development, giving teams the methods, confidence, and leadership support to own improvement themselves.",
       image:
         "/media/photo-1454165804606-c3d57bc86b40-354f8fd9.jpg",
       href: "/lean-training-uk",
@@ -253,17 +250,17 @@ export const serviceCards: CardItem[] = [
   },
   {
     title: "Cost Management",
-    body: "Cost reduction works when it is tied to how work actually runs. Otherwise it becomes pressure and short-term fixes.",
+    body: "Cost reduction works when it is tied to how work actually runs. We identify waste at the source, quantify the impact, and implement changes that hold so savings are real, repeatable, and visible in day-to-day delivery.",
     image: "/media/Cost-Management-f9a07bf6.jpeg",
   },
   {
     title: "Executive Leadership Coaching",
-    body: "Good projects stall when leaders do not have a clear operating rhythm. We coach leaders to make improvement stick.",
+    body: "We coach leaders to set a clear operating rhythm, stay visible in the work, and create the decision discipline, escalation cadence, and accountability needed to sustain results without external pressure.",
     image: "/media/Executive-Leadership-Coaching-1588bf3d.jpeg",
   },
   {
-    title: "Lean Training",
-    body: "Training has to connect to real work or it fades fast. We keep it practical and immediately usable.",
+    title: "Mentoring",
+    body: "Our mentoring builds internal capability through structured, on-the-job development. Teams learn the methods in the work, leaders learn how to coach them, and the organisation becomes less dependent on external support.",
     image: "/media/Lean-Training-060b97e6.jpeg",
   },
   {
@@ -350,19 +347,19 @@ export const serviceFaqs: FaqItem[] = [
 export const leanProgrammes = [
   {
     title: "Lean Fundamentals",
-    body: "Master the core principles of value, waste identification, and continuous improvement culture.",
+    body: "Build a shared understanding of value, waste, and practical problem solving so improvement starts from a stronger operating baseline.",
     cta: "Explore details",
     href: "/book-lean-training",
   },
   {
     title: "Value Stream Mapping",
-    body: "Learn to visualise your process flow and identify the bottlenecks that delay value.",
+    body: "Map the current state, expose bottlenecks, and turn operational insight into a clear action plan your teams can own.",
     cta: "Master VSM",
     href: "/book-lean-training",
   },
   {
     title: "Kaizen Facilitation",
-    body: "Develop the skills to lead improvement events that create rapid and sustainable results.",
+    body: "Develop the skills to lead focused improvement activity, hold the gains, and coach others with confidence.",
     cta: "View details",
     href: "/book-lean-training",
   },
@@ -390,10 +387,10 @@ export const methodSteps = [
 export const aboutBeliefs = [
   {
     title: "People-first Lean",
-    body: "Lean works best when people trust the process. If improvement feels like a threat, teams stop sharing issues and stop trying.",
+    body: "Lean works best when people trust the process. If improvement feels like a threat, teams stop surfacing issues and improvement slows down.",
   },
   {
-    title: "Our approach reduces waste without reducing headcount",
+    title: "We reduce waste while protecting and redeploying your talent",
     body:
       "We focus on capacity, capability, and performance, then help you redeploy talent into higher-value work so your organisation retains expertise as the system improves.",
   },
@@ -421,14 +418,14 @@ export const aboutServices = [
 
 export const teamMembers = [
   {
-    name: "Audrey Nyamande",
+    name: "Audrey Nyamande-Trigg",
     role: "Founder & Managing Director",
-    body: "Leads client transformation work with a practical, people-first approach grounded in Gemba observation and leadership coaching.",
+    body: "Leads Lean transformation work at Gemba, helping leaders improve flow, build capability, and sustain results in complex environments.",
   },
   {
-    name: "Arlandous Makoni",
+    name: "Arnoldis Nyamande",
     role: "Policy and Public Affairs Consultant",
-    body: "Supports stakeholder alignment, structured communication, and broader change adoption across complex environments.",
+    body: "Supports stakeholder alignment, structured communication, and wider change adoption across complex, high-accountability environments.",
   },
 ];
 
@@ -442,7 +439,7 @@ export const experienceDo = [
 export const experienceDont = [
   "Buried in slides",
   "Overloaded with initiatives",
-  "Left with a handover and no support",
+  "Abandoned after a handover",
 ];
 
 export const aboutFaqs: FaqItem[] = [
@@ -461,7 +458,7 @@ export const aboutFaqs: FaqItem[] = [
   {
     question: "Where are you based?",
     answer:
-      "We are UK-based and work on-site at client locations across the UK. We do not operate a public visitor office.",
+      "We are UK-based. We go where the work happens—no offices, no distractions.",
   },
   {
     question: "What's the best place to start?",
@@ -473,7 +470,7 @@ export const contactFaqs: FaqItem[] = [
   {
     question: "How quickly will you respond?",
     answer:
-      "We aim to respond within 2 working days to all inquiries.",
+      "We aim to respond within 2 working days to all enquiries.",
   },
   {
     question: "What's the best place to start?",
@@ -543,65 +540,134 @@ export const homeFaqs: FaqItem[] = [
   },
 ];
 
+export const mentoringFaqs: FaqItem[] = [
+  {
+    question: "Who is the Lean mentoring programme designed for?",
+    answer:
+      "The programme is designed for operational teams, team leaders, and managers in any sector who want to build practical Lean capability. No prior Lean experience is required.",
+  },
+  {
+    question: "How is your mentoring different from classroom training?",
+    answer:
+      "We teach by doing. Learning happens at the Gemba, directly connected to real work, real problems, and real improvement—not in a classroom with generic case studies.",
+  },
+  {
+    question: "How long does a mentoring programme typically last?",
+    answer:
+      "Programmes range from focused workshops of a few days to structured multi-week engagements depending on the depth of capability building required.",
+  },
+  {
+    question: "What Lean tools will my team learn?",
+    answer: leanToolsAnswer,
+  },
+  {
+    question: "What's the best place to start?",
+    answer: bestPlaceToStartAnswer,
+  },
+];
+
 export const blogPosts: BlogPost[] = [
   {
-    slug: "lean-transformation-aerospace-mait",
-    title: "Lean transformation in aerospace MAIT, where delays really come from",
+    slug: "2025-a-year-of-digital-breakthrough-tacklers-consulting-group-ltd-leading-the-charge",
+    title: "2025: A Year of Digital Breakthrough - Tacklers Consulting Group Ltd Leading the Charge",
     excerpt:
-      "If you work in aerospace MAIT, you already know the pattern. The plan looks solid, the schedule looks reasonable, and then hidden handovers start to push everything sideways.",
-    category: "Aerospace Lean",
-    date: "10 Oct 2025",
-    cover:
-      "/media/photo-1517976487492-5750f3195933-200958be.jpg",
+      "As 2025 progresses, organisations across industries are under pressure to innovate, improve efficiency, and stay competitive in an increasingly connected world.",
+    author: "Audrey Nyamande",
+    category: "Digital Transformation",
+    date: "3 Mar 2025",
+    cover: "/media/blog-2025-digital-breakthrough.jpg",
     content: [
-      "Aerospace MAIT environments rarely fail because of one dramatic issue. Delays usually build through ordinary, repeated friction: unclear sequencing, late information, conflicting priorities, and unresolved ownership between functions.",
-      "The first step in Lean transformation is not another dashboard. It is seeing the real path of work and identifying where value gets stuck. Once the flow is visible, you can stabilise daily routines, reduce firefighting, and create more predictable delivery.",
-      "Teams usually know where the pain lives. What they often lack is the space, structure, and leadership rhythm to deal with it. That is where disciplined Gemba work matters most.",
+      "As 2025 progresses, the digital landscape is set for an exciting transformation. With technological advancements shaping the future, organisations across industries are under pressure to innovate and stay ahead of the curve. Digital transformation is no longer optional; it is essential for businesses striving to improve efficiency, optimise processes, and remain competitive in an increasingly connected world.",
+      "At Tacklers Consulting Group Ltd, we are ready and fully equipped to help clients navigate this journey. Our expert team understands that true digital transformation goes beyond simply upgrading technology. It requires organisations to rethink operations, drive change, and foster innovation at every level.",
+      "One of the core pillars of our approach is lean methodology. By applying lean principles, we help organisations eliminate waste, streamline processes, and maximise value for customers. This improves operational efficiency and also helps teams make smarter, faster decisions.",
+      "In addition to lean, we are harnessing the power of Artificial Intelligence to automate routine processes. AI-driven automation frees up valuable time and resources so employees can focus on higher-value work. The result is greater productivity, faster decision-making, and a more agile organisation.",
+      "Upskilling workers is another key focus for Tacklers Consulting. We believe in helping employees embrace the digital future. Through targeted training programmes, we support teams as they move from traditional data-entry roles into more advanced analytical work, unlocking capability and preparing them to thrive in a data-driven environment.",
+      "Our expertise in using data as a strategic asset allows us to deliver sustainable change. Through data analysis, we help organisations uncover actionable insight, support better decisions, and fuel innovation. When data becomes the foundation of decision-making, companies create lasting improvements that optimise operations and position them for future growth.",
+      "As we look to 2025, Tacklers Consulting Group Ltd is ready to guide organisations through digital transformation so they are not only prepared for the future but actively shaping it. The digital revolution is here, and with the right partner, the possibilities are substantial.",
+      "Let us help you unlock your business's full potential.",
     ],
+    ogImageUrl: "/media/blog-2025-digital-breakthrough.jpg",
+    publishedAt: "2025-03-03T12:00:00.000Z",
+    seoDescription:
+      "Explore how Tacklers Consulting Group combines lean, AI, and workforce upskilling to help organisations lead digital transformation in 2025.",
+    seoTitle:
+      "2025: A Year of Digital Breakthrough | Tacklers Consulting Group",
+    updatedAt: "2025-03-03T12:00:00.000Z",
   },
   {
-    slug: "lean-transformation-without-layoffs",
-    title: "Lean transformation without layoffs, how people-first Lean actually works",
+    slug: "enhance-operational-excellence-with-tacklers-consulting-group",
+    title: "Enhance Operational Excellence with Tacklers Consulting Group",
     excerpt:
-      "Lean has a reputation problem. Some teams hear the phrase and immediately think job cuts. That is not the only path, and it is not ours.",
-    category: "People-first Lean",
-    date: "10 Oct 2025",
-    cover:
-      "/media/photo-1522202176988-66273c2fd55f-259dd5c3.jpg",
+      "Organisations across multiple sectors continue to look for practical ways to improve operational efficiency and achieve measurable results.",
+    author: "Audrey Nyamande",
+    category: "Operational Excellence",
+    date: "3 Dec 2024",
+    cover: "/media/blog-enhance-operational-excellence.png",
     content: [
-      "People-first Lean starts with a different question: how do we remove waste while increasing capability? Instead of using improvement as a threat, we use it to create better flow, clearer work, and stronger roles for the team.",
-      "When trust is low, people protect themselves. They stop surfacing issues and improvements stall. When leaders make it clear that the goal is to reduce waste while retaining expertise, teams engage more honestly and progress speeds up.",
-      "The strongest Lean environments grow internal capability, redeploy time into better work, and give leaders a rhythm for sustaining gains. That is how improvement holds.",
+      "In today's fast-paced business environment, organisations across various sectors are constantly looking for ways to enhance operational efficiency and deliver measurable results. Tacklers Consulting Group supports that effort as a trusted partner in business process improvement and operational excellence.",
+      "With more than a decade of experience in applying lean methodologies, Tacklers Consulting Group has built a strong track record in helping businesses streamline processes and achieve sustainable growth. The firm works across Aerospace, Aviation, Space and Defence, Healthcare, Life Sciences, Energy, and IT Services, offering targeted support for complex operational environments.",
+      "From Business Process Management and Executive Leadership Coaching to Lean Training and Project Management, Tacklers Consulting Group covers the core disciplines of operational excellence. A key focus area is MAIT Consulting Services, including Manufacturing, Assembly, Inspection, and Test solutions designed to improve efficiency and quality in production processes.",
+      "The firm's MRO Consulting Services also support organisations that need stronger Maintenance, Repair, and Overhaul performance. By combining lean methodologies with disciplined operational support, Tacklers helps clients optimise the way work moves.",
+      "What differentiates Tacklers Consulting Group is its commitment to effective cost management and people development. By linking lean methods to productivity improvement and strategy deployment, the team delivers outcomes that support both operational performance and wider business goals.",
+      "Whether the need is to optimise manufacturing processes, improve supplier quality, or strengthen people strategy, Tacklers Consulting Group brings the capability and tools to help businesses move forward with confidence.",
+      "For organisations looking to take operational excellence to the next level, Tacklers Consulting Group offers the practical experience, measurable focus, and delivery discipline to make that step worthwhile.",
     ],
+    ogImageUrl: "/media/blog-enhance-operational-excellence.png",
+    publishedAt: "2024-12-03T12:03:00.000Z",
+    seoDescription:
+      "See how Tacklers Consulting Group helps organisations strengthen operational excellence through lean delivery, cost management, and people development.",
+    seoTitle:
+      "Enhance Operational Excellence with Tacklers Consulting Group",
+    updatedAt: "2024-12-03T12:03:00.000Z",
   },
   {
-    slug: "business-coaching-strategies-that-drive-real-success",
-    title: "Business Coaching Strategies That Drive Real Success",
+    slug: "drive-efficiency-with-lean-methodologies-at-tacklers-consulting",
+    title: "Drive Efficiency with Lean Methodologies at Tacklers Consulting",
     excerpt:
-      "Coaching works best when it strengthens how leaders run the business week to week, not when it sits outside the operating system.",
-    category: "Leadership Coaching",
-    date: "10 Oct 2025",
-    cover:
-      "/media/photo-1552664730-d307ca884978-c9ac175b.jpg",
+      "At Tacklers Consulting Group, the drive towards efficiency is not just a goal but a way of working across operationally demanding sectors.",
+    author: "Audrey Nyamande",
+    category: "Lean Methodologies",
+    date: "3 Dec 2024",
+    cover: "/media/blog-drive-efficiency.png",
     content: [
-      "Effective coaching is practical. It helps leaders set clearer priorities, make faster decisions, and stay visible in the work rather than floating above it.",
-      "The best coaching strategies create repeatable habits: short review rhythms, better escalation pathways, clearer accountability, and more useful conversations about performance.",
-      "Coaching should make the day-to-day easier to run. If it does not change the quality of decisions and follow-through, it is not yet doing enough.",
+      "At Tacklers Consulting Group, the drive towards efficiency is not just a goal but a way of life. With a track record spanning more than ten years, the company applies lean methodologies to streamline operations and maximise productivity across industries including Aerospace, Aviation, Space and Defence, Healthcare, Life Sciences, Energy, and IT Services.",
+      "Tacklers Consulting Group delivers a broad range of services including Business Process Management, Executive Leadership Coaching, Lean Training, and Manufacturing support. This breadth allows the team to help clients improve operational performance in a way that is tailored to their environment rather than forced into a generic model.",
+      "One key area of expertise is MAIT Consulting Services, along with support for Maintenance, Repair, and Overhaul operations. By focusing on effective cost management strategies, Tacklers helps businesses optimise processes and improve commercial performance at the same time.",
+      "The firm also places strong emphasis on people development, recognising that a capable and engaged workforce is essential to sustainable growth. Through Lean Transformation and Productivity Improvement services, organisations gain practical tools and techniques that support continuous improvement and a stronger culture of innovation.",
+      "In a competitive business landscape where efficiency is directly tied to performance, Tacklers Consulting Group remains a trusted partner for organisations that want to improve operations, reduce waste, and deliver change that lasts.",
+      "With a proven record of measurable outcomes and a clear commitment to excellence, Tacklers continues to set the standard for lean methodologies and operational efficiency.",
     ],
+    ogImageUrl: "/media/blog-drive-efficiency.png",
+    publishedAt: "2024-12-03T12:02:00.000Z",
+    seoDescription:
+      "Learn how Tacklers Consulting Group applies lean methodologies to improve efficiency, reduce waste, and strengthen operational performance.",
+    seoTitle:
+      "Drive Efficiency with Lean Methodologies at Tacklers Consulting",
+    updatedAt: "2024-12-03T12:02:00.000Z",
   },
   {
-    slug: "how-to-build-confidence-with-business-coaching",
-    title: "How to Build Confidence With Business Coaching",
+    slug: "maximize-productivity-with-tacklers-consulting-group-services",
+    title: "Maximize Productivity with Tacklers Consulting Group Services",
     excerpt:
-      "Confidence is not created by motivational language alone. It grows when leaders understand the system, see progress, and know how to respond under pressure.",
-    category: "Leadership Coaching",
-    date: "10 Oct 2025",
-    cover:
-      "/media/photo-1515169067868-5387ec356754-6a0fcd5a.jpg",
+      "In a demanding business environment, organisations continue to look for practical ways to enhance efficiency and maximise productivity.",
+    author: "Audrey Nyamande",
+    category: "Productivity Improvement",
+    date: "3 Dec 2024",
+    cover: "/media/blog-maximise-productivity.png",
     content: [
-      "Business coaching builds confidence by reducing ambiguity. Leaders need a practical framework for what to look at, how to respond, and how to keep teams aligned when problems appear.",
-      "That usually means better routines, more useful metrics, and clearer expectations rather than more inspiration sessions. Confidence grows when leaders can see what good looks like.",
-      "The result is steadier leadership under pressure and a stronger environment for teams to improve their work without confusion.",
+      "In today's fast-paced business environment, organisations are constantly striving to enhance efficiency and maximise productivity. Tacklers Consulting Group plays an important role in that effort as a practical partner in business process improvement and operational excellence.",
+      "With extensive experience in lean methodologies, Tacklers Consulting Group has supported businesses across Aerospace, Aviation, Space and Defence, Healthcare, Life Sciences, Energy, and IT Services for more than a decade.",
+      "The firm's service range covers Business Process Management, Executive Leadership Coaching, Lean Training, and Supplier Quality Development, giving clients access to a broad set of solutions that can be adapted to the needs of each business.",
+      "Tacklers also brings specialist expertise in MAIT Consulting Services, MRO Consulting Services, Cost Management, and People Development. By focusing on effective cost management and stronger capability, the firm helps businesses streamline operations, improve productivity, and support sustainable growth.",
+      "Whether the challenge is optimising manufacturing processes, improving project management capability, or deploying stronger strategies, Tacklers Consulting Group is focused on delivering measurable and practical results.",
+      "For businesses operating in a competitive market, maximising productivity is essential. Working with Tacklers Consulting Group helps organisations unlock more value, drive continuous improvement, and build the foundations for long-term success.",
     ],
+    ogImageUrl: "/media/blog-maximise-productivity.png",
+    publishedAt: "2024-12-03T12:01:00.000Z",
+    seoDescription:
+      "Discover how Tacklers Consulting Group helps organisations maximise productivity through lean delivery, cost management, and operational improvement.",
+    seoTitle:
+      "Maximize Productivity with Tacklers Consulting Group Services",
+    updatedAt: "2024-12-03T12:01:00.000Z",
   },
 ];

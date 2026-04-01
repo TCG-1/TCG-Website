@@ -6,23 +6,33 @@ import { JsonLd } from "@/components/seo/json-ld";
 import {
   Container,
   CtaBanner,
+  FaqList,
   PageHero,
   SectionHeader,
 } from "@/components/sections";
 import { createPageMetadata } from "@/lib/site-seo";
-import { brandTagline, globalCta, leanProgrammes, methodSteps } from "@/lib/site-data";
-import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
+import { brandTagline, globalCta, leanProgrammes, mentoringFaqs, methodSteps } from "@/lib/site-data";
+import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildServiceJsonLd, buildWebPageJsonLd } from "@/lib/structured-data";
 
 const leanTrainingSeo = {
   description:
-    "Practical Lean training and mentoring for UK teams that want to reduce waste, improve productivity, and build capability that lasts.",
+    "Practical on-site Lean training and group mentoring for UK teams. Build internal capability, reduce waste, and sustain improvement through hands-on learning at the Gemba.",
   image: "/media/Lean-Training-060b97e6.jpeg",
-  title: "Mentoring UK | Tacklers Consulting Group",
+  title: "Lean Training & Mentoring UK | Tacklers Consulting Group",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
   description: leanTrainingSeo.description,
   image: leanTrainingSeo.image,
+  keywords: [
+    "lean training uk",
+    "lean mentoring programme",
+    "lean six sigma training",
+    "continuous improvement training",
+    "kaizen training uk",
+    "on-site lean training",
+    "value stream mapping training",
+  ],
   path: "/lean-training-uk",
   title: leanTrainingSeo.title,
 });
@@ -69,12 +79,13 @@ export default function LeanServicesPage() {
             name: "Lean Group Mentoring",
             path: "/lean-training-uk",
           }),
+          buildFaqJsonLd(mentoringFaqs),
         ]}
       />
       <PageHero
         eyebrow={brandTagline}
         title="Practical Lean training and mentoring that builds capability where work happens."
-        body="We help teams reduce waste, improve productivity, and strengthen daily ways of working through practical learning that connects directly to real operational challenges."
+        body="We help teams reduce waste, improve productivity, and strengthen daily ways of working through practical mentoring tied directly to real operational challenges."
         primary={{ label: "Enquire now", href: "/book-lean-training" }}
         secondary={{ label: "Download brochure", href: "/contact" }}
         image={leanTrainingSeo.image}
@@ -85,7 +96,7 @@ export default function LeanServicesPage() {
           <div className="relative z-10 mx-auto max-w-md rounded-[1.75rem] bg-[#FDD835] px-8 py-8 text-center shadow-[0_30px_80px_rgba(253,216,53,0.28)]">
             <p className="text-5xl font-extrabold text-[#8a0917]">500+</p>
             <p className="mt-3 text-xs font-bold uppercase leading-6 tracking-[0.16em] text-slate-950">
-              Individuals, from front-line teams to C-Suite level, trained in Lean Principles
+              Individuals trained in Lean Principles
             </p>
           </div>
         </Container>
@@ -119,7 +130,7 @@ export default function LeanServicesPage() {
           <SectionHeader
             eyebrow="Programmes"
             title="Mentoring Programmes"
-            body="Comprehensive curriculum designed to transform your workforce into Lean experts and change leaders."
+            body="Structured mentoring options designed to build practical Lean capability, leadership confidence, and internal ownership."
             center
           />
 
@@ -232,26 +243,26 @@ export default function LeanServicesPage() {
               <div className="mb-4 flex items-center gap-3">
                 <div className="h-px w-10 bg-[#8a0917]" />
                 <span className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">
-                  Why Choose Tacklers?
+                  Why clients choose Tacklers
                 </span>
               </div>
               <h2 className="section-title text-slate-950">
-                Lean Excellence, <span className="font-bold">Real Results.</span>
+                Mentoring that builds capability <span className="font-bold">and keeps it in-house.</span>
               </h2>
 
               <ul className="mt-8 space-y-6">
                 {[
                   {
-                    title: "Sustainable ROI",
-                    body: "We don’t just deliver a report; we deliver measurable bottom-line improvements that stick.",
+                    title: "Capability that stays with you",
+                    body: "The goal is not dependency. We help your teams solve problems, improve flow, and sustain better performance without relying on outside support.",
                   },
                   {
-                    title: "Pragmatic Mentoring",
-                    body: "No jargon-heavy classroom theory. We teach by doing in your operational environment, where teams can apply the learning immediately.",
+                    title: "Practical mentoring at the point of work",
+                    body: "We teach by doing in your operational environment, where the methods can be applied immediately and tested against real constraints.",
                   },
                   {
-                    title: "Cultural Transformation",
-                    body: "We focus on changing mindsets, empowering your people to become self-sufficient problem solvers.",
+                    title: "Leadership habits that hold the gains",
+                    body: "We strengthen the operating rhythm, coaching habits, and follow-through needed to make improvement sustainable.",
                   },
                 ].map((item) => (
                   <li key={item.title} className="flex gap-4">
@@ -272,6 +283,20 @@ export default function LeanServicesPage() {
                 ))}
               </ul>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="section-gap bg-slate-50">
+        <Container>
+          <SectionHeader
+            eyebrow="FAQs"
+            title="Frequently asked questions"
+            body="Common questions about our Lean mentoring and training programmes."
+            center
+          />
+          <div className="mx-auto max-w-4xl">
+            <FaqList items={mentoringFaqs} />
           </div>
         </Container>
       </section>

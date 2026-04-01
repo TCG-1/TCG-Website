@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 import { JsonLd } from "@/components/seo/json-ld";
@@ -24,14 +25,65 @@ import { buildBreadcrumbJsonLd, buildFaqJsonLd, buildServiceJsonLd, buildWebPage
 
 const servicesSeo = {
   description:
-    "Explore Tacklers Consulting Group operational excellence consulting services in the UK, including Lean transformation, coaching, training, and supplier quality support.",
+    "Tacklers Consulting Group delivers operational excellence consulting across the UK — Lean transformation, executive coaching, on-site training, and supplier quality support to reduce waste and improve flow.",
   image: "/media/Lean-transformation-consulting-UK-consultant-working-with-team-at-Gemba-1-6dc05d89.jpeg",
   title: "Operational Excellence Consulting UK | Tacklers Consulting Group",
 } as const;
 
+const serviceHighlights = [
+  {
+    title: "Scalable Implementation",
+    body: "Start with one value stream or scale across multiple teams with a delivery cadence that remains controlled, visible, and practical.",
+  },
+  {
+    title: "Evidence-Based Strategy",
+    body: "Prioritise work through Gemba observation, operational data, and leadership objectives so effort goes where the return will be measurable.",
+  },
+  {
+    title: "Objective Assessment",
+    body: "Evaluate flow, waste, management routines, and capability honestly so decisions are based on evidence rather than assumption.",
+  },
+] as const;
+
+const serviceTiers = [
+  {
+    title: "Discovery and diagnosis",
+    points: [
+      "Target the right value stream, function, or operational constraint first.",
+      "Assess flow, waste, leadership routines, and capability on-site.",
+      "Agree a clear starting point before broader investment is made.",
+    ],
+  },
+  {
+    title: "Embedded delivery support",
+    points: [
+      "Work alongside teams at Gemba to remove waste and improve flow.",
+      "Establish daily and weekly management routines that hold under pressure.",
+      "Turn improvement activity into measurable operational gains.",
+    ],
+  },
+  {
+    title: "Capability transfer",
+    points: [
+      "Coach leaders and mentors to run the work with confidence.",
+      "Build internal problem solving, standard work, and escalation discipline.",
+      "Leave behind capability your organisation can sustain without us.",
+    ],
+  },
+] as const;
+
 export const metadata: Metadata = createPageMetadata({
   description: servicesSeo.description,
   image: servicesSeo.image,
+  keywords: [
+    "operational excellence consulting uk",
+    "lean transformation services",
+    "lean consulting uk",
+    "business process improvement",
+    "continuous improvement consulting",
+    "gemba walk consulting",
+    "lean six sigma consulting uk",
+  ],
   path: "/operational-excellence-consulting-uk",
   title: servicesSeo.title,
 });
@@ -61,7 +113,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="Our services"
         title="Operational Excellence Services in the UK"
-        body="Most organisations do not need more initiatives. They need work that runs better on a normal Tuesday. Tacklers supports teams with hands-on operational excellence services across the UK to improve flow, reduce waste, and build routines that keep results in place."
+        body="Most organisations do not need more initiatives. They need measurable gains in flow, cost, quality, and delivery that hold after the consultants leave."
         primary={globalCta.primary}
         secondary={globalCta.secondary}
         image="/media/Lean-transformation-consulting-UK-consultant-working-with-team-at-Gemba-1-6dc05d89.jpeg"
@@ -70,15 +122,28 @@ export default function ServicesPage() {
       <section className="section-gap">
         <Container>
           <SectionHeader
-            eyebrow="Core offer"
-            title="Our core services"
-            body="Practical support across transformation, coaching, capability building, and performance improvement."
+            eyebrow="Lean transformation services"
+            title="Operational support built for measurable results"
+            body="Practical support across transformation, leadership coaching, mentoring, capability building, and performance improvement."
             center
           />
+          <div className="mx-auto mb-10 grid max-w-6xl gap-6 md:grid-cols-3">
+            {serviceHighlights.map((highlight) => (
+              <article
+                key={highlight.title}
+                className="card-hover rounded-[1.5rem] border border-[#8a0917]/10 bg-[#fff9fa] p-6 text-left shadow-[0_18px_45px_rgba(15,23,42,0.06)]"
+              >
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#8a0917]">
+                  {highlight.title}
+                </p>
+                <p className="mt-4 leading-7 text-slate-700">{highlight.body}</p>
+              </article>
+            ))}
+          </div>
           <div className="mx-auto max-w-6xl">
             <CardGrid
               items={serviceCards.map((card) =>
-                card.title === "Lean Training"
+                card.title === "Mentoring"
                   ? { ...card, cta: "View Programme", href: "/lean-training-uk" }
                   : { ...card, cta: undefined, href: undefined }
               )}
@@ -90,22 +155,62 @@ export default function ServicesPage() {
       <section className="section-gap bg-slate-50">
         <Container>
           <SectionHeader
-            eyebrow="Need a starting point?"
-            title="Don't know where to start?"
-            body="If you are not sure which option fits, book a discovery call. We will pick a starting point that makes sense for your reality, not an ideal world."
+            eyebrow="Service tiers"
+            title="A clear route from diagnosis to capability transfer"
+            body="Choose the level of support that fits your situation now. We can start focused and scale when the evidence supports it."
+            center
+          />
+          <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-3">
+            {serviceTiers.map((tier) => (
+              <article
+                key={tier.title}
+                className="card-hover rounded-[1.75rem] border border-black/5 bg-white p-8 text-left shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
+              >
+                <h3 className="text-2xl font-semibold tracking-tight text-slate-950">{tier.title}</h3>
+                <ul className="mt-6 space-y-3">
+                  {tier.points.map((point) => (
+                    <li key={point} className="flex items-start gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a0917]" />
+                      <span className="text-slate-700">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="section-gap">
+        <Container>
+          <SectionHeader
+            eyebrow="People-First Lean"
+            title="People-First Lean: Results Without the Risk"
+            body="We reduce waste, protect expertise, and build capability that lasts."
             center
           />
           <div className="card mx-auto max-w-3xl text-center">
-            <p className="text-lg leading-8 text-slate-600">
-              We keep the approach simple because the work is already complex.
-            </p>
+            <ul className="mx-auto max-w-md space-y-3 text-left">
+              {[
+                "Trust-Based Transformation",
+                "Waste-Free Workflows",
+                "Redeployed Talent",
+                "Retained Expertise",
+                "Sustainable Capability",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#8a0917] text-xs font-bold text-white">✓</span>
+                  <span className="text-slate-700">{item}</span>
+                </li>
+              ))}
+            </ul>
             <div className="mt-6 flex flex-wrap justify-center gap-4">
-              <a className="button-primary" href="/discovery-call">
-                Free consultation call
-              </a>
-              <a className="button-secondary" href="/on-site-assessment">
-                Request assessment
-              </a>
+              <Link className="button-primary" href="/discovery-call">
+                Book a discovery call
+              </Link>
+              <Link className="button-secondary" href="/on-site-assessment">
+                Request an assessment
+              </Link>
             </div>
           </div>
         </Container>

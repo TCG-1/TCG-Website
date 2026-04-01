@@ -16,6 +16,11 @@ const onSiteAssessmentSeo = {
 export const metadata: Metadata = createPageMetadata({
   description: onSiteAssessmentSeo.description,
   image: onSiteAssessmentSeo.image,
+  keywords: [
+    "on-site lean assessment uk",
+    "operational assessment",
+    "lean improvement assessment",
+  ],
   path: "/on-site-assessment",
   title: onSiteAssessmentSeo.title,
 });

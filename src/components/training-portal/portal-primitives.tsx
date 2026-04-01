@@ -27,7 +27,7 @@ export function PortalIntro({
   return (
     <section className="max-w-4xl">
       <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">{eyebrow}</p>
-      <h1 className="mt-4 text-[clamp(2.6rem,6vw,4.6rem)] font-light leading-[1.02] tracking-[-0.05em] text-slate-950">
+      <h1 className="mt-4 text-[clamp(2.2rem,4.5vw,3.4rem)] font-light leading-[1.05] tracking-[-0.05em] text-slate-950">
         {title}
       </h1>
       <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{description}</p>

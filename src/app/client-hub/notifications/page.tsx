@@ -102,7 +102,7 @@ export default function ClientHubNotificationsPage() {
         <article className="rounded-[1.75rem] bg-[linear-gradient(135deg,#62000b_0%,#8a0917_100%)] p-7 text-white shadow-[0_20px_60px_rgba(98,0,11,0.25)]">
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70">Response standard</p>
           <p className="mt-4 text-3xl font-bold [font-family:var(--font-client-headline)]">2 working days</p>
-          <p className="mt-2 text-sm text-white/80">We aim to respond within 2 working days to all inquiries.</p>
+          <p className="mt-2 text-sm text-white/80">We aim to respond within 2 working days to all enquiries.</p>
         </article>
       </section>
 

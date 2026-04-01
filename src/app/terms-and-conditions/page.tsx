@@ -38,7 +38,7 @@ export default function TermsPage() {
       <PageHero
         eyebrow="Legal & compliance"
         title="Terms & Conditions"
-        body="Terms governing use of the Tacklers website, enquiries, portal access, and related digital services. Effective date: 29 March 2026."
+        body="Terms governing use of the Tacklers website, enquiries, portal access, and related digital services. Effective date: 8 September 2024."
         image={termsSeo.image}
       />
       <section className="section-gap">

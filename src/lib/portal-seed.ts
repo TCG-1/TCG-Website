@@ -19,6 +19,7 @@ export async function ensureBlogSeedData(supabase: SupabaseClient) {
     .from("blog_posts")
     .insert(
       blogPosts.map((post) => ({
+        author_name: post.author ?? null,
         category: post.category,
         canonical_url: post.canonicalPath ?? null,
         cover_url: post.cover,

@@ -14,6 +14,7 @@ import {
 import { absoluteUrl } from "@/lib/site-seo";
 
 type BlogPost = {
+  author_name: string | null;
   body: string;
   canonical_url: string | null;
   category: string | null;

@@ -16,6 +16,11 @@ const careersSeo = {
 export const metadata: Metadata = createPageMetadata({
   description: careersSeo.description,
   image: careersSeo.image,
+  keywords: [
+    "lean consulting careers uk",
+    "operational excellence jobs",
+    "lean consultant roles",
+  ],
   path: "/careers",
   title: careersSeo.title,
 });

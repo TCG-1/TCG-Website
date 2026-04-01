@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { SubmissionSuccessModal } from "@/components/forms/submission-success-modal";
@@ -56,6 +57,33 @@ function GoogleIcon() {
   );
 }
 
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 6.75h16v10.5H4z" />
+      <path d="m5 8 7 5 7-5" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M7.5 10.5h9a1.5 1.5 0 0 1 1.5 1.5v6a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 18v-6a1.5 1.5 0 0 1 1.5-1.5Z" />
+      <path d="M8.5 10.5v-2a3.5 3.5 0 1 1 7 0v2" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
 export function PortalSignInForm({
   initialMessage = "",
   initialMode = "sign_in",
@@ -75,6 +103,24 @@ export function PortalSignInForm({
   const [isResetPending, setIsResetPending] = useState(false);
   const [successTitle, setSuccessTitle] = useState("Account created");
   const [successMessage, setSuccessMessage] = useState("");
+  const isSignIn = mode === "sign_in";
+  const panelTitle = isSignIn ? "New to Tacklers?" : "Already registered?";
+  const panelCta = isSignIn ? "Create account" : "Sign in";
+  const panelBody = isSignIn
+    ? "Create your portal access to view documents, track programme activity, and stay close to the work."
+    : "Return to your portal to access delivery updates, documents, and the latest account activity.";
+  const heading = isSignIn ? "Welcome back" : "Create your account";
+  const intro = isSignIn
+    ? "Sign in to continue to your Tacklers portal."
+    : "Set up your Tacklers portal access in a few focused steps.";
+  const emailDividerLabel = isSignIn ? "or sign in with email" : "or continue with email";
+  const submitLabel = isSubmitting
+    ? isSignIn
+      ? "Signing in..."
+      : "Creating account..."
+    : isSignIn
+      ? "Sign in"
+      : "Create account";
 
   useEffect(() => {
     setMode(initialMode);
@@ -245,189 +291,220 @@ export function PortalSignInForm({
 
   return (
     <>
-      <form
-        className="grid gap-5 rounded-4xl border border-black/5 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
-        onSubmit={handleSubmit}
-      >
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#8a0917]">User access</p>
-          <div className="mt-4 inline-flex rounded-full border border-black/5 bg-slate-100 p-1">
+      <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white shadow-[0_35px_120px_rgba(15,23,42,0.24)]">
+        <div className="grid lg:grid-cols-[1.04fr_0.96fr]">
+          <form className="grid gap-5 p-7 sm:p-10" onSubmit={handleSubmit}>
+            <div>
+              <p className="text-sm font-semibold text-slate-400">
+                {isSignIn ? "Sign in to continue to Tacklers" : "Create access to the Tacklers portal"}
+              </p>
+              <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
+                {heading}
+              </h1>
+              <p className="mt-3 text-base leading-7 text-slate-500">{intro}</p>
+            </div>
+
             <button
               type="button"
-              onClick={() => {
-                setMode("sign_in");
-                setError("");
-                setSuccessMessage("");
-              }}
-              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
-                mode === "sign_in" ? "bg-[#8a0917] text-white" : "text-slate-500 hover:text-[#8a0917]"
-              }`}
+              onClick={handleGoogleSignIn}
+              disabled={isSubmitting || isGooglePending}
+              className="inline-flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-[#8a0917]/25 hover:text-[#8a0917] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Sign in
+              <GoogleIcon />
+              {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
             </button>
+
+            <div className="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              <span className="h-px flex-1 bg-slate-200" />
+              <span>{emailDividerLabel}</span>
+              <span className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            {mode === "sign_up" ? (
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                Full name
+                <input
+                  className="h-13 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-[#8a0917]/40 focus:bg-white"
+                  type="text"
+                  placeholder="Your full name"
+                  value={fullName}
+                  onChange={(event) => setFullName(event.target.value)}
+                  autoComplete="name"
+                  required
+                />
+              </label>
+            ) : null}
+
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              Email
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center pl-4 text-slate-400">
+                  <MailIcon />
+                </span>
+                <input
+                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm outline-none transition focus:border-[#8a0917]/40 focus:bg-white"
+                  type="email"
+                  placeholder="you@company.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </label>
+
+            <label className="grid gap-2 text-sm font-semibold text-slate-700">
+              Password
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center pl-4 text-slate-400">
+                  <LockIcon />
+                </span>
+                <input
+                  className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-18 text-sm outline-none transition focus:border-[#8a0917]/40 focus:bg-white"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={isSignIn ? "Enter your password" : "Create a password"}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete={isSignIn ? "current-password" : "new-password"}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 transition hover:text-[#8a0917]"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </label>
+
+            {mode === "sign_up" ? (
+              <label className="grid gap-2 text-sm font-semibold text-slate-700">
+                Confirm password
+                <div className="relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-0 inline-flex items-center pl-4 text-slate-400">
+                    <LockIcon />
+                  </span>
+                  <input
+                    className="h-13 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-18 text-sm outline-none transition focus:border-[#8a0917]/40 focus:bg-white"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Re-enter your password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    autoComplete="new-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((current) => !current)}
+                    className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 transition hover:text-[#8a0917]"
+                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                  >
+                    {showConfirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </label>
+            ) : null}
+
+            {isSignIn ? (
+              <div className="-mt-1 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    void handleForgotPassword();
+                  }}
+                  disabled={isSubmitting || isGooglePending || isResetPending}
+                  className="text-sm font-semibold text-[#8a0917] transition hover:text-[#690711] disabled:opacity-60"
+                >
+                  {isResetPending ? "Sending reset link..." : "Forgot password?"}
+                </button>
+              </div>
+            ) : null}
+
+            {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
+            {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}
+
             <button
-              type="button"
-              onClick={() => {
-                setMode("sign_up");
-                setError("");
-                setSuccessMessage("");
-              }}
-              className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
-                mode === "sign_up" ? "bg-[#8a0917] text-white" : "text-slate-500 hover:text-[#8a0917]"
-              }`}
-            >
-              Sign up
-            </button>
-          </div>
-          <h1 className="mt-4 text-4xl font-light tracking-[-0.04em] text-slate-950">
-            {mode === "sign_in" ? "Sign in" : "Create your account"}
-          </h1>
-          <p className="mt-4 text-base leading-7 text-slate-600">
-            {mode === "sign_in"
-              ? "Access your Tacklers user dashboard and stay signed in until you log out manually."
-              : "Create a user account to access your Tacklers dashboard, documents, and live programme updates."}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGoogleSignIn}
-          disabled={isSubmitting || isGooglePending}
-          className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#8a0917]/20 hover:text-[#8a0917] disabled:cursor-not-allowed disabled:opacity-70"
-        >
-          <GoogleIcon />
-          {isGooglePending ? "Redirecting to Google..." : "Continue with Google"}
-        </button>
-
-        <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-          <span className="h-px flex-1 bg-slate-200" />
-          <span>or</span>
-          <span className="h-px flex-1 bg-slate-200" />
-        </div>
-
-        {mode === "sign_up" ? (
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Full name
-            <input
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-              type="text"
-              placeholder="Your full name"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              autoComplete="name"
-              required
-            />
-          </label>
-        ) : null}
-
-        {mode === "sign_in" ? (
-          <div className="-mt-1 text-right">
-            <button
-              type="button"
-              onClick={() => {
-                void handleForgotPassword();
-              }}
+              type="submit"
+              className="inline-flex h-13 w-full items-center justify-center gap-3 rounded-2xl bg-[#8a0917] px-5 text-sm font-semibold text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
               disabled={isSubmitting || isGooglePending || isResetPending}
-              className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a0917] disabled:opacity-60"
             >
-              {isResetPending ? "Sending reset link..." : "Forgot password?"}
+              <span>{submitLabel}</span>
+              <ArrowIcon />
             </button>
-          </div>
-        ) : null}
 
-        <label className="grid gap-2 text-sm font-medium text-slate-700">
-          Email
-          <input
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-            type="email"
-            placeholder="you@company.com"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="email"
-            required
-          />
-        </label>
-
-        <label className="grid gap-2 text-sm font-medium text-slate-700">
-          Password
-          <div className="relative">
-            <input
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-              type={showPassword ? "text" : "password"}
-              placeholder={mode === "sign_in" ? "Enter your password" : "Create a password"}
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete={mode === "sign_in" ? "current-password" : "new-password"}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((current) => !current)}
-              className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-          </div>
-        </label>
-
-        {mode === "sign_up" ? (
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Confirm password
-            <div className="relative">
-              <input
-                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-16 text-sm outline-none transition focus:border-[#8a0917]/30 focus:bg-white"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Re-enter your password"
-                value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
-                autoComplete="new-password"
-                required
-              />
+            <p className="text-center text-sm text-slate-500 lg:hidden">
+              {isSignIn ? "Need an account?" : "Already have an account?"}{" "}
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword((current) => !current)}
-                className="absolute inset-y-0 right-0 inline-flex items-center px-4 text-xs font-semibold text-slate-500 hover:text-[#8a0917]"
-                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                onClick={() => {
+                  setMode(isSignIn ? "sign_up" : "sign_in");
+                  setError("");
+                  setSuccessMessage("");
+                }}
+                className="font-semibold text-[#8a0917]"
               >
-                {showConfirmPassword ? "Hide" : "Show"}
+                {panelCta}
+              </button>
+            </p>
+          </form>
+
+          <aside className="relative hidden overflow-hidden bg-[linear-gradient(160deg,#6b0f1a_0%,#8a0917_48%,#8a5521_100%)] px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between">
+            <div className="absolute inset-0 opacity-30">
+              <div className="absolute -right-14 top-0 h-56 w-56 rounded-full bg-white/12 blur-sm" />
+              <div className="absolute bottom-8 left-[-3.5rem] h-64 w-64 rounded-full bg-[#fdd835]/12 blur-sm" />
+              <div className="absolute right-8 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full bg-white/10 blur-sm" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="flex flex-col items-center text-center">
+                <Image
+                  src="/media/TCG%20Logo.png"
+                  alt="Tacklers Consulting Group logo"
+                  width={184}
+                  height={184}
+                  className="h-24 w-36 object-contain"
+                />
+                <p className="mt-5 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white/75">
+                  Tacklers Consulting Group
+                </p>
+                <p className="mt-3 max-w-xs text-sm leading-6 text-white/78">
+                  People-first Lean transformation that reduces waste, protects expertise, and builds capability that lasts.
+                </p>
+              </div>
+
+              <div className="mt-10 rounded-[1.75rem] border border-white/15 bg-white/10 px-7 py-8 text-center backdrop-blur-sm">
+                <div className="text-4xl leading-none text-[#fdd835]">“</div>
+                <p className="mt-3 text-lg font-medium leading-8 text-white">
+                  Results, not reports. Results that stick.
+                </p>
+                <p className="mt-4 text-sm text-white/70">
+                  Practical access to your dashboard, documents, and delivery updates.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-10 text-center">
+              <p className="text-sm text-white/72">{panelTitle}</p>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/78">
+                {panelBody}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode(isSignIn ? "sign_up" : "sign_in");
+                  setError("");
+                  setSuccessMessage("");
+                }}
+                className="mt-6 inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/8 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/14"
+              >
+                {panelCta}
               </button>
             </div>
-          </label>
-        ) : null}
-
-        {initialMessage ? <p className="text-sm font-semibold text-[#8a0917]">{initialMessage}</p> : null}
-        {error ? <p className="text-sm font-semibold text-[#8a0917]">{error}</p> : null}
-
-        <button
-          type="submit"
-          className="inline-flex w-full items-center justify-center rounded-full bg-[#8a0917] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#690711] disabled:cursor-not-allowed disabled:opacity-70"
-          disabled={isSubmitting || isGooglePending || isResetPending}
-        >
-          {isSubmitting
-            ? mode === "sign_in"
-              ? "Signing in..."
-              : "Creating account..."
-            : mode === "sign_in"
-              ? "Sign in to dashboard"
-              : "Create account"}
-        </button>
-
-        <p className="text-center text-sm text-slate-600">
-          {mode === "sign_in" ? "Need an account?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setMode(mode === "sign_in" ? "sign_up" : "sign_in");
-              setError("");
-              setSuccessMessage("");
-            }}
-            className="font-semibold text-[#8a0917]"
-          >
-            {mode === "sign_in" ? "Sign up" : "Sign in"}
-          </button>
-        </p>
-      </form>
+          </aside>
+        </div>
+      </div>
 
       <SubmissionSuccessModal
         open={Boolean(successMessage)}
