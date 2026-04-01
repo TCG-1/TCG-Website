@@ -63,6 +63,20 @@ img {
   background: rgba(248, 249, 250, 0.84);
 }
 
+@keyframes hero-bg-kenburns {
+  0% {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: scale(1) translate3d(-1.2%, -0.8%, 0);
+  }
+}
+
+.hero-bg-kenburns {
+  animation: hero-bg-kenburns 8.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .hero-title-emphasis {
   font-weight: 800;
   color: var(--accent);
@@ -266,6 +280,10 @@ input[type="reset"]:active:not(:disabled) {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .hero-bg-kenburns {
+    animation: none;
   }
 
   .scroll-reveal,

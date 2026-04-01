@@ -107,7 +107,7 @@ export default async function Home() {
           alt="Operational excellence team session"
           fill
           priority
-          className="object-cover"
+          className="object-cover lg:hidden"
           sizes="100vw"
         />
         <HomeHeroSlideshow slides={homeData.hero.slides} />

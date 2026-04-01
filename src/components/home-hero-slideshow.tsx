@@ -18,26 +18,9 @@ export function HomeHeroSlideshow({
   slides,
 }: HomeHeroSlideshowProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
-
-    const syncViewport = () => {
-      setIsDesktop(mediaQuery.matches);
-    };
-
-    syncViewport();
-
-    mediaQuery.addEventListener("change", syncViewport);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncViewport);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isDesktop || slides.length < 2) {
+    if (slides.length < 2) {
       return;
     }
 
@@ -54,9 +37,9 @@ export function HomeHeroSlideshow({
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [intervalMs, isDesktop, slides.length]);
+  }, [intervalMs, slides.length]);
 
-  if (!isDesktop || !slides.length) {
+  if (!slides.length) {
     return null;
   }
 
@@ -70,8 +53,10 @@ export function HomeHeroSlideshow({
           fill
           priority={index === 0}
           sizes="100vw"
-          className={`object-cover transition-[opacity,transform] duration-[1400ms] ease-out ${
-            index === activeIndex ? "scale-100 opacity-100" : "scale-105 opacity-0"
+          className={`object-cover transition-[opacity,transform,filter] duration-[1900ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform] ${
+            index === activeIndex
+              ? "scale-100 opacity-100 blur-0 hero-bg-kenburns"
+              : "scale-[1.06] opacity-0 blur-[2px]"
           }`}
         />
       ))}
