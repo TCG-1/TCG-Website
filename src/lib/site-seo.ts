@@ -145,6 +145,9 @@ export const rootMetadata: Metadata = {
     url: siteConfig.url,
   },
   referrer: "origin-when-cross-origin",
+  verification: {
+    google: "2UFKM_97c4WrtsZQOI7fA2ZZfNhgDbVmHKBkC6b9OYs",
+  },
   robots: {
     follow: true,
     googleBot: {

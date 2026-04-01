@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { FunFactCarousel } from "@/components/funfact-carousel";
+import { HomeHeroSlideshow } from "@/components/home-hero-slideshow";
 import {
   CardGrid,
   Container,
@@ -102,13 +103,14 @@ export default async function Home() {
       />
       <section className="relative isolate -mt-[100px] overflow-hidden py-20 sm:-mt-[110px] sm:py-24 lg:-mt-[120px] lg:py-28">
         <Image
-          src="/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg"
+          src={homeData.hero.image}
           alt="Operational excellence team session"
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
+        <HomeHeroSlideshow slides={homeData.hero.slides} />
         <div className="hero-soft-gradient absolute inset-0" />
         <Container>
           <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center pt-14 text-center sm:pt-16 lg:pt-20">

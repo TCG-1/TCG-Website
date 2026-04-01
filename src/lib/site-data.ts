@@ -83,6 +83,7 @@ export const footerData = {
     { label: "Mentoring", href: "/lean-training-uk" },
     { label: "About", href: "/about" },
     { label: "Blog", href: "/blog" },
+    { label: "Careers", href: "/careers" },
     { label: "Contact", href: "/contact" },
     { label: "Terms", href: "/terms-and-conditions" },
     { label: "Privacy", href: "/privacy-policy" },
@@ -128,6 +129,24 @@ export const homeData = {
     },
     image:
       "/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg",
+    slides: [
+      {
+        src: "/media/aida-public-AB6AXuCyOjIab072l46SaGHablYPEZAu48OXAu95HSTBh0PG-adf322ea.jpg",
+        alt: "Operational excellence team session",
+      },
+      {
+        src: "/media/aida-public-AB6AXuDHky4TW1pFeH2_awPPMuIqsfxjuG-7yGMeQeE2qY4s-173f18c3.jpg",
+        alt: "People-first lean collaboration at Gemba",
+      },
+      {
+        src: "/media/Productivity-Improvement-1d0b843c.jpeg",
+        alt: "Lean productivity improvement workshop",
+      },
+      {
+        src: "/media/Lean-transformation-consulting-UK-consultant-working-with-team-at-Gemba-1-6dc05d89.jpeg",
+        alt: "Consultant working alongside a team on site",
+      },
+    ],
     badge: "Gemba Focused",
   },
   stats: [
