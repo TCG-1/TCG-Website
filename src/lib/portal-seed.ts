@@ -2,23 +2,36 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { blogPosts } from "@/lib/site-data";
 
+/**
+ * Incremental seed — fetches all existing slugs and inserts any
+ * entries from the static `blogPosts` array that don't yet exist
+ * in the database.  This means newly-added seed posts are picked
+ * up automatically even when the table already contains data.
+ */
 export async function ensureBlogSeedData(supabase: SupabaseClient) {
-  const { count, error } = await supabase
+  /* ── 1. Fetch every slug already present in the table ─────── */
+  const { data: existingRows, error: existingError } = await supabase
     .from("blog_posts")
-    .select("*", { count: "exact", head: true });
+    .select("slug");
 
-  if (error) {
-    throw new Error(error.message);
+  if (existingError) {
+    throw new Error(existingError.message);
   }
 
-  if ((count ?? 0) > 0) {
-    return;
+  const existingSlugs = new Set((existingRows ?? []).map((row) => row.slug));
+
+  /* ── 2. Determine which seed posts are missing ────────────── */
+  const missingPosts = blogPosts.filter((post) => !existingSlugs.has(post.slug));
+
+  if (!missingPosts.length) {
+    return; // everything is already seeded
   }
 
+  /* ── 3. Insert the missing posts ──────────────────────────── */
   const { data: insertedPosts, error: insertPostsError } = await supabase
     .from("blog_posts")
     .insert(
-      blogPosts.map((post) => ({
+      missingPosts.map((post) => ({
         author_name: post.author ?? null,
         category: post.category,
         canonical_url: post.canonicalPath ?? null,
@@ -40,8 +53,9 @@ export async function ensureBlogSeedData(supabase: SupabaseClient) {
     throw new Error(insertPostsError?.message ?? "Unable to seed blog posts.");
   }
 
+  /* ── 4. Insert sections for the newly-seeded posts ────────── */
   const postIdBySlug = new Map(insertedPosts.map((item) => [item.slug, item.id]));
-  const sectionRows = blogPosts.flatMap((post) =>
+  const sectionRows = missingPosts.flatMap((post) =>
     post.content.map((section, index) => ({
       body: section,
       post_id: postIdBySlug.get(post.slug),
