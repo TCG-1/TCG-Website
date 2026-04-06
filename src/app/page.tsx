@@ -22,7 +22,7 @@ const homeSeo = {
   description:
     "Tacklers Consulting Group is a UK-based Lean transformation and operational excellence partner. We reduce waste, clear bottlenecks, and build capability on-site at Gemba so results stick.",
   image: homeData.hero.image,
-  title: "People-First Lean Transformation & Operational Excellence | Tacklers Consulting Group",
+  title: "People-First Lean Transformation & Operational Excellence | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
@@ -45,13 +45,15 @@ export default async function Home() {
     {
       title: "Cost Management",
       body: "Cost reduction works when it is tied to how work actually runs. We identify waste at the source, quantify the impact, and implement changes that hold—so savings are real and repeatable, not just a line on a spreadsheet.",
-      href: "/operational-excellence-consulting-uk",
+      href: "/services/cost-management-consulting-uk",
+      cta: "Learn more",
       image: "/media/Cost-Management-f9a07bf6.jpeg",
     },
     {
       title: "Executive Leadership Coaching",
       body: "This is where many improvements win or lose. We coach leaders to set a clear operating rhythm, stay visible in the work, and create the conditions for their teams to sustain results without external pressure.",
-      href: "/operational-excellence-consulting-uk",
+      href: "/services/executive-leadership-coaching-operations",
+      cta: "Learn more",
       image: "/media/Executive-Leadership-Coaching-1588bf3d.jpeg",
     },
     {
@@ -64,26 +66,29 @@ export default async function Home() {
     {
       title: "Lean Transformation",
       body: "Lean transformation is not a workshop series. It is a change in how work is managed, improved, and sustained—delivered through scalable implementation, evidence-based strategy, and objective assessment.",
-      href: "/operational-excellence-consulting-uk",
+      href: "/lean-transformation-consulting-uk",
+      cta: "Learn more",
       image: "/media/Lean-Transformation-ee5c9aae.jpeg",
     },
     {
-      title: "People Strategy",
-      body: "If the people side is ignored, the process side will not last. That is not a philosophy—it is simply reality.",
-      href: "/operational-excellence-consulting-uk",
+      title: "Continuous Improvement",
+      body: "Build a sustainable improvement culture where teams solve problems at source and improve how they work every day — not just during events or projects.",
+      href: "/continuous-improvement-consulting-uk",
+      cta: "Learn more",
       image: "/media/photo-1521737604893-d14cc237f11d-b93a2a8e.jpg",
     },
     {
       title: "Manufacturing Support",
-      body: "Manufacturing environments feel small until you trace one delay and realise how many parts it touches.",
-      href: "/operational-excellence-consulting-uk",
+      body: "Reduce waste, improve production flow, and strengthen delivery reliability across your manufacturing operations and supply chains.",
+      href: "/industries/manufacturing-operational-excellence",
+      cta: "Learn more",
       image: "/media/Manufacturing-Support-f5a8f8f1.jpeg",
     },
   ];
 
   const founderCredentials = [
     "Lean Six Sigma Certified",
-    "Private Pilot's License - PPL (A)",
+    "Private Pilot's Licence - PPL (A)",
     "Bachelor's Degree",
     "Aerospace Technology",
   ];
@@ -349,6 +354,11 @@ export default async function Home() {
             center
           />
           <CardGrid items={homeData.industries} columns={3} centerText />
+          <div className="mt-10 text-center">
+            <Link href="/industries" className="button-secondary">
+              View All Industries
+            </Link>
+          </div>
         </Container>
       </section>
 

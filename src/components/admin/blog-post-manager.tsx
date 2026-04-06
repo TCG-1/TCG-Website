@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { TiptapBlogEditor } from "@/components/admin/tiptap-blog-editor";
 import { BlogRichContent } from "@/components/blog/blog-rich-content";
 import { requestJson, useLiveApi } from "@/components/portal/use-live-api";
 import { dedupeCoverImageBlocks } from "@/lib/blog-post-utils";
 import {
-  type BlogSectionType,
   normalizeBlogRenderBlocks,
-  parseBlogImagePayload,
   serializeRichTextToSections,
 } from "@/lib/blog-rich-text";
 import { absoluteUrl } from "@/lib/site-seo";
@@ -46,16 +45,6 @@ type BlogFormState = {
   slug: string;
   status: string;
   title: string;
-};
-
-type BlogEditorBlock = {
-  id: string;
-  imageAlt: string;
-  imageCaption: string;
-  imageUrl: string;
-  items: string[];
-  text: string;
-  type: BlogSectionType;
 };
 
 type AdminBlogPayload = {
@@ -99,22 +88,6 @@ const EMPTY_FORM: BlogFormState = {
   title: "",
 };
 
-function createBlockId() {
-  return Math.random().toString(36).slice(2, 10);
-}
-
-function createEmptyBlock(type: BlogSectionType = "paragraph"): BlogEditorBlock {
-  return {
-    id: createBlockId(),
-    imageAlt: "",
-    imageCaption: "",
-    imageUrl: "",
-    items: type === "bullet_list" ? [""] : [],
-    text: "",
-    type,
-  };
-}
-
 function slugifyDraft(value: string) {
   return value
     .toLowerCase()
@@ -149,91 +122,6 @@ function toFormState(post: BlogPost): BlogFormState {
     title: post.title,
   };
 }
-
-function parseBodyToBlocks(body: string) {
-  const sections = serializeRichTextToSections(body);
-
-  if (!sections.length) {
-    return [createEmptyBlock("paragraph")];
-  }
-
-  return sections.map((section) => {
-    if (section.section_type === "bullet_list") {
-      return {
-        ...createEmptyBlock("bullet_list"),
-        id: createBlockId(),
-        items: section.body
-          .split("\n")
-          .map((item) => item.trim())
-          .filter(Boolean),
-      };
-    }
-
-    if (section.section_type === "image") {
-      const image = parseBlogImagePayload(section.body);
-      return {
-        ...createEmptyBlock("image"),
-        id: createBlockId(),
-        imageAlt: image?.alt ?? "",
-        imageCaption: image?.caption ?? "",
-        imageUrl: image?.src ?? "",
-      };
-    }
-
-    return {
-      ...createEmptyBlock(
-        ["heading", "paragraph", "quote"].includes(section.section_type)
-          ? (section.section_type as BlogSectionType)
-          : "paragraph",
-      ),
-      id: createBlockId(),
-      text: section.body,
-      type: ["heading", "paragraph", "quote"].includes(section.section_type)
-        ? (section.section_type as BlogSectionType)
-        : "paragraph",
-    };
-  });
-}
-
-function serializeBlocksToBody(blocks: BlogEditorBlock[]) {
-  return blocks
-    .map((block) => {
-      switch (block.type) {
-        case "heading": {
-          const text = block.text.trim();
-          return text ? `## ${text}` : "";
-        }
-        case "quote": {
-          const text = block.text.trim();
-          return text
-            ? text
-                .split("\n")
-                .map((line) => `> ${line.trim()}`)
-                .join("\n")
-            : "";
-        }
-        case "bullet_list": {
-          const items = block.items.map((item) => item.trim()).filter(Boolean);
-          return items.length ? items.map((item) => `- ${item}`).join("\n") : "";
-        }
-        case "image": {
-          const src = block.imageUrl.trim();
-          if (!src) {
-            return "";
-          }
-          const alt = block.imageAlt.trim();
-          const caption = block.imageCaption.trim();
-          return [`![${alt}](${src})`, caption ? `:: ${caption}` : ""].filter(Boolean).join("\n");
-        }
-        default:
-          return block.text.trim();
-      }
-    })
-    .filter(Boolean)
-    .join("\n\n");
-}
-
-
 
 function buildSeoPreview(form: BlogFormState) {
   const resolvedSlug = slugifyDraft(form.slug || form.title) || "new-post";
@@ -293,76 +181,6 @@ function removePost(payload: AdminBlogPayload, id: string) {
     posts: nextPosts,
     stats: recalcStats(nextPosts),
   };
-}
-
-function EditorToolbar({
-  activeBlock,
-  onAddBlock,
-  onInsertLink,
-  onSetType,
-}: {
-  activeBlock: BlogEditorBlock | null;
-  onAddBlock: (type: BlogSectionType) => void;
-  onInsertLink: () => void;
-  onSetType: (type: BlogSectionType) => void;
-}) {
-  const typeButtons = [
-    { label: "Heading", type: "heading" as const },
-    { label: "Paragraph", type: "paragraph" as const },
-    { label: "Quote", type: "quote" as const },
-    { label: "Bullets", type: "bullet_list" as const },
-  ];
-
-  const addButtons = [
-    { label: "Add heading", type: "heading" as const },
-    { label: "Add paragraph", type: "paragraph" as const },
-    { label: "Add bullets", type: "bullet_list" as const },
-    { label: "Add image", type: "image" as const },
-  ];
-
-  return (
-    <div className="grid gap-4 rounded-3xl border border-black/5 bg-slate-50 p-4">
-      <div className="flex flex-wrap gap-2">
-        {typeButtons.map((button) => (
-          <button
-            key={button.label}
-            type="button"
-            onClick={() => {
-              onSetType(button.type);
-            }}
-            className={`rounded-full border px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] transition ${
-              activeBlock?.type === button.type
-                ? "border-[#8a0917] bg-[#8a0917] text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-[#8a0917]/30 hover:text-[#8a0917]"
-            }`}
-          >
-            {button.label}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={onInsertLink}
-          className="rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600 transition hover:border-[#8a0917]/30 hover:text-[#8a0917]"
-        >
-          Hyperlink
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2 border-t border-slate-200 pt-4">
-        {addButtons.map((button) => (
-          <button
-            key={button.label}
-            type="button"
-            onClick={() => {
-              onAddBlock(button.type);
-            }}
-            className="rounded-full border border-slate-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600 transition hover:border-[#8a0917]/30 hover:text-[#8a0917]"
-          >
-            {button.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
 }
 
 function SeoPreviewCard({ form, hasBody }: { form: BlogFormState; hasBody: boolean }) {
@@ -446,45 +264,39 @@ function SeoPreviewCard({ form, hasBody }: { form: BlogFormState; hasBody: boole
 }
 
 function BlogEditorModal({
-  blocks,
+  body,
   form,
   isDeleting,
   isSaving,
   mode,
-  onBlocksChange,
+  onBodyChange,
   onClose,
   onDelete,
   onFormChange,
   onSave,
   open,
 }: {
-  blocks: BlogEditorBlock[];
+  body: string;
   form: BlogFormState;
   isDeleting: boolean;
   isSaving: boolean;
   mode: "create" | "edit";
-  onBlocksChange: (next: BlogEditorBlock[]) => void;
+  onBodyChange: (next: string) => void;
   onClose: () => void;
   onDelete?: () => void;
   onFormChange: (patch: Partial<BlogFormState>) => void;
   onSave: (status?: string) => void;
   open: boolean;
 }) {
-  const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
-  const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null);
-  const fieldRefs = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
-
-  const previewBody = useMemo(() => serializeBlocksToBody(blocks), [blocks]);
   const previewBlocks = useMemo(
     () =>
       dedupeCoverImageBlocks(
-        normalizeBlogRenderBlocks(serializeRichTextToSections(previewBody)),
+        normalizeBlogRenderBlocks(serializeRichTextToSections(body)),
         form.coverUrl,
       ),
-    [form.coverUrl, previewBody],
+    [form.coverUrl, body],
   );
   const tableOfContents = previewBlocks.filter((block) => block.type === "heading");
-  const activeBlock = blocks.find((block) => block.id === activeBlockId) ?? blocks[0] ?? null;
 
   useEffect(() => {
     if (!open) {
@@ -511,156 +323,6 @@ function BlogEditorModal({
     };
   }, [onClose, open]);
 
-  function registerFieldRef(key: string) {
-    return (node: HTMLInputElement | HTMLTextAreaElement | null) => {
-      fieldRefs.current[key] = node;
-    };
-  }
-
-  function updateBlock(blockId: string, updater: (current: BlogEditorBlock) => BlogEditorBlock) {
-    onBlocksChange(blocks.map((block) => (block.id === blockId ? updater(block) : block)));
-  }
-
-  function replaceFieldValue(fieldKey: string, nextValue: string) {
-    const [blockId, field, maybeIndex] = fieldKey.split("|");
-
-    updateBlock(blockId, (block) => {
-      if (field === "text") {
-        return { ...block, text: nextValue };
-      }
-
-      if (field === "item") {
-        const index = Number(maybeIndex);
-        const nextItems = block.items.slice();
-        nextItems[index] = nextValue;
-        return { ...block, items: nextItems };
-      }
-
-      if (field === "imageUrl") {
-        return { ...block, imageUrl: nextValue };
-      }
-
-      if (field === "imageAlt") {
-        return { ...block, imageAlt: nextValue };
-      }
-
-      if (field === "imageCaption") {
-        return { ...block, imageCaption: nextValue };
-      }
-
-      return block;
-    });
-  }
-
-  function insertLink() {
-    const targetKey = activeFieldKey;
-    if (!targetKey) {
-      return;
-    }
-
-    const label = window.prompt("Link text", "Read more");
-    if (!label) {
-      return;
-    }
-
-    const href = window.prompt("Link URL", "https://");
-    if (!href) {
-      return;
-    }
-
-    const target = fieldRefs.current[targetKey];
-    const insertion = `[${label}](${href})`;
-
-    if (!target) {
-      replaceFieldValue(targetKey, insertion);
-      return;
-    }
-
-    const selectionStart = target.selectionStart ?? target.value.length;
-    const selectionEnd = target.selectionEnd ?? target.value.length;
-    const nextValue = `${target.value.slice(0, selectionStart)}${insertion}${target.value.slice(selectionEnd)}`;
-    replaceFieldValue(targetKey, nextValue);
-
-    requestAnimationFrame(() => {
-      const nextCursor = selectionStart + insertion.length;
-      target.focus();
-      target.setSelectionRange(nextCursor, nextCursor);
-    });
-  }
-
-  function addBlock(type: BlogSectionType) {
-    const nextBlock = createEmptyBlock(type);
-    if (!activeBlock) {
-      onBlocksChange([...blocks, nextBlock]);
-      setActiveBlockId(nextBlock.id);
-      return;
-    }
-
-    const index = blocks.findIndex((block) => block.id === activeBlock.id);
-    const nextBlocks = blocks.slice();
-    nextBlocks.splice(index + 1, 0, nextBlock);
-    onBlocksChange(nextBlocks);
-    setActiveBlockId(nextBlock.id);
-  }
-
-  function setActiveBlockType(type: BlogSectionType) {
-    if (!activeBlock) {
-      addBlock(type);
-      return;
-    }
-
-    updateBlock(activeBlock.id, (block) => ({
-      ...block,
-      items: type === "bullet_list" ? (block.items.length ? block.items : [block.text || ""]) : [],
-      text: type === "bullet_list" || type === "image" ? block.text : block.text,
-      type,
-    }));
-  }
-
-  function moveBlock(blockId: string, direction: -1 | 1) {
-    const index = blocks.findIndex((block) => block.id === blockId);
-    const nextIndex = index + direction;
-
-    if (index < 0 || nextIndex < 0 || nextIndex >= blocks.length) {
-      return;
-    }
-
-    const nextBlocks = blocks.slice();
-    const [block] = nextBlocks.splice(index, 1);
-    nextBlocks.splice(nextIndex, 0, block);
-    onBlocksChange(nextBlocks);
-  }
-
-  function removeBlock(blockId: string) {
-    const nextBlocks = blocks.filter((block) => block.id !== blockId);
-    onBlocksChange(nextBlocks.length ? nextBlocks : [createEmptyBlock("paragraph")]);
-    if (activeBlockId === blockId) {
-      setActiveBlockId(nextBlocks[0]?.id ?? null);
-    }
-  }
-
-  function updateListItem(blockId: string, itemIndex: number, nextValue: string) {
-    updateBlock(blockId, (block) => {
-      const items = block.items.slice();
-      items[itemIndex] = nextValue;
-      return { ...block, items };
-    });
-  }
-
-  function addListItem(blockId: string) {
-    updateBlock(blockId, (block) => ({
-      ...block,
-      items: [...block.items, ""],
-    }));
-  }
-
-  function removeListItem(blockId: string, itemIndex: number) {
-    updateBlock(blockId, (block) => {
-      const items = block.items.filter((_, index) => index !== itemIndex);
-      return { ...block, items: items.length ? items : [""] };
-    });
-  }
-
   if (!open) {
     return null;
   }
@@ -681,12 +343,12 @@ function BlogEditorModal({
       >
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-black/5 bg-[linear-gradient(135deg,#690711_0%,#8a0917_62%,#b31223_100%)] px-6 py-5 text-white sm:px-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#FDD835]">Advanced blog editor</p>
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#FDD835]">Rich text blog editor</p>
             <h2 className="mt-2 text-3xl font-light tracking-[-0.04em]">
               {mode === "create" ? "Write a new article" : "Edit article"}
             </h2>
             <p className="mt-3 text-sm leading-6 text-white/80">
-              Toolbar actions shape headings, paragraphs, hyperlinks, bullet lists, and images. Headings automatically drive the live table of contents.
+              Format text with the toolbar above the editor. Bold, headings, links, images, quotes, and lists are all reflected in real time.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -700,8 +362,8 @@ function BlogEditorModal({
               type="button"
               onClick={() => onSave("published")}
               className="button-primary"
-              disabled={isSaving || !form.title.trim() || !previewBody.trim()}
-              title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
+              disabled={isSaving || !form.title.trim() || !body.trim()}
+              title={!form.title.trim() ? "Add a title to publish" : !body.trim() ? "Add content to publish" : ""}
             >
               {isSaving ? "Publishing..." : "Publish post"}
             </button>
@@ -772,151 +434,17 @@ function BlogEditorModal({
                 </label>
               </div>
 
-              <EditorToolbar
-                activeBlock={activeBlock}
-                onAddBlock={addBlock}
-                onInsertLink={insertLink}
-                onSetType={setActiveBlockType}
+              <TiptapBlogEditor
+                initialMarkdown={body}
+                onChange={onBodyChange}
+                placeholder="Start writing your article here — use the toolbar for headings, bold, links, images, quotes, and lists..."
               />
-
-              <div className="space-y-4">
-                {blocks.map((block, index) => (
-                  <article
-                    key={block.id}
-                    className={`rounded-3xl border p-5 transition ${
-                      activeBlock?.id === block.id
-                        ? "border-[#8a0917]/25 bg-[#fff8f7]"
-                        : "border-black/5 bg-white"
-                    }`}
-                    onMouseDown={() => {
-                      setActiveBlockId(block.id);
-                    }}
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                          {block.type.replace("_", " ")} block
-                        </p>
-                        <p className="mt-1 text-sm text-slate-600">Block {index + 1}</p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <button type="button" onClick={() => moveBlock(block.id, -1)} className="rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600 transition hover:border-[#8a0917]/30 hover:text-[#8a0917]">Up</button>
-                        <button type="button" onClick={() => moveBlock(block.id, 1)} className="rounded-full border border-slate-200 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-600 transition hover:border-[#8a0917]/30 hover:text-[#8a0917]">Down</button>
-                        <button type="button" onClick={() => removeBlock(block.id)} className="rounded-full border border-red-200 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-red-700 transition hover:bg-red-50">Delete</button>
-                      </div>
-                    </div>
-
-                    {block.type === "image" ? (
-                      <div className="mt-5 grid gap-4">
-                        <label className="grid gap-2 text-sm font-medium text-slate-700">
-                          Image URL
-                          <input
-                            ref={registerFieldRef(`${block.id}|imageUrl`)}
-                            className="input"
-                            value={block.imageUrl}
-                            onFocus={() => {
-                              setActiveBlockId(block.id);
-                              setActiveFieldKey(`${block.id}|imageUrl`);
-                            }}
-                            onChange={(event) => replaceFieldValue(`${block.id}|imageUrl`, event.target.value)}
-                            placeholder="/media/example.jpg or https://..."
-                          />
-                        </label>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          <label className="grid gap-2 text-sm font-medium text-slate-700">
-                            Alt text
-                            <input
-                              ref={registerFieldRef(`${block.id}|imageAlt`)}
-                              className="input"
-                              value={block.imageAlt}
-                              onFocus={() => {
-                                setActiveBlockId(block.id);
-                                setActiveFieldKey(`${block.id}|imageAlt`);
-                              }}
-                              onChange={(event) => replaceFieldValue(`${block.id}|imageAlt`, event.target.value)}
-                              placeholder="Describe the image"
-                            />
-                          </label>
-                          <label className="grid gap-2 text-sm font-medium text-slate-700">
-                            Caption
-                            <input
-                              ref={registerFieldRef(`${block.id}|imageCaption`)}
-                              className="input"
-                              value={block.imageCaption}
-                              onFocus={() => {
-                                setActiveBlockId(block.id);
-                                setActiveFieldKey(`${block.id}|imageCaption`);
-                              }}
-                              onChange={(event) => replaceFieldValue(`${block.id}|imageCaption`, event.target.value)}
-                              placeholder="Optional caption"
-                            />
-                          </label>
-                        </div>
-                      </div>
-                    ) : block.type === "bullet_list" ? (
-                      <div className="mt-5 grid gap-3">
-                        {block.items.map((item, itemIndex) => (
-                          <div key={`${block.id}-${itemIndex}`} className="flex gap-3">
-                            <textarea
-                              ref={registerFieldRef(`${block.id}|item|${itemIndex}`)}
-                              rows={2}
-                              className="input min-h-20 resize-y"
-                              value={item}
-                              onFocus={() => {
-                                setActiveBlockId(block.id);
-                                setActiveFieldKey(`${block.id}|item|${itemIndex}`);
-                              }}
-                              onChange={(event) => updateListItem(block.id, itemIndex, event.target.value)}
-                              placeholder={`Bullet point ${itemIndex + 1}`}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeListItem(block.id, itemIndex)}
-                              className="self-start rounded-full border border-red-200 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.16em] text-red-700 transition hover:bg-red-50"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        ))}
-                        <button
-                          type="button"
-                          onClick={() => addListItem(block.id)}
-                          className="button-secondary w-fit"
-                        >
-                          Add bullet
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="mt-5 grid gap-2">
-                        <textarea
-                          ref={registerFieldRef(`${block.id}|text`)}
-                          rows={block.type === "heading" ? 3 : block.type === "quote" ? 4 : 6}
-                          className="input min-h-28 resize-y"
-                          value={block.text}
-                          onFocus={() => {
-                            setActiveBlockId(block.id);
-                            setActiveFieldKey(`${block.id}|text`);
-                          }}
-                          onChange={(event) => replaceFieldValue(`${block.id}|text`, event.target.value)}
-                          placeholder={
-                            block.type === "heading"
-                              ? "Section heading"
-                              : block.type === "quote"
-                                ? "Pull quote or highlighted insight"
-                                : "Write the paragraph here. Use the Hyperlink button to insert links."
-                          }
-                        />
-                      </div>
-                    )}
-                  </article>
-                ))}
-              </div>
             </div>
           </div>
 
           <div className="min-h-0 overflow-y-auto bg-slate-50 px-6 py-6 sm:px-8">
             <div className="grid gap-6">
-              <SeoPreviewCard form={form} hasBody={previewBody.trim().length > 0} />
+              <SeoPreviewCard form={form} hasBody={body.trim().length > 0} />
 
               <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_12px_35px_rgba(15,23,42,0.04)]">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Generated table of contents</p>
@@ -931,7 +459,7 @@ function BlogEditorModal({
                   </ul>
                 ) : (
                   <p className="mt-4 text-sm leading-6 text-slate-500">
-                    Add heading blocks and the live blog sidebar navigation will generate automatically.
+                    Add headings in the editor and the live table of contents will generate automatically.
                   </p>
                 )}
               </div>
@@ -967,7 +495,7 @@ function BlogEditorModal({
                     <BlogRichContent blocks={previewBlocks} />
                   ) : (
                     <div className="rounded-[1.25rem] border border-dashed border-slate-200 bg-slate-50 px-5 py-6 text-sm text-slate-500">
-                      Add blocks to preview headings, paragraphs, images, links, quotes, and lists.
+                      Start writing in the editor to preview your article here.
                     </div>
                   )}
                 </div>
@@ -993,8 +521,8 @@ function BlogEditorModal({
               type="button"
               onClick={() => onSave("published")}
               className="button-primary"
-              disabled={isSaving || !form.title.trim() || !previewBody.trim()}
-              title={!form.title.trim() ? "Add a title to publish" : !previewBody.trim() ? "Add content to publish" : ""}
+              disabled={isSaving || !form.title.trim() || !body.trim()}
+              title={!form.title.trim() ? "Add a title to publish" : !body.trim() ? "Add content to publish" : ""}
             >
               {isSaving ? "Publishing..." : "Publish post"}
             </button>
@@ -1013,7 +541,7 @@ export function BlogPostManager() {
   const [notice, setNotice] = useState<Notice>(null);
   const [modal, setModal] = useState<ModalState>(null);
   const [form, setForm] = useState<BlogFormState>(EMPTY_FORM);
-  const [blocks, setBlocks] = useState<BlogEditorBlock[]>([createEmptyBlock("paragraph")]);
+  const [body, setBody] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -1022,20 +550,20 @@ export function BlogPostManager() {
     const nextModal: ModalState = { baselineStatus: "draft", mode: "create", postId: null };
     setModal(nextModal);
     setForm(EMPTY_FORM);
-    setBlocks([createEmptyBlock("paragraph")]);
+    setBody("");
   }
 
   function openEditModal(post: BlogPost) {
     const nextModal: ModalState = { baselineStatus: post.status, mode: "edit", postId: post.id };
     setModal(nextModal);
     setForm(toFormState(post));
-    setBlocks(parseBodyToBlocks(post.body));
+    setBody(post.body);
   }
 
   function closeModal() {
     setModal(null);
     setForm(EMPTY_FORM);
-    setBlocks([createEmptyBlock("paragraph")]);
+    setBody("");
     setIsSaving(false);
     setIsDeleting(false);
   }
@@ -1045,12 +573,11 @@ export function BlogPostManager() {
       return;
     }
 
-    const currentBody = serializeBlocksToBody(blocks);
     setIsSaving(true);
     try {
       const payload = {
         ...form,
-        body: currentBody,
+        body,
         status: publishStatus ?? form.status,
       };
 
@@ -1198,12 +725,12 @@ export function BlogPostManager() {
       </section>
 
       <BlogEditorModal
-        blocks={blocks}
+        body={body}
         form={form}
         isDeleting={isDeleting}
         isSaving={isSaving}
         mode={modal?.mode ?? "create"}
-        onBlocksChange={setBlocks}
+        onBodyChange={setBody}
         onClose={closeModal}
         onDelete={modal?.mode === "edit" ? deletePost : undefined}
         onFormChange={(patch) => {

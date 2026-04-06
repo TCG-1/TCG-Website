@@ -27,7 +27,7 @@ const servicesSeo = {
   description:
     "Tacklers Consulting Group delivers operational excellence consulting across the UK — Lean transformation, executive coaching, on-site training, and supplier quality support to reduce waste and improve flow.",
   image: "/media/Lean-transformation-consulting-UK-consultant-working-with-team-at-Gemba-1-6dc05d89.jpeg",
-  title: "Operational Excellence Consulting UK | Tacklers Consulting Group",
+  title: "Operational Excellence Consulting UK | Tacklers",
 } as const;
 
 const serviceHighlights = [
@@ -145,7 +145,7 @@ export default function ServicesPage() {
               items={serviceCards.map((card) =>
                 card.title === "Mentoring"
                   ? { ...card, cta: "View Programme", href: "/lean-training-uk" }
-                  : { ...card, cta: undefined, href: undefined }
+                  : card
               )}
             />
           </div>

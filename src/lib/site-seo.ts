@@ -61,7 +61,7 @@ export function absoluteUrl(path = "/") {
 
 function buildOpenGraphImage(image?: string, alt?: string) {
   const imagePath = image ?? siteConfig.defaultOgImage;
-  const resolvedAlt = alt ?? siteConfig.title;
+  const resolvedAlt = alt ?? `${siteConfig.name} — People-First Lean Transformation`;
   return [
     {
       alt: resolvedAlt,
@@ -183,4 +183,22 @@ export const publicSitePages = [
   { changeFrequency: "yearly" as const, path: "/cookie-policy", priority: 0.3 },
   { changeFrequency: "yearly" as const, path: "/privacy-policy", priority: 0.3 },
   { changeFrequency: "yearly" as const, path: "/terms-and-conditions", priority: 0.3 },
+  { changeFrequency: "monthly" as const, path: "/services/business-process-management-consulting-uk", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/cost-management-consulting-uk", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/executive-leadership-coaching-operations", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/productivity-improvement-consulting-uk", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/supplier-quality-development-consulting", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/strategy-deployment-consulting-uk", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/services/project-management-for-transformation", priority: 0.65 },
+  { changeFrequency: "monthly" as const, path: "/industries/aerospace-defence-operational-excellence", priority: 0.6 },
+  { changeFrequency: "monthly" as const, path: "/industries/healthcare-life-sciences-process-improvement", priority: 0.6 },
+  { changeFrequency: "monthly" as const, path: "/industries/energy-sector-operational-improvement", priority: 0.6 },
+  { changeFrequency: "monthly" as const, path: "/industries/public-sector-lean-transformation", priority: 0.6 },
+  { changeFrequency: "monthly" as const, path: "/industries/it-services-lean-operations", priority: 0.6 },
+  { changeFrequency: "monthly" as const, path: "/industries/manufacturing-operational-excellence", priority: 0.6 },
+  { changeFrequency: "weekly" as const, path: "/industries", priority: 0.8 },
+  { changeFrequency: "weekly" as const, path: "/case-studies", priority: 0.7 },
+  { changeFrequency: "weekly" as const, path: "/lean-transformation-consulting-uk", priority: 0.85 },
+  { changeFrequency: "weekly" as const, path: "/continuous-improvement-consulting-uk", priority: 0.85 },
+  { changeFrequency: "weekly" as const, path: "/gemba-consulting", priority: 0.85 },
 ] as const;

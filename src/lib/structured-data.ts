@@ -116,12 +116,6 @@ export function buildWebSiteJsonLd() {
     description: siteConfig.defaultDescription,
     inLanguage: "en-GB",
     name: siteConfig.name,
-    potentialAction: {
-      "@type": "SearchAction",
-      query: "required",
-      "query-input": "required name=search_term_string",
-      target: `${siteConfig.url}/blog?q={search_term_string}`,
-    },
     publisher: {
       "@id": `${siteConfig.url}/#organization`,
     },
@@ -214,6 +208,7 @@ export function buildArticleJsonLd({
       ? {
           "@type": "Person",
           name: authorName,
+          url: absoluteUrl("/about"),
         }
       : {
           "@id": `${siteConfig.url}/#organization`,

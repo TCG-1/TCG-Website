@@ -7,7 +7,7 @@ export const metadata: Metadata = createPageMetadata({
   description: "Manage your Tacklers Consulting Group newsletter subscription preferences.",
   noIndex: true,
   path: "/newsletter/subscription",
-  title: "Newsletter Subscription Preferences | Tacklers Consulting Group",
+  title: "Newsletter Preferences | Tacklers",
 });
 
 type SubscriptionPageProps = {

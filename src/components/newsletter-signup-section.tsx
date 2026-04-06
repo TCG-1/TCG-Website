@@ -13,14 +13,12 @@ type NewsletterSignupResponse = {
 };
 
 type FormState = {
-  companyName: string;
   email: string;
   fullName: string;
   website: string;
 };
 
 const INITIAL_FORM: FormState = {
-  companyName: "",
   email: "",
   fullName: "",
   website: "",
@@ -48,7 +46,6 @@ export function NewsletterSignupSection({ sourcePage }: { sourcePage: string }) 
     try {
       const payload = await requestJson<NewsletterSignupResponse>("/api/newsletter/subscribe", {
         body: JSON.stringify({
-          companyName: form.companyName,
           email: form.email,
           fullName: form.fullName,
           sourcePage,
@@ -76,33 +73,23 @@ export function NewsletterSignupSection({ sourcePage }: { sourcePage: string }) 
     }
   }
 
+  const isCompact = /^\/blog\/[^/]+$/.test(sourcePage);
+
   return (
     <>
-      <section className="border-t border-black/5 bg-[linear-gradient(180deg,#fffaf6_0%,#fff3f4_100%)] py-18">
+      <section className={`border-t border-black/5 bg-[linear-gradient(180deg,#fffaf6_0%,#fff3f4_100%)] ${isCompact ? "py-14" : "py-18"}`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-[2rem] border border-[#8a0917]/10 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <div className="grid gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:px-10">
+          <div className="overflow-hidden rounded-4xl border border-[#8a0917]/10 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+            <div className={`grid ${isCompact ? "gap-6 px-6 py-7 sm:px-8 sm:py-8 lg:px-10" : "gap-8 px-6 py-8 sm:px-8 sm:py-10 lg:px-10"}`}>
               <div className="max-w-3xl text-left">
                 <p className="eyebrow">Newsletter</p>
                 <h2 className="section-title mt-3">Subscribe to Tacklers insight</h2>
-                <p className="mt-4 text-base leading-8 text-slate-600">
-                  Receive concise updates on operational excellence, Lean transformation, and practical leadership habits that improve flow and sustain results.
+                <p className={`mt-4 text-slate-600 ${isCompact ? "text-sm leading-7" : "text-base leading-8"}`}>
+                  Subscribe for occasional updates from Tacklers Consulting Group.
                 </p>
-                <ul className="mt-5 space-y-3 text-sm text-slate-600">
-                  {[
-                    "Practical, executive-level insight",
-                    "People-first transformation thinking",
-                    "No noise, no fluff, unsubscribe anytime",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span className="mt-1.5 h-2 w-2 rounded-full bg-[#8a0917]" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
               </div>
 
-              <form className="grid gap-4 border-t border-[#8a0917]/10 pt-8" onSubmit={handleSubmit}>
+              <form className={`grid gap-4 border-t border-[#8a0917]/10 ${isCompact ? "pt-6" : "pt-8"}`} onSubmit={handleSubmit}>
                 <input
                   type="text"
                   value={form.website}
@@ -138,21 +125,11 @@ export function NewsletterSignupSection({ sourcePage }: { sourcePage: string }) 
                   </label>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-                  <label className="grid gap-2 text-sm font-medium text-slate-700">
-                    Company
-                    <input
-                      className="input"
-                      type="text"
-                      value={form.companyName}
-                      onChange={(event) => updateField("companyName", event.target.value)}
-                      placeholder="Organisation name (optional)"
-                    />
-                  </label>
+                <div className="flex justify-end">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="button-primary min-w-[220px] justify-center disabled:cursor-not-allowed disabled:opacity-60"
+                    className={`button-primary justify-center disabled:cursor-not-allowed disabled:opacity-60 ${isCompact ? "min-w-50" : "min-w-55"}`}
                   >
                     {isSubmitting ? "Subscribing..." : "Subscribe"}
                   </button>

@@ -29,7 +29,7 @@ const aboutSeo = {
   description:
     "Meet the team behind Tacklers Consulting Group. We deliver people-first Lean consulting, on-site transformation, and operational excellence support across the UK.",
   image: "/media/audrey-and-arlandous-1-e1773762025172-1b5d8b67.jpeg",
-  title: "About Tacklers Consulting Group | People-First Lean Consultants UK",
+  title: "About Us | Tacklers Consulting Group | Lean Consultants UK",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({

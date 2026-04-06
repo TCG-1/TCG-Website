@@ -24,9 +24,9 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-black/5 bg-[#111111] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:px-8">
-        <div className="flex max-w-md flex-col items-start space-y-5 text-left">
-          <div className="flex flex-col items-start gap-3">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-12 lg:px-8">
+        <div className="flex max-w-md flex-col items-center space-y-6 text-center lg:items-start lg:text-left">
+          <div className="flex flex-col items-center gap-3 lg:items-start">
             <Link href="/" className="inline-flex">
               <Image
                 src="/media/TCG%20Logo.png"
@@ -37,9 +37,9 @@ export function SiteFooter() {
               />
             </Link>
           </div>
-          <p className="max-w-md text-sm leading-7 text-white/75">{footerData.description}</p>
-          <div className="space-y-2 text-sm text-white/75">
-            <p>{footerData.coverageNote}</p>
+          <p className="max-w-md text-base leading-8 text-white/78">{footerData.description}</p>
+          <div className="w-full max-w-md space-y-4 border-t border-white/12 pt-5 text-sm text-white/75">
+            <p className="leading-7 text-white/82">{footerData.coverageNote}</p>
             <p>
               <a href={`mailto:${footerData.email}`} className="transition hover:text-white">
                 {footerData.email}
@@ -53,7 +53,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div>
+        <div className="lg:pt-2">
           <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
             Useful links
           </h3>
@@ -68,7 +68,7 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div>
+        <div className="lg:pt-2">
           <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-white/60">
             {hasLegalLinks ? "Legal & social" : "Connect"}
           </h3>
@@ -103,7 +103,18 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/10 px-4 py-5 text-center text-sm text-white/55 sm:px-6 lg:px-8">
-        Copyright © 2026 Tacklers Consulting Group. All rights reserved.
+        <p>Copyright © 2026 Tacklers Consulting Group. All rights reserved.</p>
+        <p className="mt-2 text-white/65">
+          Design and Devlope by{" "}
+          <a
+            href="https://shreegauli.com/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-medium text-white/85 underline decoration-white/35 underline-offset-4 transition hover:text-white hover:decoration-white/70"
+          >
+            Shree Gauli
+          </a>
+        </p>
       </div>
     </footer>
   );

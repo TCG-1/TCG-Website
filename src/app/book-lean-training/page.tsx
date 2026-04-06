@@ -8,9 +8,9 @@ import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data
 
 const bookLeanTrainingSeo = {
   description:
-    "Request a Lean training session from Tacklers Consulting Group for leaders and teams who need practical capability building tied to real work.",
+    "Enquire about Lean training for your team. Tacklers Consulting Group delivers practical, on-the-job capability building tied to real work. Enquire today.",
   image: "/media/photo-1454165804606-c3d57bc86b40-354f8fd9.jpg",
-  title: "Book Lean Training | Tacklers Consulting Group",
+  title: "Book Lean Training UK | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({

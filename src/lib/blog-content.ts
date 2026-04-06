@@ -1,4 +1,4 @@
-import { normalizeBlogRenderBlocks } from "@/lib/blog-rich-text";
+import { normalizeBlogRenderBlocks, serializeRichTextToSections } from "@/lib/blog-rich-text";
 import { readBlogBody } from "@/lib/portal-data";
 import { ensureBlogSeedData } from "@/lib/portal-seed";
 import { blogPosts as staticBlogPosts } from "@/lib/site-data";
@@ -26,31 +26,53 @@ export type PublishedBlogEntry = {
 
 const FALLBACK_COVER = "/media/photo-1517976487492-5750f3195933-200958be.jpg";
 
+const BLOG_SLUG_NORMALISATION: Record<string, string> = {
+  "maximize-productivity-with-tacklers-consulting-group-services": "maximise-productivity-with-tacklers-consulting-group-services",
+};
+
+const BLOG_SLUG_ALIASES: Record<string, string> = Object.fromEntries(
+  Object.entries(BLOG_SLUG_NORMALISATION).map(([legacySlug, canonicalSlug]) => [canonicalSlug, legacySlug]),
+);
+
+function getCanonicalBlogSlug(slug: string) {
+  return BLOG_SLUG_NORMALISATION[slug] ?? slug;
+}
+
+function getBlogSlugCandidates(slug: string) {
+  const canonicalSlug = getCanonicalBlogSlug(slug);
+  const legacySlug = BLOG_SLUG_ALIASES[slug];
+  return Array.from(new Set([slug, canonicalSlug, legacySlug].filter((value): value is string => Boolean(value))));
+}
+
 function createFallbackEntries(): PublishedBlogEntry[] {
-  return staticBlogPosts.map((post) => ({
-    authorName: post.author ?? null,
-    canonicalPath: post.canonicalPath ?? null,
-    category: post.category,
-    content: post.content,
-    cover: post.cover,
-    date: post.date,
-    excerpt: post.excerpt,
-    keywords: post.keywords ?? null,
-    noIndex: post.noIndex ?? false,
-    ogImageUrl: post.ogImageUrl ?? null,
-    publishedAt: post.publishedAt ?? null,
-    sections: post.content.map((item) => ({
-      body: item,
-      image: null,
-      items: [],
-      type: "paragraph" as const,
-    })),
-    seoDescription: post.seoDescription ?? post.excerpt,
-    seoTitle: post.seoTitle ?? null,
-    slug: post.slug,
-    title: post.title,
-    updatedAt: post.updatedAt ?? post.publishedAt ?? null,
-  }));
+  return staticBlogPosts.map((post) => {
+    /* Join all content strings and parse as rich text so headings,
+       lists, quotes etc. are correctly typed instead of all being
+       treated as plain paragraphs. */
+    const rawBody = post.content.join("\n\n");
+    const parsedSections = serializeRichTextToSections(rawBody);
+    const blocks = normalizeBlogRenderBlocks(parsedSections);
+
+    return {
+      authorName: post.author ?? null,
+      canonicalPath: post.canonicalPath ?? null,
+      category: post.category,
+      content: post.content,
+      cover: post.cover,
+      date: post.date,
+      excerpt: post.excerpt,
+      keywords: post.keywords ?? null,
+      noIndex: post.noIndex ?? false,
+      ogImageUrl: post.ogImageUrl ?? null,
+      publishedAt: post.publishedAt ?? null,
+      sections: blocks,
+      seoDescription: post.seoDescription ?? post.excerpt,
+      seoTitle: post.seoTitle ?? null,
+      slug: getCanonicalBlogSlug(post.slug),
+      title: post.title,
+      updatedAt: post.updatedAt ?? post.publishedAt ?? null,
+    };
+  });
 }
 
 export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
@@ -95,7 +117,7 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
       return createFallbackEntries();
     }
 
-    return posts.map((post) => {
+    const supabaseEntries: PublishedBlogEntry[] = posts.map((post) => {
       const sectionRows = sectionsByPostId.get(post.id) ?? [];
       const body = readBlogBody(sectionRows);
       const paragraphs = body
@@ -103,9 +125,11 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
         .map((item) => item.trim())
         .filter(Boolean);
 
+      const canonicalSlug = getCanonicalBlogSlug(post.slug);
+
       return {
         authorName: post.author_name ?? null,
-        canonicalPath: post.canonical_url ?? null,
+        canonicalPath: post.canonical_url ? post.canonical_url.replace(`/blog/${post.slug}`, `/blog/${canonicalSlug}`) : null,
         category: post.category ?? "Lean Insights",
         content: paragraphs.length ? paragraphs : [post.excerpt],
         cover: post.cover_url ?? FALLBACK_COVER,
@@ -120,11 +144,19 @@ export async function getPublishedBlogEntries(): Promise<PublishedBlogEntry[]> {
         sections: normalizeBlogRenderBlocks(sectionRows),
         seoDescription: post.seo_description ?? post.excerpt,
         seoTitle: post.seo_title ?? null,
-        slug: post.slug,
+        slug: canonicalSlug,
         title: post.title,
         updatedAt: post.updated_at ?? null,
       };
     });
+
+    /* Merge: add static-only posts that have no matching slug in Supabase */
+    const supabaseSlugs = new Set(supabaseEntries.map((e) => e.slug));
+    const staticOnlyEntries = createFallbackEntries().filter(
+      (entry) => !supabaseSlugs.has(entry.slug),
+    );
+
+    return [...supabaseEntries, ...staticOnlyEntries];
   } catch {
     return createFallbackEntries();
   }
@@ -141,19 +173,24 @@ export async function getPublishedBlogEntryBySlug(slug: string) {
   try {
     await ensureBlogSeedData(supabase);
 
-    const { data: post, error: postError } = await supabase
+    const slugCandidates = getBlogSlugCandidates(slug);
+
+    const { data: posts, error: postError } = await supabase
       .from("blog_posts")
       .select("*")
       .eq("status", "published")
-      .eq("slug", slug)
-      .maybeSingle();
+      .in("slug", slugCandidates);
 
     if (postError) {
       throw new Error(postError.message);
     }
 
+    const post = posts?.[0] ?? null;
+
     if (!post) {
-      return null;
+      /* Post not in Supabase — check static fallbacks (new static-only posts) */
+      const fallbackPosts = createFallbackEntries();
+      return fallbackPosts.find((p) => p.slug === slug) ?? null;
     }
 
     const { data: sections, error: sectionsError } = await supabase
@@ -172,9 +209,11 @@ export async function getPublishedBlogEntryBySlug(slug: string) {
       .map((item) => item.trim())
       .filter(Boolean);
 
+    const canonicalSlug = getCanonicalBlogSlug(post.slug);
+
     return {
       authorName: post.author_name ?? null,
-      canonicalPath: post.canonical_url ?? null,
+      canonicalPath: post.canonical_url ? post.canonical_url.replace(`/blog/${post.slug}`, `/blog/${canonicalSlug}`) : null,
       category: post.category ?? "Lean Insights",
       content: paragraphs.length ? paragraphs : [post.excerpt],
       cover: post.cover_url ?? FALLBACK_COVER,
@@ -189,7 +228,7 @@ export async function getPublishedBlogEntryBySlug(slug: string) {
       sections: normalizeBlogRenderBlocks(sections ?? []),
       seoDescription: post.seo_description ?? post.excerpt,
       seoTitle: post.seo_title ?? null,
-      slug: post.slug,
+      slug: canonicalSlug,
       title: post.title,
       updatedAt: post.updated_at ?? null,
     };

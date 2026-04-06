@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="en-GB"
       className={`${poppins.variable} ${playfair.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full bg-white text-slate-950">

@@ -8,9 +8,9 @@ import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data
 
 const discoveryCallSeo = {
   description:
-    "Book a free discovery call with Tacklers Consulting Group. Discuss your bottlenecks, improvement priorities, and the best first step for Lean transformation in your organisation.",
+    "Book a free 30-minute discovery call with Tacklers Consulting Group. Discuss your bottlenecks, improvement priorities, and agree the best first step. Book your call today.",
   image: "/media/Strategy-Deployment-cb6e4118.jpeg",
-  title: "Book a Free Discovery Call | Tacklers Consulting Group",
+  title: "Book a Free Discovery Call | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({

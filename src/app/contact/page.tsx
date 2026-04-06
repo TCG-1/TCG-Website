@@ -18,7 +18,7 @@ const contactSeo = {
   description:
     "Get in touch with Tacklers Consulting Group to discuss Lean transformation, operational excellence, or book a discovery call. We support organisations across the UK.",
   image: "/media/photo-1554224155-6726b3ff858f-9273a89e.jpg",
-  title: "Contact | Tacklers Consulting Group | UK Lean Consultants",
+  title: "Contact Us | Lean Consultants UK | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({

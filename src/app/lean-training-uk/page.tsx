@@ -18,7 +18,7 @@ const leanTrainingSeo = {
   description:
     "Practical on-site Lean training and group mentoring for UK teams. Build internal capability, reduce waste, and sustain improvement through hands-on learning at the Gemba.",
   image: "/media/Lean-Training-060b97e6.jpeg",
-  title: "Lean Training & Mentoring UK | Tacklers Consulting Group",
+  title: "Lean Training & Mentoring UK | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
@@ -87,7 +87,7 @@ export default function LeanServicesPage() {
         title="Practical Lean training and mentoring that builds capability where work happens."
         body="We help teams reduce waste, improve productivity, and strengthen daily ways of working through practical mentoring tied directly to real operational challenges."
         primary={{ label: "Enquire now", href: "/book-lean-training" }}
-        secondary={{ label: "Download brochure", href: "/contact" }}
+        secondary={{ label: "Book a discovery call", href: "/discovery-call" }}
         image={leanTrainingSeo.image}
       />
 

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { getPublishedBlogEntries } from "@/lib/blog-content";
+import { getAllCaseStudySlugs } from "@/lib/case-studies-data";
 import { absoluteUrl, publicSitePages } from "@/lib/site-seo";
 
 export const dynamic = "force-dynamic";
@@ -23,5 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: absoluteUrl(post.canonicalPath || `/blog/${post.slug}`),
   }));
 
-  return [...staticEntries, ...blogEntries];
+  const caseStudyEntries: MetadataRoute.Sitemap = getAllCaseStudySlugs().map(
+    (slug) => ({
+      changeFrequency: "monthly" as const,
+      lastModified: now,
+      priority: 0.7,
+      url: absoluteUrl(`/case-studies/${slug}`),
+    }),
+  );
+
+  return [...staticEntries, ...blogEntries, ...caseStudyEntries];
 }

@@ -3,28 +3,44 @@ import type { ReactNode } from "react";
 
 import type { BlogRenderBlock } from "@/lib/blog-rich-text";
 
-function renderInlineContent(value: string, keyPrefix: string): ReactNode[] {
-  const lines = value.split("\n");
+function parseInlineTokens(
+  text: string,
+  keyPrefix: string,
+  tokenIndex: number[],
+): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  // Combined pattern: bold (**…**) OR markdown link [label](url)
+  const inlinePattern = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
 
-  return lines.flatMap((line, lineIndex) => {
-    const nodes: ReactNode[] = [];
-    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
+  while ((match = inlinePattern.exec(text)) !== null) {
+    const start = match.index;
 
-    while ((match = linkPattern.exec(line)) !== null) {
-      const [fullMatch, label, href] = match;
-      const start = match.index;
+    // Push plain text before the match
+    if (start > lastIndex) {
+      nodes.push(text.slice(lastIndex, start));
+    }
 
-      if (start > lastIndex) {
-        nodes.push(line.slice(lastIndex, start));
-      }
-
+    if (match[1] !== undefined) {
+      // Bold text
+      nodes.push(
+        <strong
+          key={`${keyPrefix}-bold-${tokenIndex[0]++}`}
+          className="font-semibold"
+        >
+          {match[1]}
+        </strong>,
+      );
+    } else {
+      // Markdown link
+      const label = match[2];
+      const href = match[3];
       const isExternal = /^https?:\/\//i.test(href);
 
       nodes.push(
         <a
-          key={`${keyPrefix}-link-${lineIndex}-${start}`}
+          key={`${keyPrefix}-link-${tokenIndex[0]++}`}
           href={href}
           className="font-medium text-[#8a0917] underline decoration-[#FDD835] decoration-2 underline-offset-4 transition hover:text-[#690711]"
           target={isExternal ? "_blank" : undefined}
@@ -33,13 +49,24 @@ function renderInlineContent(value: string, keyPrefix: string): ReactNode[] {
           {label}
         </a>,
       );
-
-      lastIndex = start + fullMatch.length;
     }
 
-    if (lastIndex < line.length) {
-      nodes.push(line.slice(lastIndex));
-    }
+    lastIndex = start + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(text.slice(lastIndex));
+  }
+
+  return nodes;
+}
+
+function renderInlineContent(value: string, keyPrefix: string): ReactNode[] {
+  const lines = value.split("\n");
+  const tokenIndex = [0]; // shared counter across lines
+
+  return lines.flatMap((line, lineIndex) => {
+    const nodes = parseInlineTokens(line, keyPrefix, tokenIndex);
 
     if (lineIndex < lines.length - 1) {
       nodes.push(<br key={`${keyPrefix}-break-${lineIndex}`} />);

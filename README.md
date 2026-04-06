@@ -86,6 +86,11 @@ ADMIN_EMAIL=
 ADMIN_PASSWORD=
 ADMIN_NAME=Tacklers Admin
 ADMIN_SESSION_SECRET=
+CRON_SECRET=
+SEO_MONITOR_BASE_URL=https://tacklersconsulting.com
+SEO_MONITOR_PATHS=/,/robots.txt,/sitemap.xml,/blog,/operational-excellence-consulting-uk,/lean-training-uk,/contact,/discovery-call
+SEO_OPPORTUNITY_PATHS=/,/operational-excellence-consulting-uk,/lean-training-uk,/blog,/contact,/discovery-call
+SEO_MONITOR_EMAIL_TO=krishgauli@gmail.com
 ```
 
 Notes:
@@ -94,6 +99,10 @@ Notes:
 - `SUPABASE_URL` is optional if you already set `NEXT_PUBLIC_SUPABASE_URL`.
 - SMTP is used for enquiry, careers, and support emails. For Google Workspace or Gmail app passwords, `smtp.gmail.com` on port `465` with `SMTP_SECURE=true` is the intended setup.
 - `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET` are required for production admin access.
+- `CRON_SECRET` is used for manual/secure cron triggers when requests are not coming directly from Vercel Cron.
+- `SEO_MONITOR_BASE_URL` and `SEO_MONITOR_PATHS` configure on-demand SEO health checks at `/api/cron/seo-health`.
+- `SEO_OPPORTUNITY_PATHS` configures which pages are reviewed by on-demand opportunity checks at `/api/cron/seo-opportunities`.
+- `SEO_MONITOR_EMAIL_TO` sets where SEO report emails are sent (comma-separated for multiple recipients).
 
 ## Supabase setup
 

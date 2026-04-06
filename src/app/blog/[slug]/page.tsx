@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AuthorBio } from "@/components/blog/author-bio";
 import { BlogRichContent } from "@/components/blog/blog-rich-content";
+import { ShareButtons } from "@/components/blog/share-buttons";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Container } from "@/components/sections";
 import { getPublishedBlogEntries, getPublishedBlogEntryBySlug } from "@/lib/blog-content";
@@ -50,7 +52,7 @@ export async function generateMetadata({
     noIndex: post.noIndex,
     path: post.canonicalPath || `/blog/${post.slug}`,
     publishedTime: post.publishedAt,
-    title: post.seoTitle ?? `${post.title} | Tacklers Consulting Group`,
+    title: post.seoTitle ?? `${post.title} | Tacklers`,
     type: "article",
     updatedTime: post.updatedAt,
   });
@@ -174,28 +176,12 @@ export default async function BlogPostPage({
                   <h2 className="text-xs font-bold uppercase tracking-[0.22em] text-[#795900]">
                     Share insight
                   </h2>
-                  <div className="mt-5 flex gap-3">
-                    <button
-                      type="button"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#8a0917]/15 bg-white text-[#8a0917] transition hover:bg-[#fff4c2]"
-                      aria-label="Share article"
-                    >
-                      ↗
-                    </button>
-                    <a
-                      href={`mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(`https://tacklersconsulting.com/blog/${post.slug}`)}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#8a0917]/15 bg-white text-[#8a0917] transition hover:bg-[#fff4c2]"
-                      aria-label="Email article"
-                    >
-                      @
-                    </a>
-                    <Link
-                      href="/contact"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#8a0917]/15 bg-white text-[#8a0917] transition hover:bg-[#fff4c2]"
-                      aria-label="Discuss this article"
-                    >
-                      +
-                    </Link>
+                  <div className="mt-5">
+                    <ShareButtons
+                      url={`https://www.tacklersconsulting.com/blog/${post.slug}`}
+                      title={post.title}
+                      variant="sidebar"
+                    />
                   </div>
                 </div>
               </div>
@@ -211,35 +197,44 @@ export default async function BlogPostPage({
 
                 <BlogRichContent blocks={articleBlocks} />
 
+                {post.authorName ? (
+                  <div className="mt-12">
+                    <AuthorBio name={post.authorName} />
+                  </div>
+                ) : null}
+
+                <div className="mt-12 rounded-3xl border border-[#8a0917]/10 bg-slate-50 p-6 sm:p-8">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#795900]">Next steps</p>
+                  <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
+                    Turn insight into practical operational gains
+                  </h2>
+                  <p className="mt-4 text-sm leading-7 text-slate-700 sm:text-base">
+                    If this topic matches your current priorities, explore our service pathways or book a focused discovery call.
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href="/operational-excellence-consulting-uk" className="button-secondary">
+                      Operational excellence services
+                    </Link>
+                    <Link href="/lean-training-uk" className="button-secondary">
+                      Lean mentoring programmes
+                    </Link>
+                    <Link href="/discovery-call" className="button-primary">
+                      Book a discovery call
+                    </Link>
+                  </div>
+                </div>
+
                 <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t border-[#8a0917]/10 pt-10">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
                     Category: <span className="text-[#8a0917]">{post.category}</span>
                   </p>
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-medium text-slate-600">Share this insight</span>
-                    <div className="flex gap-3">
-                      <button
-                        type="button"
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-[#8a0917]"
-                        aria-label="Share article"
-                      >
-                        ↗
-                      </button>
-                      <a
-                        href={`mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(`https://tacklersconsulting.com/blog/${post.slug}`)}`}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-[#8a0917]"
-                        aria-label="Email article"
-                      >
-                        @
-                      </a>
-                      <Link
-                        href="/contact"
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition hover:bg-[#8a0917]"
-                        aria-label="Discuss this article"
-                      >
-                        +
-                      </Link>
-                    </div>
+                    <ShareButtons
+                      url={`https://www.tacklersconsulting.com/blog/${post.slug}`}
+                      title={post.title}
+                      variant="inline"
+                    />
                   </div>
                 </div>
               </div>
@@ -264,11 +259,11 @@ export default async function BlogPostPage({
                 </Link>
               </div>
 
-              <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,340px))] justify-center gap-8">
                 {relatedPosts.map((entry) => (
                   <article
                     key={entry.slug}
-                    className="group overflow-hidden rounded-2xl bg-white shadow-[0_14px_36px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.12)]"
+                    className="group w-full overflow-hidden rounded-2xl bg-white shadow-[0_14px_36px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.12)]"
                   >
                     <div className="h-48 overflow-hidden">
                       <Image

@@ -8,9 +8,9 @@ import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/structured-data
 
 const onSiteAssessmentSeo = {
   description:
-    "Request an on-site assessment from Tacklers Consulting Group to identify waste, bottlenecks, and the highest-impact starting point for improvement.",
+    "Request an on-site Lean assessment from Tacklers Consulting Group. We identify waste, bottlenecks, and the highest-impact starting point for improvement. Request your assessment today.",
   image: "/media/Supplier-Quality-Development-a29c0c6d.jpeg",
-  title: "On-Site Assessment | Tacklers Consulting Group",
+  title: "On-Site Lean Assessment UK | Tacklers",
 } as const;
 
 export const metadata: Metadata = createPageMetadata({
