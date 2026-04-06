@@ -106,6 +106,32 @@ function formatTimestamp(value: string | null) {
   });
 }
 
+function buildPostPreview(post: BlogPost) {
+  const excerpt = post.excerpt?.trim();
+
+  if (excerpt) {
+    return excerpt;
+  }
+
+  const plainText = post.body
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[[^\]]+\]\(([^)]+)\)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^>\s?/gm, "")
+    .replace(/^[-*]\s+/gm, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!plainText) {
+    return "No preview text yet. Open this post to add content.";
+  }
+
+  return plainText.length > 220 ? `${plainText.slice(0, 220).trimEnd()}…` : plainText;
+}
+
 function toFormState(post: BlogPost): BlogFormState {
   return {
     canonicalUrl: post.canonical_url ?? "",
@@ -647,7 +673,7 @@ export function BlogPostManager() {
         <p className="eyebrow">Blog management</p>
         <h1 className="section-title">Manage blog posts</h1>
         <p className="body-copy mt-4 max-w-3xl">
-          Write inside the popup editor with structured blocks, top-menu formatting, auto-generated table of contents, image sections, and hyperlink support. Save drafts or publish posts directly.
+          Write and edit with a rich text editor. Headings, links, lists, images, and formatting are reflected live while you draft and publish.
         </p>
       </section>
 
@@ -699,7 +725,7 @@ export function BlogPostManager() {
                     <h3 className="truncate text-lg font-semibold text-slate-950">{post.title}</h3>
                     <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600">{post.status}</span>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{post.excerpt}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{buildPostPreview(post)}</p>
                 </div>
                 <div className="grid gap-1 text-sm text-slate-500">
                   <span>{post.slug}</span>
